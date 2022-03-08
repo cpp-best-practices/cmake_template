@@ -12,5 +12,11 @@ target_link_libraries(
           fmt::fmt
           spdlog::spdlog)
 
-target_include_directories(intro PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")
+target_link_system_libraries(
+  intro
+  PRIVATE
+  ftxui::screen
+  ftxui::dom
+  ftxui::component)
 
+target_include_directories(intro PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")
