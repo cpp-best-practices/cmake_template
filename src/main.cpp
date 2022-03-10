@@ -24,6 +24,48 @@ static constexpr auto USAGE =
           --version     Show version.
 )";
 
+
+struct GameBoard
+{
+  static constexpr std::size_t width = 5;
+  static constexpr std::size_t height = 5;
+
+  std::array<std::array<std::string, height>, width> strings;
+  std::array<std::array<bool, height>, width> values{};
+
+  void set(std::size_t x, std::size_t y, bool new_value)
+  {
+    values[x][y] = new_value;
+
+    if (new_value) {
+      strings[x][y] = " ON";
+    } else {
+      strings[x][y] = "OFF";
+    }
+  }
+
+  bool get(std::size_t x, std::size_t y) { return values[x][y]; }
+
+  GameBoard() { update_strings(); }
+
+  void update_strings()
+  {
+    for (std::size_t x = 0; x < width; ++x) {
+      for (std::size_t y = 0; y < height; ++y) { set(x, y, get(x, y)); }
+    }
+  }
+
+  void toggle(std::size_t x, std::size_t y) { set(x, y, !get(x, y)); }
+
+  void press(std::size_t x, std::size_t y)
+  {
+    if (x > 0) { toggle(x - 1, y); }
+    if (y > 0) { toggle(x, y - 1); }
+    if (x < width - 1) { toggle(x + 1, y); }
+    if (y < height - 1) { toggle(x, y + 1); }
+  }
+};
+
 int main(int argc, const char **argv)
 {
   try {
@@ -36,49 +78,50 @@ int main(int argc, const char **argv)
                                             // from config.hpp via CMake
 
     using namespace ftxui;
-    std::vector<std::string> toggle_1_entries = {
-      "On",
-      "Off",
-    };
-    std::vector<std::string> toggle_2_entries = {
-      "Enabled",
-      "Disabled",
-    };
-    std::vector<std::string> toggle_3_entries = {
-      "10€",
-      "0€",
-    };
-    std::vector<std::string> toggle_4_entries = {
-      "Nothing",
-      "One element",
-      "Several elements",
-    };
-
     auto screen = ScreenInteractive::TerminalOutput();
 
-    int toggle_1_selected = 0;
-    int toggle_2_selected = 0;
-    int toggle_3_selected = 0;
-    int toggle_4_selected = 0;
-    Component toggle_1 = Toggle(&toggle_1_entries, &toggle_1_selected);
-    Component toggle_2 = Toggle(&toggle_2_entries, &toggle_2_selected);
-    Component toggle_3 = Toggle(&toggle_3_entries, &toggle_3_selected);
-    Component toggle_4 = Toggle(&toggle_4_entries, &toggle_4_selected);
-    auto quit_button = Button("Save & Quit", screen.ExitLoopClosure());
+    GameBoard gb;
 
-    auto container = Container::Vertical({ toggle_1, toggle_2, toggle_3, toggle_4, quit_button });
+    const auto make_buttons = [&] {
+      std::vector<ftxui::Component> buttons;
+      for (std::size_t x = 0; x < gb.width; ++x) {
+        for (std::size_t y = 0; y < gb.height; ++y) {
+          buttons.push_back(ftxui::Button(&gb.strings[x][y], [x, y, &gb] { gb.press(x,y); }));
+        }
+      }
+      return buttons;
+    };
 
-    auto renderer = Renderer(container, [&] {
-      return vbox({ text("Choose your options:"),
-        text(""),
-        hbox(text(" * Poweroff on startup      : "), toggle_1->Render()),
-        hbox(text(" * Out of process           : "), toggle_2->Render()),
-        hbox(text(" * Price of the information : "), toggle_3->Render()),
-        hbox(text(" * Number of elements       : "), toggle_4->Render()),
-        text(""),
-        hbox(toggle_1_selected == 0 ? color(Color::Green, quit_button->Render())
-                                    : color(Color::Blue, quit_button->Render())) });
-    });
+    auto buttons = make_buttons();
+
+    auto container = Container::Horizontal(buttons);
+
+    auto make_layout = [&] {
+      std::vector<ftxui::Element> columns;
+
+      std::size_t idx = 0;
+
+      for (std::size_t x = 0; x < gb.width; ++x) {
+        std::vector<ftxui::Element> row;
+        for (std::size_t y = 0; y < gb.height; ++y) {
+          row.push_back(buttons[idx]->Render());
+          ++idx;
+        }
+        columns.push_back(ftxui::hbox(std::move(row)));
+      }
+
+      return ftxui::vbox(std::move(columns));
+    };
+
+    auto renderer = Renderer(container, make_layout);
+
+
+    /*
+  return vbox({ text("Turn all boxes to 'on':"),
+    text(""),
+    hbox(toggle_1_selected == 0 ? color(Color::Green, quit_button->Render())
+                                : color(Color::Blue, quit_button->Render())) });
+                                */
 
     screen.Loop(renderer);
 
