@@ -1,5 +1,6 @@
 #include <functional>
 #include <iostream>
+#include <random>
 
 #include <docopt/docopt.h>
 #include <ftxui/component/captured_mouse.hpp>// for ftxui
@@ -44,9 +45,19 @@ struct GameBoard
     }
   }
 
-  bool get(std::size_t x, std::size_t y) { return values[x][y]; }
+  void visit(auto visitor)
+  {
+    for (std::size_t x = 0; x < width; ++x) {
+      for (std::size_t y = 0; y < height; ++y) { visitor(x, y, *this); }
+    }
+  }
 
-  GameBoard() { update_strings(); }
+  bool get(std::size_t x, std::size_t y) const { return values[x][y]; }
+
+  GameBoard()
+  {
+    visit([](const auto x, const auto y, auto &gameboard) { gameboard.set(x, y, true); });
+  }
 
   void update_strings()
   {
@@ -63,6 +74,17 @@ struct GameBoard
     if (y > 0) { toggle(x, y - 1); }
     if (x < width - 1) { toggle(x + 1, y); }
     if (y < height - 1) { toggle(x, y + 1); }
+  }
+
+  bool solved() const
+  {
+    for (std::size_t x = 0; x < width; ++x) {
+      for (std::size_t y = 0; y < height; ++y) {
+        if (!get(x, y)) { return false; }
+      }
+    }
+
+    return true;
   }
 };
 
@@ -86,7 +108,10 @@ int main(int argc, const char **argv)
       std::vector<ftxui::Component> buttons;
       for (std::size_t x = 0; x < gb.width; ++x) {
         for (std::size_t y = 0; y < gb.height; ++y) {
-          buttons.push_back(ftxui::Button(&gb.strings[x][y], [x, y, &gb] { gb.press(x,y); }));
+          buttons.push_back(ftxui::Button(&gb.strings[x][y], [x, y, &gb, &screen] {
+            gb.press(x, y);
+            if (gb.solved()) { screen.ExitLoopClosure()(); }
+          }));
         }
       }
       return buttons;
@@ -113,15 +138,14 @@ int main(int argc, const char **argv)
       return ftxui::vbox(std::move(columns));
     };
 
+    std::mt19937 gen32;
+    std::uniform_int_distribution<std::size_t> x(static_cast<std::size_t>(0), gb.width - 1);
+    std::uniform_int_distribution<std::size_t> y(static_cast<std::size_t>(0), gb.height - 1);
+
+    for (int i = 0; i < 100; ++i) { gb.press(x(gen32), y(gen32)); }
+
     auto renderer = Renderer(container, make_layout);
 
-
-    /*
-  return vbox({ text("Turn all boxes to 'on':"),
-    text(""),
-    hbox(toggle_1_selected == 0 ? color(Color::Green, quit_button->Render())
-                                : color(Color::Blue, quit_button->Render())) });
-                                */
 
     screen.Loop(renderer);
 
