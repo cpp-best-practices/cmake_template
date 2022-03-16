@@ -1,6 +1,7 @@
 #include <functional>
 #include <iostream>
 #include <random>
+#include <array>
 
 #include <docopt/docopt.h>
 #include <ftxui/component/captured_mouse.hpp>// for ftxui
