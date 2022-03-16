@@ -28,9 +28,9 @@ It requires
  * conan
  * a compiler
 
-If you want a more complex example project, check out the [cpp_starter_project](https://github.com/cpp-best-practices/cpp_starter_project).
 
-Ths Boilerplate project will merge new features first, then they will be merged (as appropriate) into cpp_starter_project.
+This project gets you started with a simple example of using FTXUI, which happens to also be a game
+
 
 ## Getting Started
 
