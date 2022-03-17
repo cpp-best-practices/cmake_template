@@ -1,3 +1,4 @@
+#include <array>
 #include <functional>
 #include <iostream>
 #include <random>
@@ -34,21 +35,19 @@ template<std::size_t Width, std::size_t Height> struct GameBoard
   std::array<std::array<std::string, height>, width> strings;
   std::array<std::array<bool, height>, width> values{};
 
-  std::size_t move_count{0};
+  std::size_t move_count{ 0 };
 
-  std::string &get_string(std::size_t x, std::size_t y) {
-  return      strings.at(x).at(y);
-  }
+  std::string &get_string(std::size_t x, std::size_t y) { return strings.at(x).at(y); }
 
 
   void set(std::size_t x, std::size_t y, bool new_value)
   {
-    get(x,y) = new_value;
+    get(x, y) = new_value;
 
     if (new_value) {
-      get_string(x,y) = " ON";
+      get_string(x, y) = " ON";
     } else {
-      get_string(x,y) = "OFF";
+      get_string(x, y) = "OFF";
     }
   }
 
@@ -125,7 +124,7 @@ int main(int argc, const char **argv)
       std::vector<ftxui::Component> buttons;
       for (std::size_t x = 0; x < gb.width; ++x) {
         for (std::size_t y = 0; y < gb.height; ++y) {
-          buttons.push_back(ftxui::Button(&gb.get_string(x,y), [=, &gb] {
+          buttons.push_back(ftxui::Button(&gb.get_string(x, y), [=, &gb] {
             if (!gb.solved()) { gb.press(x, y); }
             update_quit_text(gb);
           }));
@@ -161,7 +160,7 @@ int main(int argc, const char **argv)
     static constexpr int randomization_iterations = 100;
     static constexpr int random_seed = 42;
 
-    std::mt19937 gen32{random_seed}; // NOLINT
+    std::mt19937 gen32{ random_seed };// NOLINT
     std::uniform_int_distribution<std::size_t> x(static_cast<std::size_t>(0), gb.width - 1);
     std::uniform_int_distribution<std::size_t> y(static_cast<std::size_t>(0), gb.height - 1);
 

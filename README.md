@@ -29,7 +29,7 @@ It requires
  * a compiler
 
 
-This project gets you started with a simple example of using FTXUI, which happens to also be a game
+This project gets you started with a simple example of using FTXUI, which happens to also be a game.
 
 
 ## Getting Started
