@@ -239,30 +239,26 @@ void game_iteration_canvas()
     }
 
     // for the fun of it, let's have a second window doing interesting things
-    auto &small_bm_pixel = small_bm->data().at(static_cast<std::size_t>(elapsed_time.count()) % small_bm->data().size());
+    auto &small_bm_pixel =
+      small_bm->data().at(static_cast<std::size_t>(elapsed_time.count()) % small_bm->data().size());
 
     switch (elapsed_time.count() % 3) {
-      case 0:
-        small_bm_pixel.R += 11; // NOLINT Magic Number
-        break;
-      case 1:
-        small_bm_pixel.G += 11; // NOLINT Magic Number
-        break;
-      case 2:
-        small_bm_pixel.B += 11; // NOLINT Magic Number
-        break;
+    case 0:
+      small_bm_pixel.R += 11;// NOLINT Magic Number
+      break;
+    case 1:
+      small_bm_pixel.G += 11;// NOLINT Magic Number
+      break;
+    case 2:
+      small_bm_pixel.B += 11;// NOLINT Magic Number
+      break;
     }
 
 
-
-
-
     ++max_row;
-    if (max_row >= bm->height()) {
-      max_row = 0; }
+    if (max_row >= bm->height()) { max_row = 0; }
     ++max_col;
-    if (max_col >= bm->width()) {
-      max_col = 0; }
+    if (max_col >= bm->width()) { max_col = 0; }
   };
 
   auto screen = ftxui::ScreenInteractive::TerminalOutput();
