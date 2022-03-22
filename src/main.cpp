@@ -183,12 +183,12 @@ struct Bitmap : ftxui::Node
 
   void Render(ftxui::Screen &screen) override
   {
-    for (int x = box_.x_min; x < box_.x_max; ++x) {
-      for (int y = box_.y_min; y < box_.y_max; ++y) {
-        auto &p = screen.PixelAt(x, y);
+    for (std::size_t x = 0; x < width_; ++x) {
+      for (std::size_t y = 0; y < height_ / 2; ++y) {
+        auto &p = screen.PixelAt(box_.x_min + static_cast<int>(x), box_.y_min + static_cast<int>(y));
         p.character = "▄";
-        const auto &top_color = at(static_cast<std::size_t>(x), static_cast<std::size_t>(y) * 2);
-        const auto &bottom_color = at(static_cast<std::size_t>(x), static_cast<std::size_t>(y) * 2 + 1);
+        const auto &top_color = at(x, y * 2);
+        const auto &bottom_color = at(x, y * 2 + 1);
         p.background_color = ftxui::Color{ top_color.R, top_color.G, top_color.B };
         p.foreground_color = ftxui::Color{ bottom_color.R, bottom_color.G, bottom_color.B };
       }
@@ -198,6 +198,8 @@ struct Bitmap : ftxui::Node
   [[nodiscard]] auto width() const noexcept { return width_; }
 
   [[nodiscard]] auto height() const noexcept { return height_; }
+
+  [[nodiscard]] auto &data() noexcept { return pixels; }
 
 private:
   std::size_t width_;
@@ -211,6 +213,7 @@ void game_iteration_canvas()
   // this should probably have a `bitmap` helper function that does what you expect
   // similar to the other parts of FTXUI
   auto bm = std::make_shared<Bitmap>(50, 50);// NOLINT magic numbers
+  auto small_bm = std::make_shared<Bitmap>(6, 6);// NOLINT magic numbers
 
   double fps = 0;
 
@@ -235,11 +238,31 @@ void game_iteration_canvas()
       for (std::size_t col = 0; col < max_col; ++col) { ++(bm->at(col, row).G); }
     }
 
+    // for the fun of it, let's have a second window doing interesting things
+    auto &small_bm_pixel = small_bm->data().at(static_cast<std::size_t>(elapsed_time.count()) % small_bm->data().size());
+
+    switch (elapsed_time.count() % 3) {
+      case 0:
+        small_bm_pixel.R += 11; // NOLINT Magic Number
+        break;
+      case 1:
+        small_bm_pixel.G += 11; // NOLINT Magic Number
+        break;
+      case 2:
+        small_bm_pixel.B += 11; // NOLINT Magic Number
+        break;
+    }
+
+
+
+
 
     ++max_row;
-    if (max_row >= bm->height()) { max_row = 0; }
+    if (max_row >= bm->height()) {
+      max_row = 0; }
     ++max_col;
-    if (max_col >= bm->width()) { max_col = 0; }
+    if (max_col >= bm->width()) {
+      max_col = 0; }
   };
 
   auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -259,7 +282,9 @@ void game_iteration_canvas()
 
     // now actually draw the game elements
     return ftxui::hbox({ bm | ftxui::border,
-      ftxui::vbox({ ftxui::text("Frame: " + std::to_string(counter)), ftxui::text("FPS: " + std::to_string(fps)) }) });
+      ftxui::vbox({ ftxui::text("Frame: " + std::to_string(counter)),
+        ftxui::text("FPS: " + std::to_string(fps)),
+        small_bm | ftxui::border }) });
   };
 
   auto container = ftxui::Container::Vertical({});
