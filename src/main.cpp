@@ -139,7 +139,7 @@ void consequence_game()
   static constexpr int randomization_iterations = 100;
   static constexpr int random_seed = 42;
 
-  std::mt19937 gen32{ random_seed };// NOLINT
+  std::mt19937 gen32{ random_seed };// NOLINT fixed seed
   std::uniform_int_distribution<std::size_t> x(static_cast<std::size_t>(0), gb.width - 1);
   std::uniform_int_distribution<std::size_t> y(static_cast<std::size_t>(0), gb.height - 1);
 
@@ -163,9 +163,10 @@ struct Color
   std::uint8_t B{};
 };
 
+// A simple way of representing a bitmap on screen using only characters
 struct Bitmap : ftxui::Node
 {
-  Bitmap(std::size_t width, std::size_t height)// NOLINT
+  Bitmap(std::size_t width, std::size_t height)// NOLINT same typed parameters adjacent to each other
     : width_(width), height_(height)
   {}
 
@@ -205,9 +206,11 @@ private:
   std::vector<Color> pixels = std::vector<Color>(width_ * height_, Color{});
 };
 
-void game_loop_canvas()
+void game_iteration_canvas()
 {
-  auto bm = std::make_shared<Bitmap>(50, 50);// NOLINT
+  // this should probably have a `bitmap` helper function that does what you expect
+  // similar to the other parts of FTXUI
+  auto bm = std::make_shared<Bitmap>(50, 50);// NOLINT magic numbers
 
   double fps = 0;
 
@@ -215,10 +218,14 @@ void game_loop_canvas()
   std::size_t max_col = 0;
 
   // to do, add total game time clock also, not just current elapsed time
-  auto game_loop = [&](const std::chrono::steady_clock::duration elapsed_time) {
+  auto game_iteration = [&](const std::chrono::steady_clock::duration elapsed_time) {
+    // in here we simulate however much game time has elapsed. Update animations,
+    // run character AI, whatever, update stats, etc
+
+    // this isn't actually timing based for now, it's just updating the display however fast it can
     fps = 1.0
           / (static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(elapsed_time).count())
-             / 1'000'000.0);// NOLINT
+             / 1'000'000.0);// NOLINT magic numbers
 
     for (std::size_t row = 0; row < max_row; ++row) {
       for (std::size_t col = 0; col < bm->width(); ++col) { ++(bm->at(col, row).R); }
@@ -242,11 +249,15 @@ void game_loop_canvas()
   auto last_time = std::chrono::steady_clock::now();
 
   auto make_layout = [&] {
+    // This code actually processes the draw event
     const auto new_time = std::chrono::steady_clock::now();
 
     ++counter;
-    game_loop(new_time - last_time);
+    // we will dispatch to the game_iteration function, where the work happens
+    game_iteration(new_time - last_time);
     last_time = new_time;
+
+    // now actually draw the game elements
     return ftxui::hbox({ bm | ftxui::border,
       ftxui::vbox({ ftxui::text("Frame: " + std::to_string(counter)), ftxui::text("FPS: " + std::to_string(fps)) }) });
   };
@@ -256,10 +267,13 @@ void game_loop_canvas()
   auto renderer = ftxui::Renderer(container, make_layout);
 
   std::atomic<bool> refresh_ui_continue = true;
+
+  // This thread exists to make sure that the event queue has an event to
+  // process at approximately a rate of 30 FPS
   std::thread refresh_ui([&] {
     while (refresh_ui_continue) {
       using namespace std::chrono_literals;
-      std::this_thread::sleep_for(1.0s / 30.0);// NOLINT
+      std::this_thread::sleep_for(1.0s / 30.0);// NOLINT magic numbers
       screen.PostEvent(ftxui::Event::Custom);
     }
   });
@@ -297,7 +311,7 @@ int main(int argc, const char **argv)
     if (args["turn_based"].asBool()) {
       consequence_game();
     } else {
-      game_loop_canvas();
+      game_iteration_canvas();
     }
 
     //    consequence_game();
