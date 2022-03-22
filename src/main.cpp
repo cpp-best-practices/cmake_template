@@ -14,19 +14,6 @@
 // the source template at `configured_files/config.hpp.in`.
 #include <internal_use_only/config.hpp>
 
-static constexpr auto USAGE =
-  R"(intro
-
-    Usage:
-          intro
-          intro (-h | --help)
-          intro --version
- Options:
-          -h --help     Show this screen.
-          --version     Show version.
-)";
-
-
 template<std::size_t Width, std::size_t Height> struct GameBoard
 {
   static constexpr std::size_t width = Width;
@@ -169,58 +156,136 @@ void consequence_game()
   screen.Loop(renderer);
 }
 
+struct Color
+{
+  std::uint8_t R{};
+  std::uint8_t G{};
+  std::uint8_t B{};
+};
+
 struct Bitmap : ftxui::Node
 {
-  Bitmap(std::size_t width, std::size_t height)  // NOLINT
+  Bitmap(std::size_t width, std::size_t height)// NOLINT
     : width_(width), height_(height)
+  {}
+
+  Color &at(std::size_t x, std::size_t y) { return pixels.at(width_ * y + x); }
+
+  void ComputeRequirement() override
   {
+    requirement_ = ftxui::Requirement{
+      .min_x = static_cast<int>(width_), .min_y = static_cast<int>(height_ / 2), .selected_box{ 0, 0, 0, 0 }
+    };
   }
 
-  ftxui::Color &at(std::size_t x, std::size_t y) {
-    return pixels.at(width_ * y + x);
+  void SetBox(ftxui::Box box) override { box_ = box; }
+
+  void Render(ftxui::Screen &screen) override
+  {
+    for (int x = box_.x_min; x < box_.x_max; ++x) {
+      for (int y = box_.y_min; y < box_.y_max; ++y) {
+        auto &p = screen.PixelAt(x, y);
+        p.character = "▄";
+        const auto &top_color = at(static_cast<std::size_t>(x), static_cast<std::size_t>(y) * 2);
+        const auto &bottom_color = at(static_cast<std::size_t>(x), static_cast<std::size_t>(y) * 2 + 1);
+        p.background_color = ftxui::Color{ top_color.R, top_color.G, top_color.B };
+        p.foreground_color = ftxui::Color{ bottom_color.R, bottom_color.G, bottom_color.B };
+      }
+    }
   }
 
-  void ComputeRequirement() override {
-    requirement_ = ftxui::Requirement{.min_x = static_cast<int>(width_), .min_y = static_cast<int>(height_/2), .selected_box{0,0,0,0}};
-  }
+  [[nodiscard]] auto width() const noexcept { return width_; }
 
-  void SetBox(ftxui::Box box) override {
-    box_ = box;
-  }
+  [[nodiscard]] auto height() const noexcept { return height_; }
 
-  void Render(ftxui::Screen &screen) override {
-    auto &p = screen.PixelAt(box_.x_min, box_.y_min);
-    p.character = "▄";
-    p.background_color = ftxui::Color::Red;
-    p.foreground_color = ftxui::Color::Blue;
-  }
-
-  private:
+private:
   std::size_t width_;
   std::size_t height_;
 
-  std::vector<ftxui::Color> pixels = std::vector<ftxui::Color>(width_ * height_, ftxui::Color::Black);
-
+  std::vector<Color> pixels = std::vector<Color>(width_ * height_, Color{});
 };
 
 void game_loop_canvas()
 {
-  auto bm = std::make_shared<Bitmap>(50,50); // NOLINT
+  auto bm = std::make_shared<Bitmap>(50, 50);// NOLINT
+
+  double fps = 0;
+
+  std::size_t max_row = 0;
+  std::size_t max_col = 0;
+
+  // to do, add total game time clock also, not just current elapsed time
+  auto game_loop = [&](const std::chrono::steady_clock::duration elapsed_time) {
+    fps = 1.0
+          / (static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(elapsed_time).count())
+             / 1'000'000.0);// NOLINT
+
+    for (std::size_t row = 0; row < max_row; ++row) {
+      for (std::size_t col = 0; col < bm->width(); ++col) { ++(bm->at(col, row).R); }
+    }
+
+    for (std::size_t row = 0; row < bm->height(); ++row) {
+      for (std::size_t col = 0; col < max_col; ++col) { ++(bm->at(col, row).G); }
+    }
 
 
-  auto document = bm | ftxui::border;
+    ++max_row;
+    if (max_row >= bm->height()) { max_row = 0; }
+    ++max_col;
+    if (max_col >= bm->width()) { max_col = 0; }
+  };
 
-  auto screen = ftxui::Screen::Create(ftxui::Dimension::Fit(document));
+  auto screen = ftxui::ScreenInteractive::TerminalOutput();
 
-  ftxui::Render(screen, document);
-  screen.Print();
-  getchar();
+  int counter = 0;
 
+  auto last_time = std::chrono::steady_clock::now();
+
+  auto make_layout = [&] {
+    const auto new_time = std::chrono::steady_clock::now();
+
+    ++counter;
+    game_loop(new_time - last_time);
+    last_time = new_time;
+    return ftxui::hbox({ bm | ftxui::border,
+      ftxui::vbox({ ftxui::text("Frame: " + std::to_string(counter)), ftxui::text("FPS: " + std::to_string(fps)) }) });
+  };
+
+  auto container = ftxui::Container::Vertical({});
+
+  auto renderer = ftxui::Renderer(container, make_layout);
+
+  std::atomic<bool> refresh_ui_continue = true;
+  std::thread refresh_ui([&] {
+    while (refresh_ui_continue) {
+      using namespace std::chrono_literals;
+      std::this_thread::sleep_for(1.0s / 30.0);// NOLINT
+      screen.PostEvent(ftxui::Event::Custom);
+    }
+  });
+
+  screen.Loop(renderer);
+
+  refresh_ui_continue = false;
+  refresh_ui.join();
 }
 
 int main(int argc, const char **argv)
 {
   try {
+    static constexpr auto USAGE =
+      R"(intro
+
+    Usage:
+          intro turn_based
+          intro loop_based
+          intro (-h | --help)
+          intro --version
+ Options:
+          -h --help     Show this screen.
+          --version     Show version.
+)";
+
     std::map<std::string, docopt::value> args = docopt::docopt(USAGE,
       { std::next(argv), std::next(argv, argc) },
       true,// show help if requested
@@ -229,9 +294,13 @@ int main(int argc, const char **argv)
         myproject::cmake::project_version));// version string, acquired
                                             // from config.hpp via CMake
 
-    game_loop_canvas();
+    if (args["turn_based"].asBool()) {
+      consequence_game();
+    } else {
+      game_loop_canvas();
+    }
 
-//    consequence_game();
+    //    consequence_game();
   } catch (const std::exception &e) {
     fmt::print("Unhandled exception in main: {}", e.what());
   }
