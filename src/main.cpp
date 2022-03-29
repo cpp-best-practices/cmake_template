@@ -179,8 +179,6 @@ struct Bitmap : ftxui::Node
     };
   }
 
-  void SetBox(ftxui::Box box) override { box_ = box; }
-
   void Render(ftxui::Screen &screen) override
   {
     for (std::size_t x = 0; x < width_; ++x) {
@@ -283,9 +281,8 @@ void game_iteration_canvas()
         small_bm | ftxui::border }) });
   };
 
-  auto container = ftxui::Container::Vertical({});
+  auto renderer = ftxui::Renderer(make_layout);
 
-  auto renderer = ftxui::Renderer(container, make_layout);
 
   std::atomic<bool> refresh_ui_continue = true;
 
