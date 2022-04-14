@@ -1,6 +1,7 @@
 find_package(fmt CONFIG)
 find_package(spdlog CONFIG)
 find_package(docopt CONFIG)
+find_package(ftxui CONFIG)
 
 # Generic test that uses conan libs
 add_executable(intro main.cpp)
@@ -10,13 +11,9 @@ target_link_libraries(
           project_warnings
           docopt::docopt
           fmt::fmt
-          spdlog::spdlog)
-
-target_link_system_libraries(
-  intro
-  PRIVATE
-  ftxui::screen
-  ftxui::dom
-  ftxui::component)
+          spdlog::spdlog
+          ftxui::screen
+          ftxui::dom
+          ftxui::component)
 
 target_include_directories(intro PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")
