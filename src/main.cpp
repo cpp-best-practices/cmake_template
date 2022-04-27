@@ -316,10 +316,10 @@ int main(int argc, const char **argv)
     app.add_flag("--version", show_version, "Show version information");
 
     bool is_turn_based = false;
-    auto *turn_based = app.add_flag("turn_based", is_turn_based);
+    auto *turn_based = app.add_flag("--turn_based", is_turn_based);
 
     bool is_loop_based = false;
-    auto *loop_based = app.add_flag("loop_based", is_loop_based);
+    auto *loop_based = app.add_flag("--loop_based", is_loop_based);
 
     turn_based->excludes(loop_based);
     loop_based->excludes(turn_based);

@@ -10,7 +10,7 @@ target_link_libraries(
   intro
   PRIVATE project_options
           project_warnings
-          docopt::docopt
+          CLI11::CLI11
           fmt::fmt
           spdlog::spdlog
           ftxui::screen
