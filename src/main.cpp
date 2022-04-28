@@ -1,9 +1,11 @@
 #include <array>
 #include <functional>
 #include <iostream>
+#include <optional>
+
 #include <random>
 
-#include <docopt/docopt.h>
+#include <CLI/CLI.hpp>
 #include <ftxui/component/captured_mouse.hpp>// for ftxui
 #include <ftxui/component/component.hpp>// for Slider
 #include <ftxui/component/screen_interactive.hpp>// for ScreenInteractive
@@ -302,38 +304,41 @@ void game_iteration_canvas()
   refresh_ui.join();
 }
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 int main(int argc, const char **argv)
 {
   try {
-    static constexpr auto USAGE =
-      R"(intro
+    CLI::App app{ fmt::format("{} version {}", myproject::cmake::project_name, myproject::cmake::project_version) };
 
-    Usage:
-          intro turn_based
-          intro loop_based
-          intro (-h | --help)
-          intro --version
- Options:
-          -h --help     Show this screen.
-          --version     Show version.
-)";
+    std::optional<std::string> message;
+    app.add_option("-m,--message", message, "A message to print back out");
+    bool show_version = false;
+    app.add_flag("--version", show_version, "Show version information");
 
-    std::map<std::string, docopt::value> args = docopt::docopt(USAGE,
-      { std::next(argv), std::next(argv, argc) },
-      true,// show help if requested
-      fmt::format("{} {}",
-        myproject::cmake::project_name,
-        myproject::cmake::project_version));// version string, acquired
-                                            // from config.hpp via CMake
+    bool is_turn_based = false;
+    auto *turn_based = app.add_flag("--turn_based", is_turn_based);
 
-    if (args["turn_based"].asBool()) {
+    bool is_loop_based = false;
+    auto *loop_based = app.add_flag("--loop_based", is_loop_based);
+
+    turn_based->excludes(loop_based);
+    loop_based->excludes(turn_based);
+
+
+    CLI11_PARSE(app, argc, argv);
+
+    if (show_version) {
+      fmt::print("{}\n", myproject::cmake::project_version);
+      return EXIT_SUCCESS;
+    }
+
+    if (is_turn_based) {
       consequence_game();
     } else {
       game_iteration_canvas();
     }
 
-    //    consequence_game();
   } catch (const std::exception &e) {
-    fmt::print("Unhandled exception in main: {}", e.what());
+    spdlog::error("Unhandled exception in main: {}", e.what());
   }
 }

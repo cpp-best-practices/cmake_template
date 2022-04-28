@@ -1,15 +1,16 @@
-find_package(fmt CONFIG)
-find_package(spdlog CONFIG)
-find_package(docopt CONFIG)
-find_package(ftxui CONFIG)
+find_package(fmt CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+find_package(CLI11 CONFIG REQUIRED)
+find_package(ftxui CONFIG REQUIRED)
 
 # Generic test that uses conan libs
 add_executable(intro main.cpp)
+
 target_link_libraries(
   intro
   PRIVATE project_options
           project_warnings
-          docopt::docopt
+          CLI11::CLI11
           fmt::fmt
           spdlog::spdlog
           ftxui::screen
