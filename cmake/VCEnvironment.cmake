@@ -1,4 +1,4 @@
-include("${ProjectOptions_SRC_DIR}/Utilities.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/Utilities.cmake")
 
 macro(detect_architecture)
   # detect the architecture

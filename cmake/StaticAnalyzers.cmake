@@ -1,4 +1,4 @@
-macro(enable_cppcheck CPPCHECK_OPTIONS)
+macro(enable_cppcheck WARNINGS_AS_ERRORS CPPCHECK_OPTIONS)
   find_program(CPPCHECK cppcheck)
   if(CPPCHECK)
 
@@ -17,9 +17,14 @@ macro(enable_cppcheck CPPCHECK_OPTIONS)
           --enable=style,performance,warning,portability
           --inline-suppr
           # We cannot act on a bug/missing feature of cppcheck
+          --suppress=cppcheckError
           --suppress=internalAstError
           # if a file does not have an internalAstError, we get an unmatchedSuppression error
           --suppress=unmatchedSuppression
+          # noisy and incorrect sometimes
+          --suppress=passedByValue
+          # ignores code that cppcheck thinks is invalid C++
+          --suppress=syntaxError
           --inconclusive)
     else()
       # if the user provides a CPPCHECK_OPTIONS with a template specified, it will override this template
@@ -40,35 +45,49 @@ macro(enable_cppcheck CPPCHECK_OPTIONS)
   endif()
 endmacro()
 
-macro(enable_clang_tidy)
+macro(enable_clang_tidy target WARNINGS_AS_ERRORS)
+
+  get_target_property(TARGET_PCH ${target} INTERFACE_PRECOMPILE_HEADERS)
+
+  if("${TARGET_PCH}" STREQUAL "TARGET_PCH-NOTFOUND")
+    get_target_property(TARGET_PCH ${target} PRECOMPILE_HEADERS)
+  endif()
+
+  message("TARGET_PCH ${TARGET_PCH}")
+
   find_program(CLANGTIDY clang-tidy)
   if(CLANGTIDY)
     if(NOT
        CMAKE_CXX_COMPILER_ID
        MATCHES
        ".*Clang"
-       AND ${ProjectOptions_ENABLE_PCH})
+       AND NOT ("${TARGET_PCH}" STREQUAL "TARGET_PCH-NOTFOUND"))
       message(
         SEND_ERROR
           "clang-tidy cannot be enabled with non-clang compiler and PCH, clang-tidy fails to handle gcc's PCH file")
     endif()
     # construct the clang-tidy command line
-    set(CMAKE_CXX_CLANG_TIDY ${CLANGTIDY} -extra-arg=-Wno-unknown-warning-option)
+    set(CLANG_TIDY_OPTIONS ${CLANGTIDY} -extra-arg=-Wno-unknown-warning-option)
+    set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} -extra-arg=-Wno-ignored-optimization-argument)
     # set standard
     if(NOT
        "${CMAKE_CXX_STANDARD}"
        STREQUAL
        "")
-      if("${CMAKE_CXX_CLANG_TIDY_DRIVER_MODE}" STREQUAL "cl")
-        set(CMAKE_CXX_CLANG_TIDY ${CMAKE_CXX_CLANG_TIDY} -extra-arg=/std:c++${CMAKE_CXX_STANDARD})
+      if("${CLANG_TIDY_OPTIONS_DRIVER_MODE}" STREQUAL "cl")
+        set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} -extra-arg=/std:c++${CMAKE_CXX_STANDARD})
       else()
-        set(CMAKE_CXX_CLANG_TIDY ${CMAKE_CXX_CLANG_TIDY} -extra-arg=-std=c++${CMAKE_CXX_STANDARD})
+        set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} -extra-arg=-std=c++${CMAKE_CXX_STANDARD})
       endif()
     endif()
+
     # set warnings as errors
-    if(WARNINGS_AS_ERRORS)
-      list(APPEND CMAKE_CXX_CLANG_TIDY -warnings-as-errors=*)
+    if(${WARNINGS_AS_ERRORS})
+      list(APPEND CLANG_TIDY_OPTIONS -warnings-as-errors=*)
     endif()
+
+    message("Also setting clang-tidy globally")
+    set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_OPTIONS})
   else()
     message(${WARNING_MESSAGE} "clang-tidy requested but executable not found")
   endif()

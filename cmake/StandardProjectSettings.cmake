@@ -39,9 +39,9 @@ else()
   message(STATUS "No colored compiler diagnostic set for '${CMAKE_CXX_COMPILER_ID}' compiler.")
 endif()
 
-include("${ProjectOptions_SRC_DIR}/Standards.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/Standards.cmake")
 set_standards()
 
 # run vcvarsall when msvc is used
-include("${ProjectOptions_SRC_DIR}/VCEnvironment.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/VCEnvironment.cmake")
 run_vcvarsall()
