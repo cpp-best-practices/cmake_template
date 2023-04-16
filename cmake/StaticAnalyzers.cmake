@@ -66,8 +66,8 @@ macro(enable_clang_tidy target WARNINGS_AS_ERRORS)
           "clang-tidy cannot be enabled with non-clang compiler and PCH, clang-tidy fails to handle gcc's PCH file")
     endif()
     # construct the clang-tidy command line
-    set(CLANG_TIDY_OPTIONS ${CLANGTIDY} -extra-arg=-Wno-unknown-warning-option)
-    set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} -extra-arg=-Wno-ignored-optimization-argument)
+    set(CLANG_TIDY_OPTIONS ${CLANGTIDY} -extra-arg=-Wno-unknown-warning-option -extra-arg=-Wno-ignored-optimization-argument -extra-arg=-Wno-unused-command-line-argument)
+    set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS})
     # set standard
     if(NOT
        "${CMAKE_CXX_STANDARD}"
