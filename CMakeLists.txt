@@ -27,8 +27,16 @@ include(cmake/CPM.cmake)
 global_options()
 
 cpmaddpackage("gh:fmtlib/fmt#9.1.0")
+cpmaddpackage(
+  NAME
+  spdlog
+  VERSION
+  1.11.0
+  GITHUB_REPOSITORY
+  "gabime/spdlog"
+  OPTIONS
+  "SPDLOG_FMT_EXTERNAL ON")
 cpmaddpackage("gh:catchorg/Catch2@3.3.2")
-cpmaddpackage("gh:gabime/spdlog@1.11.0")
 cpmaddpackage("gh:CLIUtils/CLI11@2.3.2")
 cpmaddpackage("gh:ArthurSonzogni/FTXUI@4.0.0")
 
@@ -43,7 +51,6 @@ string(
             8
             GIT_SHORT_SHA)
 
-
 target_compile_features(myproject_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 # TODO: The INTERFACE library NAMESPACE ALIAS are missing! CK
 add_library(myproject::myproject_options INTERFACE IMPORTED)
@@ -55,9 +62,8 @@ add_subdirectory(configured_files)
 # Adding the src:
 add_subdirectory(src)
 
-
 # Don't even look at tests if we're not top level
-if (NOT PROJECT_IS_TOP_LEVEL)
+if(NOT PROJECT_IS_TOP_LEVEL)
   return()
 endif()
 
@@ -69,10 +75,9 @@ if(BUILD_TESTING)
   add_subdirectory(test)
 endif()
 
-
 option(myproject_BUILD_FUZZ_TESTS "Build fuzz tests" OFF)
 
-if (myproject_BUILD_FUZZ_TESTS)
+if(myproject_BUILD_FUZZ_TESTS)
   message(AUTHOR_WARNING "Building Fuzz Tests, using fuzzing sanitizer https://www.llvm.org/docs/LibFuzzer.html")
   add_subdirectory(fuzz_test)
 endif()
@@ -113,4 +118,3 @@ set(CPACK_PACKAGE_FILE_NAME
 )
 
 include(CPack)
-
