@@ -89,6 +89,7 @@ macro(local_options)
     ${myproject_ENABLE_SANITIZER_THREAD}
     ${myproject_ENABLE_SANITIZER_MEMORY})
 
+
   set_target_properties(myproject_options PROPERTIES UNITY_BUILD ${myproject_ENABLE_UNITY_BUILD})
 
   if(myproject_ENABLE_HARDENING)
