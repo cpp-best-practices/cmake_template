@@ -1,3 +1,5 @@
+include(cmake/SystemLink.cmake)
+
 macro(setup_options)
   option(myproject_ENABLE_HARDENING "Enable hardening" ON)
   option(myproject_ENABLE_COVERAGE "Enable coverage reporting" OFF)
