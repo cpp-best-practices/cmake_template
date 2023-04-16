@@ -60,6 +60,9 @@ jobs:
             enable_ipo: Off
             gcov_executable: "llvm-cov gcov"
 
+          - os: macos-10.15
+            enable_ipo: Off
+
           # Set up preferred package generators, for given build configurations
           - build_type: Release
             package_maintainer_mode: OFF

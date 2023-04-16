@@ -11,8 +11,5 @@ macro(enable_hardening target)
     endif()
   endif()
 
-  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    target_compile_options(${target} INTERFACE -mcet)
-  endif()
 
 endmacro()
