@@ -11,7 +11,7 @@ on:
 
 env:
   # Conan cache environment variables
-  CLANG_TIDY_VERSION: "15.0.7"
+  CLANG_TIDY_VERSION: "15.0.2"
 
 jobs:
   Test:
@@ -32,8 +32,8 @@ jobs:
           - macos-10.15
           - windows-2019
         compiler:
-          # you can specify the version after `-` like "llvm-15.0.7".
-          - llvm-15.0.7
+          # you can specify the version after `-` like "llvm-15.0.2".
+          - llvm-15.0.2
           - gcc-11
         generator:
           - "Ninja Multi-Config"
@@ -54,7 +54,7 @@ jobs:
           # if you try to use a compiler that does not have gcov set
           - compiler: gcc-11
             gcov_executable: gcov
-          - compiler: llvm-15.0.7
+          - compiler: llvm-15.0.2
             gcov_executable: "llvm-cov gcov"
 
           # Set up preferred package generators, for given build configurations
