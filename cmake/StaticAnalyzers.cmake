@@ -53,7 +53,6 @@ macro(enable_clang_tidy target WARNINGS_AS_ERRORS)
     get_target_property(TARGET_PCH ${target} PRECOMPILE_HEADERS)
   endif()
 
-  message("TARGET_PCH ${TARGET_PCH}")
 
   find_program(CLANGTIDY clang-tidy)
   if(CLANGTIDY)
