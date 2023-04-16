@@ -142,8 +142,10 @@ void consequence_game()
   static constexpr int random_seed = 42;
 
   std::mt19937 gen32{ random_seed };// NOLINT fixed seed
-  std::uniform_int_distribution<std::size_t> cur_x(static_cast<std::size_t>(0), game_board.width - 1);
-  std::uniform_int_distribution<std::size_t> cur_y(static_cast<std::size_t>(0), game_board.height - 1);
+  std::uniform_int_distribution<std::size_t> cur_x(
+    static_cast<std::size_t>(0), game_board.width - 1);// NOLINT This cannot be const
+  std::uniform_int_distribution<std::size_t> cur_y(
+    static_cast<std::size_t>(0), game_board.height - 1);// NOLINT this cannot be const
 
   for (int i = 0; i < randomization_iterations; ++i) { game_board.press(cur_x(gen32), cur_y(gen32)); }
   game_board.move_count = 0;
