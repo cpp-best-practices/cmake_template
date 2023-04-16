@@ -1,5 +1,6 @@
 macro(setup_options)
   option(myproject_ENABLE_HARDENING "Enable hardening" ON)
+  option(myproject_ENABLE_COVERAGE "Enable coverage reporting" OFF)
 
   if(NOT PROJECT_IS_TOP_LEVEL OR PACKAGING_MAINTAINER_MODE)
     option(myproject_ENABLE_IPO "Enable IPO/LTO" OFF)
@@ -44,6 +45,7 @@ macro(setup_options)
       myproject_ENABLE_UNITY_BUILD
       myproject_ENABLE_CLANG_TIDY
       myproject_ENABLE_CPPCHECK
+      myproject_ENABLE_COVERAGE
       myproject_ENABLE_PCH
       myproject_ENABLE_CACHE)
   endif()
@@ -114,5 +116,10 @@ macro(local_options)
   if(myproject_ENABLE_CPPCHECK)
     enable_cppcheck(${myproject_WARNINGS_AS_ERRORS} "" # override cppcheck options
     )
+  endif()
+
+  if(myproject_ENABLE_COVERAGE)
+    include(cmake/Tests.cmake)
+    enable_coverage(myproject_options)
   endif()
 endmacro()
