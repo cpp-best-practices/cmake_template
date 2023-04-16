@@ -20,13 +20,19 @@ project(
 include(cmake/PreventInSourceBuilds.cmake)
 include(ProjectOptions.cmake)
 
+setup_options()
+
 include(cmake/CPM.cmake)
+
+global_options()
 
 cpmaddpackage("gh:fmtlib/fmt#9.1.0")
 cpmaddpackage("gh:catchorg/Catch2@3.3.2")
 cpmaddpackage("gh:gabime/spdlog@1.11.0")
 cpmaddpackage("gh:CLIUtils/CLI11@2.3.2")
 cpmaddpackage("gh:ArthurSonzogni/FTXUI@4.0.0")
+
+local_options()
 
 set(GIT_SHA
     "Unknown"
