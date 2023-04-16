@@ -11,10 +11,7 @@ on:
 
 env:
   # Conan cache environment variables
-  CONAN_SYSREQUIRES_MODE: enabled
-  CONAN_USER_HOME: "${{ github.workspace }}/conan-cache"
-  CONAN_USER_HOME_SHORT: "${{ github.workspace }}/conan-cache/short"
-  CLANG_TIDY_VERSION: "13.0.0"
+  CLANG_TIDY_VERSION: "15.0.7"
 
 jobs:
   Test:
@@ -35,8 +32,8 @@ jobs:
           - macos-10.15
           - windows-2019
         compiler:
-          # you can specify the version after `-` like "llvm-13.0.0".
-          - llvm-13.0.0
+          # you can specify the version after `-` like "llvm-15.0.7".
+          - llvm-15.0.7
           - gcc-11
         generator:
           - "Ninja Multi-Config"
@@ -57,7 +54,7 @@ jobs:
           # if you try to use a compiler that does not have gcov set
           - compiler: gcc-11
             gcov_executable: gcov
-          - compiler: llvm-13.0.0
+          - compiler: llvm-15.0.7
             gcov_executable: "llvm-cov gcov"
 
           # Set up preferred package generators, for given build configurations
@@ -126,7 +123,6 @@ jobs:
 
           cmake: true
           ninja: true
-          conan: true
           vcpkg: false
           ccache: true
           clangtidy: ${{ env.CLANG_TIDY_VERSION }}
@@ -137,12 +133,6 @@ jobs:
           gcovr: true
           opencppcoverage: true
 
-      - name: Cleanup Conan system packages (they are not properly cached)
-        run: |
-          conan remove -f '*/system'
-
-        # make sure coverage is only enabled for Debug builds, since it sets -O0 to make sure coverage
-        # has meaningful results
       - name: Configure CMake
         run: |
           cmake -S . -B ./build -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DENABLE_DEVELOPER_MODE:BOOL=${{matrix.developer_mode}} -DOPT_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }}
