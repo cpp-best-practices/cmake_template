@@ -85,3 +85,13 @@ function(
   endif()
 
 endfunction()
+
+
+function(enable_ubsan_minimal_runtime project_name)
+  check_cxx_compiler_flag("-fno-sanitize-recover=undefined;-fsanitize-minimal-runtime" MINIMAL_RUNTIME)
+  message("MINIMAL_RUNTIME '${MINIMAL_RUNTIME}'")
+  if (MINIMAL_RUNTIME)
+    target_compile_options(${project_name} INTERFACE -fno-sanitize-recover=undefined -fsanitize-minimal-runtime)
+  endif()
+endfunction()
+

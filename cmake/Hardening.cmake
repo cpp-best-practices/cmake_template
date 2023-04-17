@@ -22,13 +22,9 @@ macro(enable_hardening target)
       target_compile_options(${target} INTERFACE -fcf-protection)
     endif()
 
-    check_cxx_compiler_flag(-fclash-protection CLASH_PROTECTION)
+    check_cxx_compiler_flag(-fstack-clash-protection CLASH_PROTECTION)
     if (CLASH_PROTECTION)
       target_compile_options(${target} INTERFACE -fstack-clash-protection)
     endif()
-
-
   endif()
-
-
 endmacro()

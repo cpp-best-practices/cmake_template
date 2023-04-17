@@ -25,6 +25,7 @@ macro(enable_cppcheck WARNINGS_AS_ERRORS CPPCHECK_OPTIONS)
           --suppress=passedByValue
           # ignores code that cppcheck thinks is invalid C++
           --suppress=syntaxError
+          --suppress=preprocessorErrorDirective
           --inconclusive)
     else()
       # if the user provides a CPPCHECK_OPTIONS with a template specified, it will override this template

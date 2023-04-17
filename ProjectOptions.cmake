@@ -131,4 +131,8 @@ macro(local_options)
       target_link_options(myproject_options INTERFACE -Wl,--fatal-warnings)
     endif()
   endif()
+
+  if (myproject_ENABLE_HARDENING AND NOT myproject_ENABLE_SANITIZER_UNDEFINED)
+    enable_ubsan_minimal_runtime(myproject_options)
+  endif()
 endmacro()
