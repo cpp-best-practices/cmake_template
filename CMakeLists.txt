@@ -38,7 +38,7 @@ cpmaddpackage(
   "SPDLOG_FMT_EXTERNAL ON")
 cpmaddpackage("gh:catchorg/Catch2@3.3.2")
 cpmaddpackage("gh:CLIUtils/CLI11@2.3.2")
-cpmaddpackage("gh:ArthurSonzogni/FTXUI@4.0.0")
+cpmaddpackage("gh:lefticus/FTXUI#honor_global_cxx_standard")
 
 local_options()
 
