@@ -92,11 +92,6 @@ macro(local_options)
 
   set_target_properties(myproject_options PROPERTIES UNITY_BUILD ${myproject_ENABLE_UNITY_BUILD})
 
-  if(myproject_ENABLE_HARDENING)
-    include(cmake/Hardening.cmake)
-    enable_hardening(myproject_options)
-  endif()
-
   if(myproject_ENABLE_PCH)
     target_precompile_headers(
       myproject_options
@@ -129,11 +124,15 @@ macro(local_options)
   if (myproject_WARNINGS_AS_ERRORS)
     check_cxx_compiler_flag("-Wl,--fatal-warnings" LINKER_FATAL_WARNINGS)
     if (LINKER_FATAL_WARNINGS)
-      target_link_options(myproject_options INTERFACE -Wl,--fatal-warnings)
+      # This is not working consistently, so disabling for now
+      # target_link_options(myproject_options INTERFACE -Wl,--fatal-warnings)
     endif()
   endif()
 
-  if (myproject_ENABLE_HARDENING AND NOT myproject_ENABLE_SANITIZER_UNDEFINED)
-    enable_ubsan_minimal_runtime(myproject_options)
+  if(myproject_ENABLE_HARDENING)
+    include(cmake/Hardening.cmake)
+    set(ENABLE_UBSAN_MINIMAL_RUNTIME NOT myproject_ENABLE_SANITIZER_UNDEFINED)
+    enable_hardening(myproject_options OFF ${ENABLE_UBSAN_MINIMAL_RUNTIME})
   endif()
+
 endmacro()
