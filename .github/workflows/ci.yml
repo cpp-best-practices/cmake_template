@@ -15,6 +15,7 @@ env:
   CONAN_USER_HOME: "${{ github.workspace }}/conan-cache"
   CONAN_USER_HOME_SHORT: "${{ github.workspace }}/conan-cache/short"
   CLANG_TIDY_VERSION: "13.0.0"
+  VERBOSE: 1
 
 jobs:
   Test:
