@@ -1,8 +1,15 @@
 include(cmake/SystemLink.cmake)
+include(CMakeDependentOption)
 
 macro(setup_options)
   option(myproject_ENABLE_HARDENING "Enable hardening" ON)
   option(myproject_ENABLE_COVERAGE "Enable coverage reporting" OFF)
+  cmake_dependent_option(
+    myproject_ENABLE_GLOBAL_HARDENING
+    "Attempt to push hardening options to built dependencies"
+    ON
+    myproject_ENABLE_HARDENING
+    OFF)
 
   if(NOT PROJECT_IS_TOP_LEVEL OR myproject_PACKAGING_MAINTAINER_MODE)
     option(myproject_ENABLE_IPO "Enable IPO/LTO" OFF)
@@ -58,6 +65,12 @@ macro(global_options)
     include(cmake/InterproceduralOptimization.cmake)
     enable_ipo()
   endif()
+
+  if(myproject_ENABLE_HARDENING AND myproject_ENABLE_GLOBAL_HARDENING)
+    include(cmake/Hardening.cmake)
+    set(ENABLE_UBSAN_MINIMAL_RUNTIME NOT myproject_ENABLE_SANITIZER_UNDEFINED)
+    enable_hardening(myproject_options ON ${ENABLE_UBSAN_MINIMAL_RUNTIME})
+  endif()
 endmacro()
 
 macro(local_options)
@@ -88,7 +101,6 @@ macro(local_options)
     ${myproject_ENABLE_SANITIZER_UNDEFINED}
     ${myproject_ENABLE_SANITIZER_THREAD}
     ${myproject_ENABLE_SANITIZER_MEMORY})
-
 
   set_target_properties(myproject_options PROPERTIES UNITY_BUILD ${myproject_ENABLE_UNITY_BUILD})
 
@@ -121,15 +133,15 @@ macro(local_options)
     enable_coverage(myproject_options)
   endif()
 
-  if (myproject_WARNINGS_AS_ERRORS)
+  if(myproject_WARNINGS_AS_ERRORS)
     check_cxx_compiler_flag("-Wl,--fatal-warnings" LINKER_FATAL_WARNINGS)
-    if (LINKER_FATAL_WARNINGS)
+    if(LINKER_FATAL_WARNINGS)
       # This is not working consistently, so disabling for now
       # target_link_options(myproject_options INTERFACE -Wl,--fatal-warnings)
     endif()
   endif()
 
-  if(myproject_ENABLE_HARDENING)
+  if(myproject_ENABLE_HARDENING AND NOT myproject_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
     set(ENABLE_UBSAN_MINIMAL_RUNTIME NOT myproject_ENABLE_SANITIZER_UNDEFINED)
     enable_hardening(myproject_options OFF ${ENABLE_UBSAN_MINIMAL_RUNTIME})

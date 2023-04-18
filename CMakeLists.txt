@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.21)
 
-# Not ideal to use this global variable, but necessary to make sure
-# that tooling and projects use the same version
-set(CMAKE_CXX_STANDARD 20)
+# This template attempts to be "fetch_content"-able
+# so that it works well with tools like CPM or other
+# manual dependency management
+
+# Only set the cxx_standard if it is not set by someone else
+if (NOT DEFINED CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 20)
+endif()
 
 # strongly encouraged to enable this globally to avoid conflicts between
 # -Wpedantic being enabled and -std=c++20 and -std=gnu++20 for example
@@ -22,23 +27,8 @@ include(ProjectOptions.cmake)
 
 setup_options()
 
-include(cmake/CPM.cmake)
-
-global_options()
-
-cpmaddpackage("gh:fmtlib/fmt#9.1.0")
-cpmaddpackage(
-  NAME
-  spdlog
-  VERSION
-  1.11.0
-  GITHUB_REPOSITORY
-  "gabime/spdlog"
-  OPTIONS
-  "SPDLOG_FMT_EXTERNAL ON")
-cpmaddpackage("gh:catchorg/Catch2@3.3.2")
-cpmaddpackage("gh:CLIUtils/CLI11@2.3.2")
-cpmaddpackage("gh:lefticus/FTXUI#honor_global_cxx_standard")
+include(Dependencies.cmake)
+setup_dependencies()
 
 local_options()
 
