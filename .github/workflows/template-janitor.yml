@@ -83,6 +83,7 @@ jobs:
           sed -i "s/%%myorg%%/${{ env.NEW_ORG }}/g" ${{ env.TEMPLATES_PATH }}/README.md
           sed -i "s/%%myproject%%/${{ env.NEW_PROJECT }}/g" ${{ env.TEMPLATES_PATH }}/README.md
           sed -i "s|%%description%%|${{ fromJson(steps.get_repo_meta.outputs.data).description }}|g" ${{ env.TEMPLATES_PATH }}/README.md
+          mv include/myproject include/${{ env.NEW_SAFE_PROJECT }}
           cp ${{ env.TEMPLATES_PATH }}/README.md README.md
 
       - name: Print diff after replacement
