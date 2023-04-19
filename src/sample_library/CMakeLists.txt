@@ -1,6 +1,10 @@
 include(GenerateExportHeader)
 
-add_library(sample_library SHARED sample_library.cpp)
+
+add_library(sample_library sample_library.cpp)
+
+
+
 add_library(myproject::sample_library ALIAS sample_library)
 
 target_link_libraries(sample_library PRIVATE myproject_options myproject_warnings)
@@ -19,5 +23,5 @@ set_target_properties(
 generate_export_header(sample_library EXPORT_FILE_NAME ${PROJECT_BINARY_DIR}/include/myproject/sample_library_export.hpp)
 
 if(NOT BUILD_SHARED_LIBS)
-  target_compile_definitions(sample_library PUBLIC MYPROJECT_STATIC_DEFINE)
+  target_compile_definitions(sample_library PUBLIC SAMPLE_LIBRARY_STATIC_DEFINE)
 endif()

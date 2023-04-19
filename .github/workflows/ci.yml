@@ -43,6 +43,8 @@ jobs:
         package_maintainer_mode:
           - ON
           - OFF
+        build_shared:
+          - OFF
 
         exclude:
           # mingw is determined by this author to be too buggy to support
@@ -104,6 +106,14 @@ jobs:
             build_type: Release
             package_maintainer_mode: Off
             package_generator: ZIP
+
+          - os: windows-2022
+            compiler: msvc
+            generator: "Visual Studio 17 2022"
+            build_type: Release
+            package_maintainer_mode: On
+            enable_ipo: On
+            build_shared: On
 
 
     steps:
