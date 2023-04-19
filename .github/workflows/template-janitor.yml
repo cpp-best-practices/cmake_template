@@ -14,11 +14,8 @@ on:
 
 env:
   TEMPLATES_PATH: ".github/template"
-  CONAN_SYSREQUIRES_MODE: enabled
-  CONAN_USER_HOME: "${{ github.workspace }}/conan-cache"
-  CONAN_USER_HOME_SHORT: "${{ github.workspace }}/conan-cache/short"
 
-   
+
 jobs:
 
   template-cleanup:
@@ -77,7 +74,7 @@ jobs:
       - name: Insert new org and project
         run: |
           # rename the CMake project to match the github project
-          sed -i "s/myproject/${{ env.NEW_SAFE_PROJECT }}/gi" CMakeLists.txt configured_files/config.hpp.in src/main.cpp test/CMakeLists.txt fuzz_test/CMakeLists.txt
+          find src include test fuzz_test -type f -exec sed -i "s/myproject/${{ env.NEW_SAFE_PROJECT }}/gi" CMakeLists.txt ProjectOptions.cmake .github/workflows/ci.yml .github/workflows/codeql-analysis.yml configured_files/config.hpp.in {} +
 
           # Update URL placeholders for project
           sed -i "s|%%myurl%%|${{ fromJson(steps.get_repo_meta.outputs.data).html_url }}|gi" CMakeLists.txt
@@ -86,6 +83,7 @@ jobs:
           sed -i "s/%%myorg%%/${{ env.NEW_ORG }}/g" ${{ env.TEMPLATES_PATH }}/README.md
           sed -i "s/%%myproject%%/${{ env.NEW_PROJECT }}/g" ${{ env.TEMPLATES_PATH }}/README.md
           sed -i "s|%%description%%|${{ fromJson(steps.get_repo_meta.outputs.data).description }}|g" ${{ env.TEMPLATES_PATH }}/README.md
+          mv include/myproject include/${{ env.NEW_SAFE_PROJECT }}
           cp ${{ env.TEMPLATES_PATH }}/README.md README.md
 
       - name: Print diff after replacement
@@ -115,7 +113,6 @@ jobs:
 
           cmake: true
           ninja: false
-          conan: true
           vcpkg: false
           ccache: false
           clangtidy: false
@@ -125,9 +122,6 @@ jobs:
           gcovr: false
           opencppcoverage: false
 
-      - name: Cleanup Conan system packages (they are not properly cached)
-        run: |
-          conan remove -f '*/system'
 
       - name: Test simple configuration to make sure nothing broke
         run: |
@@ -217,7 +211,6 @@ jobs:
 
           cmake: true
           ninja: false
-          conan: true
           vcpkg: false
           ccache: false
           clangtidy: false
@@ -227,9 +220,6 @@ jobs:
           gcovr: false
           opencppcoverage: false
 
-      - name: Cleanup Conan system packages (they are not properly cached)
-        run: |
-          conan remove -f '*/system'
 
       - name: Test simple configuration to make sure nothing broke (default compiler,cmake,developer_mode OFF)
         run: |

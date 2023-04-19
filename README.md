@@ -17,7 +17,7 @@ By default (collectively known as `ENABLE_DEVELOPER_MODE`)
  * Address Sanitizer and Undefined Behavior Sanitizer enabled where possible
  * Warnings as errors
  * clang-tidy and cppcheck static analysis
- * conan for dependencies
+ * CPM for dependencies
 
 It includes
 
@@ -28,7 +28,6 @@ It includes
 It requires
 
  * cmake
- * conan
  * a compiler
 
 

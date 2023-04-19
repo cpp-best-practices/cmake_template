@@ -20,12 +20,6 @@ on:
   schedule:
     - cron: '38 0 * * 5'
 
-env:
-  # Conan cache environment variables
-  CONAN_SYSREQUIRES_MODE: enabled
-  CONAN_USER_HOME: "${{ github.workspace }}/conan-cache"
-  CONAN_USER_HOME_SHORT: "${{ github.workspace }}/conan-cache/short"
-
 
 jobs:
   analyze:
@@ -49,8 +43,8 @@ jobs:
           - "Ninja Multi-Config"
         build_type:
           - Debug
-        developer_mode:
-          - OFF
+        packaging_maintainer_mode:
+          - ON
 
 
     steps:
@@ -61,7 +55,7 @@ jobs:
       with:
         compiler: ${{ matrix.compiler }}
         build_type: ${{ matrix.build_type }}
-        developer_mode: ${{ matrix.developer_mode }}
+        packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
         generator: ${{ matrix.generator }}
 
 
@@ -73,7 +67,6 @@ jobs:
 
         cmake: true
         ninja: true
-        conan: true
         vcpkg: false
         ccache: true
         clangtidy: false
@@ -83,15 +76,11 @@ jobs:
         gcovr: false
         opencppcoverage: false
 
-    - name: Cleanup Conan system packages (they are not properly cached)
-      run: |
-        conan remove -f '*/system'
-
       # make sure coverage is only enabled for Debug builds, since it sets -O0 to make sure coverage
       # has meaningful results
     - name: Configure CMake
       run: |
-        cmake -S . -B ./build -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DENABLE_DEVELOPER_MODE:BOOL=${{matrix.developer_mode}} -DOPT_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }}
+        cmake -S . -B ./build -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -Dmyproject_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -DOPT_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }}
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
