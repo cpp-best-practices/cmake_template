@@ -10,7 +10,6 @@ on:
       - develop
 
 env:
-  # Conan cache environment variables
   CLANG_TIDY_VERSION: "15.0.2"
   VERBOSE: 1
 

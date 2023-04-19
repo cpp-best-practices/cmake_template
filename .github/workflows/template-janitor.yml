@@ -14,11 +14,8 @@ on:
 
 env:
   TEMPLATES_PATH: ".github/template"
-  CONAN_SYSREQUIRES_MODE: enabled
-  CONAN_USER_HOME: "${{ github.workspace }}/conan-cache"
-  CONAN_USER_HOME_SHORT: "${{ github.workspace }}/conan-cache/short"
 
-   
+
 jobs:
 
   template-cleanup:
@@ -115,7 +112,6 @@ jobs:
 
           cmake: true
           ninja: false
-          conan: true
           vcpkg: false
           ccache: false
           clangtidy: false
@@ -125,9 +121,6 @@ jobs:
           gcovr: false
           opencppcoverage: false
 
-      - name: Cleanup Conan system packages (they are not properly cached)
-        run: |
-          conan remove -f '*/system'
 
       - name: Test simple configuration to make sure nothing broke
         run: |
@@ -217,7 +210,6 @@ jobs:
 
           cmake: true
           ninja: false
-          conan: true
           vcpkg: false
           ccache: false
           clangtidy: false
@@ -227,9 +219,6 @@ jobs:
           gcovr: false
           opencppcoverage: false
 
-      - name: Cleanup Conan system packages (they are not properly cached)
-        run: |
-          conan remove -f '*/system'
 
       - name: Test simple configuration to make sure nothing broke (default compiler,cmake,developer_mode OFF)
         run: |

@@ -20,12 +20,6 @@ on:
   schedule:
     - cron: '38 0 * * 5'
 
-env:
-  # Conan cache environment variables
-  CONAN_SYSREQUIRES_MODE: enabled
-  CONAN_USER_HOME: "${{ github.workspace }}/conan-cache"
-  CONAN_USER_HOME_SHORT: "${{ github.workspace }}/conan-cache/short"
-
 
 jobs:
   analyze:
@@ -73,7 +67,6 @@ jobs:
 
         cmake: true
         ninja: true
-        conan: true
         vcpkg: false
         ccache: true
         clangtidy: false
@@ -82,10 +75,6 @@ jobs:
 
         gcovr: false
         opencppcoverage: false
-
-    - name: Cleanup Conan system packages (they are not properly cached)
-      run: |
-        conan remove -f '*/system'
 
       # make sure coverage is only enabled for Debug builds, since it sets -O0 to make sure coverage
       # has meaningful results
