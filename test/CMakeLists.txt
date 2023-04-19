@@ -17,9 +17,7 @@ endif()
 
 # ---- Dependencies ----
 
-
 include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
-
 
 # Provide a simple smoke test to make sure that the CLI works and can display a --help message
 add_test(NAME cli.has_help COMMAND intro --help)
@@ -32,7 +30,12 @@ add_test(NAME cli.version_matches COMMAND intro --version)
 set_tests_properties(cli.version_matches PROPERTIES PASS_REGULAR_EXPRESSION "${PROJECT_VERSION}")
 
 add_executable(tests tests.cpp)
-target_link_libraries(tests PRIVATE myproject_warnings myproject_options Catch2::Catch2WithMain)
+target_link_libraries(
+  tests
+  PRIVATE myproject::myproject_warnings
+          myproject::myproject_options
+          myproject::sample_library
+          Catch2::Catch2WithMain)
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. Set TEST_PREFIX
 # to whatever you want, or use different for different binaries
@@ -51,7 +54,12 @@ catch_discover_tests(
 
 # Add a file containing a set of constexpr tests
 add_executable(constexpr_tests constexpr_tests.cpp)
-target_link_libraries(constexpr_tests PRIVATE myproject_options myproject_warnings Catch2::Catch2WithMain)
+target_link_libraries(
+  constexpr_tests
+  PRIVATE myproject::myproject_warnings
+          myproject::myproject_options
+          myproject::sample_library
+          Catch2::Catch2WithMain)
 
 catch_discover_tests(
   constexpr_tests
@@ -69,7 +77,12 @@ catch_discover_tests(
 # Disable the constexpr portion of the test, and build again this allows us to have an executable that we can debug when
 # things go wrong with the constexpr testing
 add_executable(relaxed_constexpr_tests constexpr_tests.cpp)
-target_link_libraries(relaxed_constexpr_tests PRIVATE myproject_options myproject_warnings Catch2::Catch2WithMain)
+target_link_libraries(
+  relaxed_constexpr_tests
+  PRIVATE myproject::myproject_warnings
+          myproject::myproject_options
+          myproject::sample_library
+          Catch2::Catch2WithMain)
 target_compile_definitions(relaxed_constexpr_tests PRIVATE -DCATCH_CONFIG_RUNTIME_STATIC_REQUIRE)
 
 catch_discover_tests(

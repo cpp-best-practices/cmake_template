@@ -27,10 +27,14 @@ include(ProjectOptions.cmake)
 
 setup_options()
 
+global_options()
 include(Dependencies.cmake)
 setup_dependencies()
 
 local_options()
+
+# don't know if this should be set globally from here or not...
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 set(GIT_SHA
     "Unknown"
@@ -42,9 +46,12 @@ string(
             GIT_SHORT_SHA)
 
 target_compile_features(myproject_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
-# TODO: The INTERFACE library NAMESPACE ALIAS are missing! CK
-add_library(myproject::myproject_options INTERFACE IMPORTED)
-add_library(myproject::myproject_warnings INTERFACE IMPORTED)
+
+add_library(myproject::myproject_options ALIAS myproject_options)
+add_library(myproject::myproject_warnings ALIAS myproject_warnings)
+
+#add_library(myproject::myproject_options INTERFACE IMPORTED)
+#add_library(myproject::myproject_warnings INTERFACE IMPORTED)
 
 # configure files based on CMake configuration options
 add_subdirectory(configured_files)

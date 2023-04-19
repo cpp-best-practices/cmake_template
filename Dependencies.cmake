@@ -4,7 +4,6 @@ include(cmake/CPM.cmake)
 # CMAKE_CXX_FLAGS don't propagate out to other
 # targets
 function(setup_dependencies)
-  global_options()
 
   # For each dependency, see if it's
   # already been provided to us by a parent project

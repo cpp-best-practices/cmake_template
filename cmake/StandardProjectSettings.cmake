@@ -39,6 +39,8 @@ else()
   message(STATUS "No colored compiler diagnostic set for '${CMAKE_CXX_COMPILER_ID}' compiler.")
 endif()
 
+
+
 include("${CMAKE_CURRENT_LIST_DIR}/Standards.cmake")
 set_standards()
 
