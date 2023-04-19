@@ -11,4 +11,3 @@ int factorial(int input) noexcept
 
   return result;
 }
-
