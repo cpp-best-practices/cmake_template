@@ -1,5 +1,8 @@
 include(cmake/SystemLink.cmake)
+include(cmake/LibFuzzer.cmake)
 include(CMakeDependentOption)
+include(CheckCXXCompilerFlag)
+
 
 macro(setup_options)
   option(myproject_ENABLE_HARDENING "Enable hardening" ON)
@@ -23,6 +26,9 @@ macro(setup_options)
   else()
     set(SUPPORTS_ASAN ON)
   endif()
+
+  check_libfuzzer_support(LIBFUZZER_SUPPORTED)
+  option(myproject_BUILD_FUZZ_TESTS "Enable fuzz testing executable" ${LIBFUZZER_SUPPORTED})
 
 
   if(NOT PROJECT_IS_TOP_LEVEL OR myproject_PACKAGING_MAINTAINER_MODE)

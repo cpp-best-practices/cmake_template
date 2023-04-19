@@ -33,6 +33,6 @@ function(setup_dependencies)
   endif()
 
   if(NOT TARGET ftxui::screen)
-    cpmaddpackage("gh:lefticus/FTXUI#honor_global_cxx_standard")
+    cpmaddpackage("gh:ArthurSonzogni/FTXUI#e23dbc7473654024852ede60e2121276c5aab660")
   endif()
 endfunction()
