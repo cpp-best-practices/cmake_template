@@ -11,6 +11,8 @@
 #include <ftxui/component/screen_interactive.hpp>// for ScreenInteractive
 #include <spdlog/spdlog.h>
 
+#include <lefticus/tools/non_promoting_ints.hpp>
+
 // This file will be generated automatically when cur_you run the CMake
 // configuration step. It creates a namespace called `myproject`. You can modify
 // the source template at `configured_files/config.hpp.in`.
@@ -163,9 +165,9 @@ void consequence_game()
 
 struct Color
 {
-  std::uint8_t R{};
-  std::uint8_t G{};
-  std::uint8_t B{};
+  lefticus::tools::uint_np8_t R{ static_cast<std::uint8_t>(0) };
+  lefticus::tools::uint_np8_t G{ static_cast<std::uint8_t>(0) };
+  lefticus::tools::uint_np8_t B{ static_cast<std::uint8_t>(0) };
 };
 
 // A simple way of representing a bitmap on screen using only characters
@@ -192,8 +194,8 @@ struct Bitmap : ftxui::Node
         pixel.character = "▄";
         const auto &top_color = at(cur_x, cur_y * 2);
         const auto &bottom_color = at(cur_x, cur_y * 2 + 1);
-        pixel.background_color = ftxui::Color{ top_color.R, top_color.G, top_color.B };
-        pixel.foreground_color = ftxui::Color{ bottom_color.R, bottom_color.G, bottom_color.B };
+        pixel.background_color = ftxui::Color{ top_color.R.get(), top_color.G.get(), top_color.B.get() };
+        pixel.foreground_color = ftxui::Color{ bottom_color.R.get(), bottom_color.G.get(), bottom_color.B.get() };
       }
     }
   }

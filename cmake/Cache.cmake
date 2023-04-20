@@ -1,5 +1,5 @@
 # Enable cache if available
-function(enable_cache)
+function(myproject_enable_cache)
   set(CACHE_OPTION
       "ccache"
       CACHE STRING "Compiler cache to be used")
