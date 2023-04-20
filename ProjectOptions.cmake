@@ -94,7 +94,7 @@ macro(myproject_global_options)
 endmacro()
 
 macro(myproject_local_options)
-  if (NOT PROJECT_IS_TOP_LEVEL)
+  if (PROJECT_IS_TOP_LEVEL)
     include(cmake/StandardProjectSettings.cmake)
   endif()
 
