@@ -165,9 +165,9 @@ void consequence_game()
 
 struct Color
 {
-  lefticus::tools::uint_np8_t R{static_cast<std::uint8_t>(0)};
-  lefticus::tools::uint_np8_t G{static_cast<std::uint8_t>(0)};
-  lefticus::tools::uint_np8_t B{static_cast<std::uint8_t>(0)};
+  lefticus::tools::uint_np8_t R{ static_cast<std::uint8_t>(0) };
+  lefticus::tools::uint_np8_t G{ static_cast<std::uint8_t>(0) };
+  lefticus::tools::uint_np8_t B{ static_cast<std::uint8_t>(0) };
 };
 
 // A simple way of representing a bitmap on screen using only characters
