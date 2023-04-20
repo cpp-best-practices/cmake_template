@@ -40,10 +40,6 @@ else()
 endif()
 
 
-
-include("${CMAKE_CURRENT_LIST_DIR}/Standards.cmake")
-set_standards()
-
 # run vcvarsall when msvc is used
 include("${CMAKE_CURRENT_LIST_DIR}/VCEnvironment.cmake")
 run_vcvarsall()

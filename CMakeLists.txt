@@ -25,13 +25,14 @@ project(
 include(cmake/PreventInSourceBuilds.cmake)
 include(ProjectOptions.cmake)
 
-setup_options()
 
-global_options()
+myproject_setup_options()
+
+myproject_global_options()
 include(Dependencies.cmake)
-setup_dependencies()
+myproject_setup_dependencies()
 
-local_options()
+myproject_local_options()
 
 # don't know if this should be set globally from here or not...
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
@@ -97,7 +98,7 @@ include(cmake/PackageProject.cmake)
 
 # Add other targets that you want installed here, by default we just package the one executable
 # we know we want to ship
-package_project(
+myproject_package_project(
   TARGETS
   intro
   myproject_options

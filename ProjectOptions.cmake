@@ -4,7 +4,7 @@ include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 
 
-macro(setup_options)
+macro(myproject_setup_options)
   option(myproject_ENABLE_HARDENING "Enable hardening" ON)
   option(myproject_ENABLE_COVERAGE "Enable coverage reporting" OFF)
   cmake_dependent_option(
@@ -27,7 +27,7 @@ macro(setup_options)
     set(SUPPORTS_ASAN ON)
   endif()
 
-  check_libfuzzer_support(LIBFUZZER_SUPPORTED)
+  myproject_check_libfuzzer_support(LIBFUZZER_SUPPORTED)
   option(myproject_BUILD_FUZZ_TESTS "Enable fuzz testing executable" ${LIBFUZZER_SUPPORTED})
 
 
@@ -80,27 +80,29 @@ macro(setup_options)
   endif()
 endmacro()
 
-macro(global_options)
+macro(myproject_global_options)
   if(myproject_ENABLE_IPO)
     include(cmake/InterproceduralOptimization.cmake)
-    enable_ipo()
+    myproject_enable_ipo()
   endif()
 
   if(myproject_ENABLE_HARDENING AND myproject_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
     set(ENABLE_UBSAN_MINIMAL_RUNTIME NOT myproject_ENABLE_SANITIZER_UNDEFINED)
-    enable_hardening(myproject_options ON ${ENABLE_UBSAN_MINIMAL_RUNTIME})
+    myproject_enable_hardening(myproject_options ON ${ENABLE_UBSAN_MINIMAL_RUNTIME})
   endif()
 endmacro()
 
-macro(local_options)
-  include(cmake/StandardProjectSettings.cmake)
+macro(myproject_local_options)
+  if (NOT PROJECT_IS_TOP_LEVEL)
+    include(cmake/StandardProjectSettings.cmake)
+  endif()
 
   add_library(myproject_warnings INTERFACE)
   add_library(myproject_options INTERFACE)
 
   include(cmake/CompilerWarnings.cmake)
-  set_project_warnings(
+  myproject_set_project_warnings(
     myproject_warnings
     ${myproject_WARNINGS_AS_ERRORS}
     ""
@@ -114,7 +116,7 @@ macro(local_options)
   endif()
 
   include(cmake/Sanitizers.cmake)
-  enable_sanitizers(
+  myproject_enable_sanitizers(
     myproject_options
     ${myproject_ENABLE_SANITIZER_ADDRESS}
     ${myproject_ENABLE_SANITIZER_LEAK}
@@ -135,22 +137,22 @@ macro(local_options)
 
   if(myproject_ENABLE_CACHE)
     include(cmake/Cache.cmake)
-    enable_cache()
+    myproject_enable_cache()
   endif()
 
   include(cmake/StaticAnalyzers.cmake)
   if(myproject_ENABLE_CLANG_TIDY)
-    enable_clang_tidy(myproject_options ${myproject_WARNINGS_AS_ERRORS})
+    myproject_enable_clang_tidy(myproject_options ${myproject_WARNINGS_AS_ERRORS})
   endif()
 
   if(myproject_ENABLE_CPPCHECK)
-    enable_cppcheck(${myproject_WARNINGS_AS_ERRORS} "" # override cppcheck options
+    myproject_enable_cppcheck(${myproject_WARNINGS_AS_ERRORS} "" # override cppcheck options
     )
   endif()
 
   if(myproject_ENABLE_COVERAGE)
     include(cmake/Tests.cmake)
-    enable_coverage(myproject_options)
+    myproject_enable_coverage(myproject_options)
   endif()
 
   if(myproject_WARNINGS_AS_ERRORS)
@@ -164,7 +166,7 @@ macro(local_options)
   if(myproject_ENABLE_HARDENING AND NOT myproject_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
     set(ENABLE_UBSAN_MINIMAL_RUNTIME NOT myproject_ENABLE_SANITIZER_UNDEFINED)
-    enable_hardening(myproject_options OFF ${ENABLE_UBSAN_MINIMAL_RUNTIME})
+    myproject_enable_hardening(myproject_options OFF ${ENABLE_UBSAN_MINIMAL_RUNTIME})
   endif()
 
 endmacro()
