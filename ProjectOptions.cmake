@@ -3,7 +3,6 @@ include(cmake/LibFuzzer.cmake)
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 
-
 macro(myproject_setup_options)
   option(myproject_ENABLE_HARDENING "Enable hardening" ON)
   option(myproject_ENABLE_COVERAGE "Enable coverage reporting" OFF)
@@ -13,7 +12,6 @@ macro(myproject_setup_options)
     ON
     myproject_ENABLE_HARDENING
     OFF)
-
 
   if((CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*") AND NOT WIN32)
     set(SUPPORTS_UBSAN ON)
@@ -26,10 +24,6 @@ macro(myproject_setup_options)
   else()
     set(SUPPORTS_ASAN ON)
   endif()
-
-  myproject_check_libfuzzer_support(LIBFUZZER_SUPPORTED)
-  option(myproject_BUILD_FUZZ_TESTS "Enable fuzz testing executable" ${LIBFUZZER_SUPPORTED})
-
 
   if(NOT PROJECT_IS_TOP_LEVEL OR myproject_PACKAGING_MAINTAINER_MODE)
     option(myproject_ENABLE_IPO "Enable IPO/LTO" OFF)
@@ -78,6 +72,16 @@ macro(myproject_setup_options)
       myproject_ENABLE_PCH
       myproject_ENABLE_CACHE)
   endif()
+
+  myproject_check_libfuzzer_support(LIBFUZZER_SUPPORTED)
+  if(LIBFUZZER_SUPPORTED AND (myproject_ENABLE_SANITIZER_ADDRESS OR myproject_ENABLE_SANITIZER_THREAD OR myproject_ENABLE_SANITIZER_UNDEFINED))
+    set(DEFAULT_FUZZER ON)
+  else()
+    set(DEFAULT_FUZZER OFF)
+  endif()
+
+  option(myproject_BUILD_FUZZ_TESTS "Enable fuzz testing executable" ${DEFAULT_FUZZER})
+
 endmacro()
 
 macro(myproject_global_options)
@@ -88,13 +92,21 @@ macro(myproject_global_options)
 
   if(myproject_ENABLE_HARDENING AND myproject_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
-    set(ENABLE_UBSAN_MINIMAL_RUNTIME NOT myproject_ENABLE_SANITIZER_UNDEFINED)
+    if(myproject_ENABLE_SANITIZER_UNDEFINED
+       OR myproject_ENABLE_SANITIZER_ADDRESS
+       OR myproject_ENABLE_SANITIZER_THREAD
+       OR myproject_ENABLE_SANITIZER_LEAK)
+      set(ENABLE_UBSAN_MINIMAL_RUNTIME FALSE)
+    else()
+      set(ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
+    endif()
+    message("${myproject_ENABLE_HARDENING} ${ENABLE_UBSAN_MINIMAL_RUNTIME} ${myproject_ENABLE_SANITIZER_UNDEFINED}")
     myproject_enable_hardening(myproject_options ON ${ENABLE_UBSAN_MINIMAL_RUNTIME})
   endif()
 endmacro()
 
 macro(myproject_local_options)
-  if (PROJECT_IS_TOP_LEVEL)
+  if(PROJECT_IS_TOP_LEVEL)
     include(cmake/StandardProjectSettings.cmake)
   endif()
 
@@ -165,7 +177,11 @@ macro(myproject_local_options)
 
   if(myproject_ENABLE_HARDENING AND NOT myproject_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
-    set(ENABLE_UBSAN_MINIMAL_RUNTIME NOT myproject_ENABLE_SANITIZER_UNDEFINED)
+    if(myproject_ENABLE_SANITIZER_UNDEFINED)
+      set(ENABLE_UBSAN_MINIMAL_RUNTIME FALSE)
+    else()
+      set(ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
+    endif()
     myproject_enable_hardening(myproject_options OFF ${ENABLE_UBSAN_MINIMAL_RUNTIME})
   endif()
 

@@ -10,8 +10,8 @@ target_link_libraries(
           myproject_warnings
           fmt::fmt
           -coverage
-          -fsanitize=fuzzer,undefined,address)
-target_compile_options(fuzz_tester PRIVATE -fsanitize=fuzzer,undefined,address)
+          -fsanitize=fuzzer)
+target_compile_options(fuzz_tester PRIVATE -fsanitize=fuzzer)
 
 # Allow short runs during automated testing to see if something new breaks
 set(FUZZ_RUNTIME
