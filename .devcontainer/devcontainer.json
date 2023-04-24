@@ -19,23 +19,27 @@
 		"--security-opt",
 		"seccomp=unconfined"
 	],
-	// Set *default* container specific settings.json values on container create.
-	"settings": {
-		"cmake.configureOnOpen": true,
-		"editor.formatOnSave": true
-	},
-	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"ms-vscode.cpptools",
-		"ms-vscode.cmake-tools",
-		"twxs.cmake",
-		"ms-vscode.cpptools-themes",
-		"cschlosser.doxdocgen",
-		"eamodio.gitlens",
-		"ms-python.python",
-		"ms-python.vscode-pylance",
-		"mutantdino.resourcemonitor"
-	],
+  "customizations": {
+    // Set *default* container specific settings.json values on container create.
+    "vscode": {
+      "settings": {
+        "cmake.configureOnOpen": true,
+        "editor.formatOnSave": true
+      },
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "twxs.cmake",
+        "ms-vscode.cpptools-themes",
+        "cschlosser.doxdocgen",
+        "eamodio.gitlens",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "mutantdino.resourcemonitor"
+      ]
+    }
+  },
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 	// Use 'postCreateCommand' to run commands after the container is created.
