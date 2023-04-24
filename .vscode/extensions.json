@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "cschlosser.doxdocgen",
+    "eamodio.gitlens",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-vscode.cmake-tools",
+    "ms-vscode.cpptools-themes",
+    "ms-vscode.cpptools",
+    "mutantdino.resourcemonitor",
+    "twxs.cmake"
+  ]
+}
