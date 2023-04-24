@@ -1,8 +1,23 @@
 version: "3.9"
 
-x-base: &base
+x-ptrace: &ptrace
   cap_add:
     - SYS_PTRACE
+  security_opt:
+    - seccomp:unconfined
+
+x-wslg: &wslg
+  environment:
+    DISPLAY: :0
+    PULSE_SERVER: /mnt/wslg/PulseServer
+    WAYLAND_DISPLAY: wayland-0
+    XDG_RUNTIME_DIR: /mnt/wslg/runtime-dir
+  volumes:
+    - /run/desktop/mnt/host/wslg:/mnt/wslg
+    - /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix
+
+x-base: &base
+  <<: [*ptrace, *wslg]
   command: sleep infinity
   environment:
     DEBIAN_FRONTEND: noninteractive
@@ -10,8 +25,6 @@ x-base: &base
     PYTHONUNBUFFERED: 1
     TZ: UTC
   init: true
-  security_opt:
-    - seccomp:unconfined
   volumes:
     - /etc/localtime:/etc/localtime:ro
     - /etc/timezone:/etc/timezone:ro
