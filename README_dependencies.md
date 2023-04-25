@@ -36,6 +36,7 @@ This is a really long list of dependencies, and it's easy to mess up. That's why
   The following compilers should work:
 
   - [Clang 6+](https://clang.llvm.org)
+
     - MacOS
 
       ```shell
@@ -65,6 +66,7 @@ This is a really long list of dependencies, and it's easy to mess up. That's why
       ```
 
   - [GCC 7+](https://gcc.gnu.org/)
+
     - MacOS
 
       ```shell
@@ -110,6 +112,7 @@ This is a really long list of dependencies, and it's easy to mess up. That's why
     ```
 
 - [Cmake 3.15+](https://cmake.org)
+
   - MacOS
 
     ```shell
@@ -131,6 +134,7 @@ This is a really long list of dependencies, and it's easy to mess up. That's why
 ## Optional Dependencies
 
 - [ccache](https://ccache.dev)
+
   - MacOS
 
     ```shell
@@ -150,6 +154,7 @@ This is a really long list of dependencies, and it's easy to mess up. That's why
     ```
 
 - [Cppcheck](http://cppcheck.sourceforge.net)
+
   - MacOS
 
     ```shell
@@ -169,6 +174,7 @@ This is a really long list of dependencies, and it's easy to mess up. That's why
     ```
 
 - [Doxygen](http://doxygen.nl)
+
   - MacOS
 
     ```shell

@@ -17,6 +17,7 @@ CMake uses the environment variables CC and CXX to decide which compiler to use.
 So to avoid the conflict issues only specify the compilers using these variables:
 
 - MacOS/Ubuntu:
+
   - Permanently
 
     Open `~/.bashrc` using your text editor:
@@ -49,6 +50,7 @@ So to avoid the conflict issues only specify the compilers using these variables
       ```
 
 - Windows
+
   - Permanently
 
     - Clang
@@ -118,6 +120,7 @@ Each of them are explained in the following:
   press 'g' to generate, and 'q' to quit.
 
 - Configuring via cmake-gui
+
   - Open cmake-gui from the project directory
 
     ```shell
@@ -126,7 +129,7 @@ Each of them are explained in the following:
 
   - Set the build directory
 
-  ![build_dir](https://user-images.githubusercontent.com/16418197/82524586-fa48e380-9af4-11ea-8514-4e18a063d8eb.jpg)
+    ![build_dir](https://user-images.githubusercontent.com/16418197/82524586-fa48e380-9af4-11ea-8514-4e18a063d8eb.jpg)
 
   - Configure the generator
 
@@ -167,9 +170,9 @@ Each of them are explained in the following:
 
   - Choose the Cmake options and then generate
 
-  ![generate](https://user-images.githubusercontent.com/16418197/82781591-c97feb80-9e1f-11ea-86c8-f2748b96f516.png)
+    ![generate](https://user-images.githubusercontent.com/16418197/82781591-c97feb80-9e1f-11ea-86c8-f2748b96f516.png)
 
-## (3) Build the project
+## 3. Build the project
 
 Once you have selected all the options you would like to use,
 you can build the project (all targets):

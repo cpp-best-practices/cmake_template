@@ -13,21 +13,21 @@ This is a C++ Best Practices GitHub template for getting up and running with C++
 
 By default (collectively known as `ENABLE_DEVELOPER_MODE`)
 
-* Address Sanitizer and Undefined Behavior Sanitizer enabled where possible
-* Warnings as errors
-* clang-tidy and cppcheck static analysis
-* CPM for dependencies
+- Address Sanitizer and Undefined Behavior Sanitizer enabled where possible
+- Warnings as errors
+- clang-tidy and cppcheck static analysis
+- CPM for dependencies
 
 It includes
 
-* a basic CLI example
-* examples for fuzz, unit, and constexpr testing
-* large github action testing matrix
+- a basic CLI example
+- examples for fuzz, unit, and constexpr testing
+- large github action testing matrix
 
 It requires
 
-* cmake
-* a compiler
+- cmake
+- a compiler
 
 This project gets you started with a simple example of using FTXUI, which happens to also be a game.
 
@@ -52,10 +52,10 @@ git clone https://github.com/<user>/<your_new_repo>.git
 
 ## More Details
 
-* [Dependency Setup](README_dependencies.md)
-* [Building Details](README_building.md)
-* [Troubleshooting](README_troubleshooting.md)
-* [Docker](README_docker.md)
+- [Dependency Setup](README_dependencies.md)
+- [Building Details](README_building.md)
+- [Troubleshooting](README_troubleshooting.md)
+- [Docker](README_docker.md)
 
 ## Testing
 
