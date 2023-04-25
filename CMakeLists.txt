@@ -94,6 +94,11 @@ endif()
 # set the startup project for the "play" button in MSVC
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT intro)
 
+# Temporary solution to let VSCode clangd extension correctly resolve dependencies.
+# It does not affect compilation, but IDE experience.
+# https://github.com/clangd/vscode-clangd/issues/48#issuecomment-987765846
+configure_file(.clangd.in ${CMAKE_SOURCE_DIR}/.clangd @ONLY)
+
 if(CMAKE_SKIP_INSTALL_RULES)
   return()
 endif()

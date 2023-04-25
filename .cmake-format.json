@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/voidei/cmake_format/master/cmakelang/vscode_extension/schema/cmake-format.schema.json",
   "encode": {},
   "format": {
     "dangle_parens": false,

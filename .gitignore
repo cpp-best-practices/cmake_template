@@ -10,6 +10,7 @@
 !.vscode/tasks.json
 
 # Build directories and binary files
+.clangd
 build/
 cmake-build-*/
 conan-cache/
