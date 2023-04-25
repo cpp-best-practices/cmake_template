@@ -2,11 +2,6 @@
 // For format details, see https://aka.ms/devcontainer.json
 {
   "dockerComposeFile": "./docker-compose.yml",
-  "features": {
-    "git": "latest",
-		"git-lfs": "latest",
-		"powershell": "latest"
-  },
   "service": "app",
   "workspaceFolder": "/workspaces"
 }

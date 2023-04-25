@@ -19,11 +19,6 @@ x-wslg: &wslg
 x-base: &base
   <<: [*ptrace, *wslg]
   command: sleep infinity
-  environment:
-    DEBIAN_FRONTEND: noninteractive
-    LANG: c.UTF-8
-    PYTHONUNBUFFERED: 1
-    TZ: UTC
   init: true
   volumes:
     - /etc/localtime:/etc/localtime:ro
@@ -33,23 +28,6 @@ services:
   app:
     <<: *base
     build:
-      args:
-        # Update 'GCC_VER' to pick a gcc and g++ version
-        # Options: [7, 8, 9, 10, 11]
-        # Default: 11
-        GCC_VER: 11
-        # Update 'LLVM_VER' to pick clang version
-        # Options: [10, 11, 12, 13]
-        # Default: 13
-        LLVM_VER: 13
-        # Update 'USE_CLANG' to set clang as the default C and C++ compiler
-        # Options: [1, null]
-        # Default null
-        USE_CLANG: null
-        # Update 'VARIANT' to pick an Ubuntu OS version
-        # Options: [bionic, focal]
-        # Default: focal
-        VARIANT: focal
       context: .
       dockerfile: Dockerfile
     pull_policy: missing
