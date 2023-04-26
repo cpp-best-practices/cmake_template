@@ -5,8 +5,8 @@ function(
   ENABLE_SANITIZER_LEAK
   ENABLE_SANITIZER_UNDEFINED_BEHAVIOR
   ENABLE_SANITIZER_THREAD
-  ENABLE_SANITIZER_MEMORY)
-
+  ENABLE_SANITIZER_MEMORY
+)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
     set(SANITIZERS "")
 
@@ -37,7 +37,8 @@ function(
       )
       if("address" IN_LIST SANITIZERS
          OR "thread" IN_LIST SANITIZERS
-         OR "leak" IN_LIST SANITIZERS)
+         OR "leak" IN_LIST SANITIZERS
+      )
         message(WARNING "Memory sanitizer does not work with Address, Thread or Leak sanitizer enabled")
       else()
         list(APPEND SANITIZERS "memory")
@@ -50,22 +51,16 @@ function(
     if(${ENABLE_SANITIZER_LEAK}
        OR ${ENABLE_SANITIZER_UNDEFINED_BEHAVIOR}
        OR ${ENABLE_SANITIZER_THREAD}
-       OR ${ENABLE_SANITIZER_MEMORY})
+       OR ${ENABLE_SANITIZER_MEMORY}
+    )
       message(WARNING "MSVC only supports address sanitizer")
     endif()
   endif()
 
-  list(
-    JOIN
-    SANITIZERS
-    ","
-    LIST_OF_SANITIZERS)
+  list(JOIN SANITIZERS "," LIST_OF_SANITIZERS)
 
   if(LIST_OF_SANITIZERS)
-    if(NOT
-       "${LIST_OF_SANITIZERS}"
-       STREQUAL
-       "")
+    if(NOT "${LIST_OF_SANITIZERS}" STREQUAL "")
       if(NOT MSVC)
         target_compile_options(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
         target_link_options(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
@@ -83,8 +78,4 @@ function(
       endif()
     endif()
   endif()
-
 endfunction()
-
-
-

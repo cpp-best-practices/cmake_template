@@ -28,17 +28,18 @@ function(myproject_enable_doxygen DOXYGEN_THEME)
   endif()
 
   if("${DOXYGEN_THEME}" STREQUAL "awesome" OR "${DOXYGEN_THEME}" STREQUAL "awesome-sidebar")
-    # use a modern doxygen theme
-    # https://github.com/jothepro/doxygen-awesome-css v1.6.1
-    FetchContent_Declare(_doxygen_theme
-                         URL https://github.com/jothepro/doxygen-awesome-css/archive/refs/tags/v1.6.1.zip)
+    # use a modern doxygen theme https://github.com/jothepro/doxygen-awesome-css v1.6.1
+    FetchContent_Declare(
+      _doxygen_theme URL https://github.com/jothepro/doxygen-awesome-css/archive/refs/tags/v1.6.1.zip
+    )
     FetchContent_MakeAvailable(_doxygen_theme)
     if("${DOXYGEN_THEME}" STREQUAL "awesome" OR "${DOXYGEN_THEME}" STREQUAL "awesome-sidebar")
       set(DOXYGEN_HTML_EXTRA_STYLESHEET "${_doxygen_theme_SOURCE_DIR}/doxygen-awesome.css")
     endif()
     if("${DOXYGEN_THEME}" STREQUAL "awesome-sidebar")
       set(DOXYGEN_HTML_EXTRA_STYLESHEET ${DOXYGEN_HTML_EXTRA_STYLESHEET}
-                                        "${_doxygen_theme_SOURCE_DIR}/doxygen-awesome-sidebar-only.css")
+                                        "${_doxygen_theme_SOURCE_DIR}/doxygen-awesome-sidebar-only.css"
+      )
     endif()
   else()
     # use the original doxygen theme
@@ -49,6 +50,8 @@ function(myproject_enable_doxygen DOXYGEN_THEME)
 
   # add doxygen-docs target
   message(STATUS "Adding `doxygen-docs` target that builds the documentation.")
-  doxygen_add_docs(doxygen-docs ALL ${PROJECT_SOURCE_DIR}
-                   COMMENT "Generating documentation - entry file: ${CMAKE_CURRENT_BINARY_DIR}/html/index.html")
+  doxygen_add_docs(
+    doxygen-docs ALL ${PROJECT_SOURCE_DIR}
+    COMMENT "Generating documentation - entry file: ${CMAKE_CURRENT_BINARY_DIR}/html/index.html"
+  )
 endfunction()

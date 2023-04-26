@@ -2,31 +2,12 @@
   "$schema": "https://raw.githubusercontent.com/voidei/cmake_format/master/cmakelang/vscode_extension/schema/cmake-format.schema.json",
   "encode": {},
   "format": {
-    "dangle_parens": false,
-    "line_ending": "unix",
-    "line_width": 120,
-    "max_pargs_hwrap": 3,
-    "separate_ctrl_name_with_space": false,
-    "separate_fn_name_with_space": false,
-    "tab_size": 2
+    "autosort": true,
+    "dangle_parens": true,
+    "line_width": 120
   },
   "lint": {},
-  "markup": {
-    "bullet_char": "*",
-    "enum_char": ".",
-    "enable_markup": false
-  },
+  "markup": {},
   "misc": {},
-  "parse": {
-    "additional_commands": {
-      "foo": {
-        "flags": ["BAR", "BAZ"],
-        "kwargs": {
-          "DEPENDS": "*",
-          "HEADERS": "*",
-          "SOURCES": "*"
-        }
-      }
-    }
-  }
+  "parse": {}
 }

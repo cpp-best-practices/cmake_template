@@ -1,6 +1,4 @@
-# from here:
-#
-# https://github.com/lefticus/cppbestpractices/blob/master/02-Use_the_Tools_Available.md
+# Reference: https://github.com/lefticus/cppbestpractices/blob/master/02-Use_the_Tools_Available.md
 
 function(
   myproject_set_project_warnings
@@ -9,15 +7,16 @@ function(
   MSVC_WARNINGS
   CLANG_WARNINGS
   GCC_WARNINGS
-  CUDA_WARNINGS)
+  CUDA_WARNINGS
+)
   if("${MSVC_WARNINGS}" STREQUAL "")
     set(MSVC_WARNINGS
         /W4 # Baseline reasonable warnings
         /w14242 # 'identifier': conversion from 'type1' to 'type1', possible loss of data
         /w14254 # 'operator': conversion from 'type1:field_bits' to 'type2:field_bits', possible loss of data
         /w14263 # 'function': member function does not override any base class virtual member function
-        /w14265 # 'classname': class has virtual functions, but destructor is not virtual instances of this class may not
-                # be destructed correctly
+        /w14265 # 'classname': class has virtual functions, but destructor is not virtual instances of this class may
+                # not be destructed correctly
         /w14287 # 'operator': unsigned/negative constant mismatch
         /we4289 # nonstandard extension used: 'variable': loop control variable declared in the for-loop is used outside
                 # the for-loop scope
@@ -71,13 +70,8 @@ function(
   endif()
 
   if("${CUDA_WARNINGS}" STREQUAL "")
-    set(CUDA_WARNINGS
-        -Wall
-        -Wextra
-        -Wunused
-        -Wconversion
-        -Wshadow
-        # TODO add more Cuda warnings
+    set(CUDA_WARNINGS -Wall -Wextra -Wunused -Wconversion -Wshadow
+                      # TODO add more Cuda warnings
     )
   endif()
 
@@ -111,5 +105,6 @@ function(
               # C warnings
               $<$<COMPILE_LANGUAGE:C>:${PROJECT_WARNINGS_C}>
               # Cuda warnings
-              $<$<COMPILE_LANGUAGE:CUDA>:${PROJECT_WARNINGS_CUDA}>)
+              $<$<COMPILE_LANGUAGE:CUDA>:${PROJECT_WARNINGS_CUDA}>
+  )
 endfunction()
