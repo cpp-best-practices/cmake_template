@@ -30,9 +30,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    pull_policy: missing
+    pull_policy: if_not_present
     volumes:
-      - data:/workspaces:delegated
+      - data:/workspaces
 
 volumes:
   data:
