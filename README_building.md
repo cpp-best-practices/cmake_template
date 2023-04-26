@@ -16,7 +16,7 @@ the system default compiler will be used.
 CMake uses the environment variables CC and CXX to decide which compiler to use.
 So to avoid the conflict issues only specify the compilers using these variables:
 
-- MacOS/Ubuntu:
+- MacOS/Ubuntu
 
   - Permanently
 

@@ -1,254 +1,318 @@
 {
-    "version": 3,
-    "cmakeMinimumRequired": {
-        "major": 3,
-        "minor": 21,
-        "patch": 0
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "version": 3,
+  "buildPresets": [
+    {
+      "hidden": true,
+      "name": "build-base"
     },
-    "configurePresets": [
-        {
-            "name": "conf-common",
-            "description": "General settings that apply to all configurations",
-            "hidden": true,
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "installDir": "${sourceDir}/out/install/${presetName}"
-        },
-        {
-            "name": "conf-windows-common",
-            "description": "Windows settings for MSBuild toolchain that apply to msvc and clang",
-            "hidden": true,
-            "inherits": "conf-common",
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            },
-            "architecture": {
-                "value": "x64",
-                "strategy": "external"
-            },
-            "toolset": {
-                "value": "host=x64",
-                "strategy": "external"
-            },
-            "cacheVariables": {
-                "ENABLE_CPPCHECK_DEFAULT": "FALSE",
-                "ENABLE_CLANG_TIDY_DEFAULT": "FALSE"
-            }
-        },
-        {
-            "name": "conf-unixlike-common",
-            "description": "Unix-like OS settings for gcc and clang toolchains",
-            "hidden": true,
-            "inherits": "conf-common",
-            "condition": {
-                "type": "inList",
-                "string": "${hostSystemName}",
-                "list": [
-                    "Linux",
-                    "Darwin"
-                ]
-            },
-            "vendor": {
-                "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-                    "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
-                }
-            }
-        },
-        {
-            "name": "windows-msvc-debug-developer-mode",
-            "displayName": "msvc Debug (Developer Mode)",
-            "description": "Target Windows with the msvc compiler, debug build type",
-            "inherits": "conf-windows-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl",
-                "CMAKE_CXX_COMPILER": "cl",
-                "CMAKE_BUILD_TYPE": "Debug",
-                "ENABLE_DEVELOPER_MODE": "ON"
-            }
-        },
-        {
-            "name": "windows-msvc-release-developer-mode",
-            "displayName": "msvc Release (Developer Mode)",
-            "description": "Target Windows with the msvc compiler, release build type",
-            "inherits": "conf-windows-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl",
-                "CMAKE_CXX_COMPILER": "cl",
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-                "ENABLE_DEVELOPER_MODE": "ON"
-            }
-        },
-        {
-            "name": "windows-msvc-debug-user-mode",
-            "displayName": "msvc Debug (User Mode)",
-            "description": "Target Windows with the msvc compiler, debug build type",
-            "inherits": "conf-windows-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl",
-                "CMAKE_CXX_COMPILER": "cl",
-                "CMAKE_BUILD_TYPE": "Debug",
-                "ENABLE_DEVELOPER_MODE": "OFF"
-            }
-        },
-        {
-            "name": "windows-msvc-release-user-mode",
-            "displayName": "msvc Release (User Mode)",
-            "description": "Target Windows with the msvc compiler, release build type",
-            "inherits": "conf-windows-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl",
-                "CMAKE_CXX_COMPILER": "cl",
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-                "ENABLE_DEVELOPER_MODE": "OFF"
-            }
-        },
-        {
-            "name": "windows-clang-debug",
-            "displayName": "clang Debug",
-            "description": "Target Windows with the clang compiler, debug build type",
-            "inherits": "conf-windows-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang-cl",
-                "CMAKE_CXX_COMPILER": "clang-cl",
-                "CMAKE_BUILD_TYPE": "Debug"
-            },
-            "vendor": {
-                "microsoft.com/VisualStudioSettings/CMake/1.0": {
-                    "intelliSenseMode": "windows-clang-x64"
-                }
-            }
-        },
-        {
-            "name": "windows-clang-release",
-            "displayName": "clang Release",
-            "description": "Target Windows with the clang compiler, release build type",
-            "inherits": "conf-windows-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang-cl",
-                "CMAKE_CXX_COMPILER": "clang-cl",
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-            },
-            "vendor": {
-                "microsoft.com/VisualStudioSettings/CMake/1.0": {
-                    "intelliSenseMode": "windows-clang-x64"
-                }
-            }
-        },
-        {
-            "name": "unixlike-gcc-debug",
-            "displayName": "gcc Debug",
-            "description": "Target Unix-like OS with the gcc compiler, debug build type",
-            "inherits": "conf-unixlike-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "unixlike-gcc-release",
-            "displayName": "gcc Release",
-            "description": "Target Unix-like OS with the gcc compiler, release build type",
-            "inherits": "conf-unixlike-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-            }
-        },
-        {
-            "name": "unixlike-clang-debug",
-            "displayName": "clang Debug",
-            "description": "Target Unix-like OS with the clang compiler, debug build type",
-            "inherits": "conf-unixlike-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "unixlike-clang-release",
-            "displayName": "clang Release",
-            "description": "Target Unix-like OS with the clang compiler, release build type",
-            "inherits": "conf-unixlike-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-            }
+    {
+      "condition": {
+        "list": ["Darwin", "Linux"],
+        "string": "${hostSystemName}",
+        "type": "inList"
+      },
+      "hidden": true,
+      "inherits": ["build-base"],
+      "name": "build-unix-base"
+    },
+    {
+      "configurePreset": "unix-clang-debug",
+      "inherits": ["build-unix-base"],
+      "name": "unix-clang-debug"
+    },
+    {
+      "configurePreset": "unix-clang-release",
+      "inherits": ["build-unix-base"],
+      "name": "unix-clang-release"
+    },
+    {
+      "configurePreset": "unix-gcc-debug",
+      "inherits": ["build-unix-base"],
+      "name": "unix-gcc-debug"
+    },
+    {
+      "configurePreset": "unix-gcc-release",
+      "inherits": ["build-unix-base"],
+      "name": "unix-gcc-release"
+    },
+    {
+      "condition": {
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows",
+        "type": "equals"
+      },
+      "hidden": true,
+      "inherits": ["build-base"],
+      "name": "build-windows-base"
+    },
+    {
+      "configurePreset": "windows-clang-debug",
+      "inherits": ["build-windows-base"],
+      "name": "windows-clang-debug"
+    },
+    {
+      "configurePreset": "windows-clang-release",
+      "inherits": ["build-windows-base"],
+      "name": "windows-clang-release"
+    },
+    {
+      "configurePreset": "windows-msvc-debug-developer-mode",
+      "inherits": ["build-windows-base"],
+      "name": "windows-msvc-debug-developer-mode"
+    },
+    {
+      "configurePreset": "windows-msvc-debug-user-mode",
+      "inherits": ["build-windows-base"],
+      "name": "windows-msvc-debug-user-mode"
+    },
+    {
+      "configurePreset": "windows-msvc-release-developer-mode",
+      "inherits": ["build-windows-base"],
+      "name": "windows-msvc-release-developer-mode"
+    },
+    {
+      "configurePreset": "windows-msvc-release-user-mode",
+      "inherits": ["build-windows-base"],
+      "name": "windows-msvc-release-user-mode"
+    }
+  ],
+  "configurePresets": [
+    {
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "hidden": true,
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "name": "conf-base"
+    },
+    {
+      "condition": {
+        "list": ["Darwin", "Linux"],
+        "string": "${hostSystemName}",
+        "type": "inList"
+      },
+      "hidden": true,
+      "inherits": ["conf-base"],
+      "name": "conf-unix-base",
+      "vendor": {
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
         }
-    ],
-    "testPresets": [
-        {
-            "name": "test-common",
-            "description": "Test CMake settings that apply to all configurations",
-            "hidden": true,
-            "output": {
-                "outputOnFailure": true
-            },
-            "execution": {
-                "noTestsAction": "error",
-                "stopOnFailure": true
-            }
-        },
-        {
-            "name": "test-windows-msvc-debug-developer-mode",
-            "displayName": "Strict",
-            "description": "Enable output and stop on failure",
-            "inherits": "test-common",
-            "configurePreset": "windows-msvc-debug-developer-mode"
-        },
-        {
-            "name": "test-windows-msvc-release-developer-mode",
-            "displayName": "Strict",
-            "description": "Enable output and stop on failure",
-            "inherits": "test-common",
-            "configurePreset": "windows-msvc-release-developer-mode"
-        },
-        {
-            "name": "test-windows-clang-debug",
-            "displayName": "Strict",
-            "description": "Enable output and stop on failure",
-            "inherits": "test-common",
-            "configurePreset": "windows-clang-debug"
-        },
-        {
-            "name": "test-windows-clang-release",
-            "displayName": "Strict",
-            "description": "Enable output and stop on failure",
-            "inherits": "test-common",
-            "configurePreset": "windows-clang-release"
-        },
-        {
-            "name": "test-unixlike-gcc-debug",
-            "displayName": "Strict",
-            "description": "Enable output and stop on failure",
-            "inherits": "test-common",
-            "configurePreset": "unixlike-gcc-debug"
-        },
-        {
-            "name": "test-unixlike-gcc-release",
-            "displayName": "Strict",
-            "description": "Enable output and stop on failure",
-            "inherits": "test-common",
-            "configurePreset": "unixlike-gcc-release"
-        },
-        {
-            "name": "test-unixlike-clang-debug",
-            "displayName": "Strict",
-            "description": "Enable output and stop on failure",
-            "inherits": "test-common",
-            "configurePreset": "unixlike-clang-debug"
-        },
-        {
-            "name": "test-unixlike-clang-release",
-            "displayName": "Strict",
-            "description": "Enable output and stop on failure",
-            "inherits": "test-common",
-            "configurePreset": "unixlike-clang-release"
+      }
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      },
+      "inherits": ["conf-unix-base"],
+      "name": "unix-clang-debug"
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      },
+      "inherits": ["conf-unix-base"],
+      "name": "unix-clang-release"
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      },
+      "inherits": ["conf-unix-base"],
+      "name": "unix-gcc-debug"
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      },
+      "inherits": ["conf-unix-base"],
+      "name": "unix-gcc-release"
+    },
+    {
+      "architecture": {
+        "strategy": "external",
+        "value": "x64"
+      },
+      "cacheVariables": {
+        "CMAKE_SYSTEM_PROCESSOR": "AMD64",
+        "ENABLE_CLANG_TIDY_DEFAULT": "FALSE",
+        "ENABLE_CPPCHECK_DEFAULT": "FALSE"
+      },
+      "condition": {
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows",
+        "type": "equals"
+      },
+      "hidden": true,
+      "inherits": ["conf-base"],
+      "name": "conf-windows-base",
+      "toolset": {
+        "strategy": "external",
+        "value": "host=x64"
+      }
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl"
+      },
+      "inherits": ["conf-windows-base"],
+      "name": "windows-clang-debug",
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "windows-clang-x64"
         }
-    ]
+      }
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl"
+      },
+      "inherits": ["conf-windows-base"],
+      "name": "windows-clang-release",
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "windows-clang-x64"
+        }
+      }
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "ENABLE_DEVELOPER_MODE": "ON"
+      },
+      "inherits": ["conf-windows-base"],
+      "name": "windows-msvc-debug-developer-mode"
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "ENABLE_DEVELOPER_MODE": "OFF"
+      },
+      "inherits": ["conf-windows-base"],
+      "name": "windows-msvc-debug-user-mode"
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "ENABLE_DEVELOPER_MODE": "ON"
+      },
+      "inherits": ["conf-windows-base"],
+      "name": "windows-msvc-release-developer-mode"
+    },
+    {
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "ENABLE_DEVELOPER_MODE": "OFF"
+      },
+      "inherits": ["conf-windows-base"],
+      "name": "windows-msvc-release-user-mode"
+    }
+  ],
+  "testPresets": [
+    {
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
+      },
+      "hidden": true,
+      "name": "test-base",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "condition": {
+        "list": ["Darwin", "Linux"],
+        "string": "${hostSystemName}",
+        "type": "inList"
+      },
+      "hidden": true,
+      "inherits": ["test-base"],
+      "name": "test-unix-base"
+    },
+    {
+      "configurePreset": "unix-clang-debug",
+      "inherits": ["test-unix-base"],
+      "name": "unix-clang-debug"
+    },
+    {
+      "configurePreset": "unix-clang-release",
+      "inherits": ["test-unix-base"],
+      "name": "unix-clang-release"
+    },
+    {
+      "configurePreset": "unix-gcc-debug",
+      "inherits": ["test-unix-base"],
+      "name": "unix-gcc-debug"
+    },
+    {
+      "configurePreset": "unix-gcc-release",
+      "inherits": ["test-unix-base"],
+      "name": "unix-gcc-release"
+    },
+    {
+      "condition": {
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows",
+        "type": "equals"
+      },
+      "hidden": true,
+      "inherits": ["test-base"],
+      "name": "test-windows-base"
+    },
+    {
+      "configurePreset": "windows-clang-debug",
+      "inherits": ["test-windows-base"],
+      "name": "windows-clang-debug"
+    },
+    {
+      "configurePreset": "windows-clang-release",
+      "inherits": ["test-windows-base"],
+      "name": "windows-clang-release"
+    },
+    {
+      "configurePreset": "windows-msvc-debug-developer-mode",
+      "inherits": ["test-windows-base"],
+      "name": "windows-msvc-debug-developer-mode"
+    },
+    {
+      "configurePreset": "windows-msvc-debug-user-mode",
+      "inherits": ["test-windows-base"],
+      "name": "windows-msvc-debug-user-mode"
+    },
+    {
+      "configurePreset": "windows-msvc-release-developer-mode",
+      "inherits": ["test-windows-base"],
+      "name": "windows-msvc-release-developer-mode"
+    },
+    {
+      "configurePreset": "windows-msvc-release-user-mode",
+      "inherits": ["test-windows-base"],
+      "name": "windows-msvc-release-user-mode"
+    }
+  ]
 }
