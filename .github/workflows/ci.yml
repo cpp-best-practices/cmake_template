@@ -4,7 +4,6 @@ on:
   release:
     types: [published]
   push:
-    tags:
     branches:
       - main
       - develop
@@ -13,7 +12,6 @@ env:
   CLANG_TIDY_VERSION: "15.0.2"
   VERBOSE: 1
   PROJECT_NAME: ${{ env.PROJECT_NAME }}
-
 
 jobs:
   Test:
@@ -25,7 +23,7 @@ jobs:
       #   * support at least 2 operating systems
       #   * support at least 2 compilers
       #   * make sure all supported configurations for your project are built
-      #
+
       # Disable/enable builds in this list to meet the above recommendations
       # and your own projects needs
       matrix:
@@ -117,7 +115,6 @@ jobs:
             enable_ipo: On
             build_shared: On
 
-
     steps:
       - name: Check for llvm version mismatches
         if: ${{ contains(matrix.compiler, 'llvm') && !contains(matrix.compiler, env.CLANG_TIDY_VERSION) }}
@@ -147,7 +144,6 @@ jobs:
           vcpkg: false
           ccache: true
           clangtidy: ${{ env.CLANG_TIDY_VERSION }}
-
 
           cppcheck: true
 
@@ -190,7 +186,6 @@ jobs:
         with:
           files: |
             build/*-*${{ matrix.build_type }}*-*.*
-
 
       - name: Publish to codecov
         uses: codecov/codecov-action@v2
