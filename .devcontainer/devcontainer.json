@@ -1,7 +1,6 @@
-// For config options, see https://github.com/microsoft/vscode-dev-containers/tree/main/containers/cpp
 // For format details, see https://aka.ms/devcontainer.json
 {
-  "dockerComposeFile": "./docker-compose.yml",
+  "dockerComposeFile": ["./docker-compose.yml"],
   "service": "app",
   "workspaceFolder": "/workspaces"
 }

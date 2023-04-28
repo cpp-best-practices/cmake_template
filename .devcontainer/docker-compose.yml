@@ -27,9 +27,11 @@ x-base: &base
 services:
   app:
     <<: *base
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # TODO: https://github.com/microsoft/vscode-remote-release/issues/8158
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: ghcr.io/fruzitent/devcontainers/cpp:latest
     pull_policy: if_not_present
     volumes:
       - data:/workspaces

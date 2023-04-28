@@ -35,6 +35,8 @@ RUN <<EOF
 
         asc_path="/tmp/${filename}.asc"
         gpg_path="/usr/share/keyrings/${filename}.gpg"
+        list_path="/etc/apt/sources.list.d/${filename}.list"
+        rm -rf "${gpg_path}"
 
         wget -O "${asc_path}" "${asc_url}"
         gpg --batch --dearmor --no-tty --output "${gpg_path}" "${asc_path}"
@@ -45,18 +47,17 @@ RUN <<EOF
         {
             echo "deb     [signed-by=${gpg_path}] ${toolchain}"
             echo "deb-src [signed-by=${gpg_path}] ${toolchain}"
-            echo
-        } >> "/etc/apt/sources.list.d/${filename}.list"
+        } >> "${list_path}"
     }
 
     . /etc/os-release
 
-    add_apt_repository "deadsnakes"         "https://ppa.launchpadcontent.net/deadsnakes/nightly/ubuntu      ${VERSION_CODENAME}    main" "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xf23c5a6cf475977595c89f51ba6932366a755776"
-    add_apt_repository "deadsnakes"         "https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu          ${VERSION_CODENAME}    main" "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xf23c5a6cf475977595c89f51ba6932366a755776"
-    add_apt_repository "kitware"            "https://apt.kitware.com/ubuntu                                  ${VERSION_CODENAME}    main" "https://apt.kitware.com/keys/kitware-archive-latest.asc"
-    add_apt_repository "kitware"            "https://apt.kitware.com/ubuntu                                  ${VERSION_CODENAME}-rc main" "https://apt.kitware.com/keys/kitware-archive-latest.asc"
-    add_apt_repository "ubuntu-toolchain-r" "https://ppa.launchpadcontent.net/ubuntu-toolchain-r/ppa/ubuntu  ${VERSION_CODENAME}    main" "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x60c317803a41ba51845e371a1e9377a2ba9ef27f"
-    add_apt_repository "ubuntu-toolchain-r" "https://ppa.launchpadcontent.net/ubuntu-toolchain-r/test/ubuntu ${VERSION_CODENAME}    main" "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x60c317803a41ba51845e371a1e9377a2ba9ef27f"
+    add_apt_repository "deadsnakes-ubuntu-nightly-${VERSION_CODENAME}"      "https://ppa.launchpadcontent.net/deadsnakes/nightly/ubuntu      ${VERSION_CODENAME}    main" "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xf23c5a6cf475977595c89f51ba6932366a755776"
+    add_apt_repository "deadsnakes-ubuntu-ppa-${VERSION_CODENAME}"          "https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu          ${VERSION_CODENAME}    main" "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xf23c5a6cf475977595c89f51ba6932366a755776"
+    add_apt_repository "kitware-archive-keyring"                            "https://apt.kitware.com/ubuntu                                  ${VERSION_CODENAME}    main" "https://apt.kitware.com/keys/kitware-archive-latest.asc"
+    add_apt_repository "kitware-archive-keyring"                            "https://apt.kitware.com/ubuntu                                  ${VERSION_CODENAME}-rc main" "https://apt.kitware.com/keys/kitware-archive-latest.asc"
+    add_apt_repository "ubuntu-toolchain-r-ubuntu-ppa-${VERSION_CODENAME}"  "https://ppa.launchpadcontent.net/ubuntu-toolchain-r/ppa/ubuntu  ${VERSION_CODENAME}    main" "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x60c317803a41ba51845e371a1e9377a2ba9ef27f"
+    add_apt_repository "ubuntu-toolchain-r-ubuntu-test-${VERSION_CODENAME}" "https://ppa.launchpadcontent.net/ubuntu-toolchain-r/test/ubuntu ${VERSION_CODENAME}    main" "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x60c317803a41ba51845e371a1e9377a2ba9ef27f"
 EOF
 
 # Setup locales and timezone
@@ -84,6 +85,7 @@ ENV LC_ALL="en_US.UTF-8"
 
 # Install GCC
 
+# 9, 10, 11, 12, 13
 ARG GCC_VER="12"
 
 RUN <<EOF
@@ -100,6 +102,7 @@ EOF
 
 # Install Python
 
+# 3.7, 3.8, 3.9, 3.10, 3.11, 3.12
 ARG PYTHON_VER="3.11"
 ARG PIP_URL="https://bootstrap.pypa.io/get-pip.py"
 
@@ -133,8 +136,12 @@ EOF
 
 # Install LLVM
 
+# 9, 10, 11, 12, 13, 14, 15, 16, 17
 ARG LLVM_URL="https://apt.llvm.org/llvm.sh"
-ARG LLVM_VER="16"
+ARG LLVM_VER="17"
+
+# TODO: LLVM needs to resolve depency pinning issues on arm64 https://github.com/llvm/llvm-project/issues?q=libclang-common
+# [https://apt.llvm.org] Jan 03rd 2023 - libclang-common-X.Y-dev split into: libclang-rt-X.Y-dev, libpolly-X.Y-dev, libclang-rt-X.Y-dev-wasm32 and libclang-rt-X.Y-dev-wasm64
 
 RUN <<EOF
     wget -O - ${LLVM_URL} | bash -s ${LLVM_VER} all
@@ -170,15 +177,19 @@ ARG IWYU_BUILD="${IWYU_SRC}/build"
 ARG IWYU_URL="https://github.com/include-what-you-use/include-what-you-use"
 
 RUN <<EOF
-    git clone --branch="clang_${LLVM_VER}" "${IWYU_URL}" "${IWYU_SRC}"
+    remote_branch_name="clang_${LLVM_VER}"
+    if [ ! git ls-remote --exit-code --heads ${IWYU_URL} ${remote_branch_name} | wc -l ]; then
+        git clone --depth 1 "${IWYU_URL}" "${IWYU_SRC}" --branch ${remote_branch_name} --single-branch
+    else
+        git clone --depth 1 "${IWYU_URL}" "${IWYU_SRC}"
+    fi
 
     CC="clang-${LLVM_VER}" CXX="clang++-${LLVM_VER}"
     mkdir -p "${IWYU_BUILD}"
 
     cmake -B "${IWYU_BUILD}" -S "${IWYU_SRC}" -DCMAKE_PREFIX_PATH="/usr/lib/llvm-${LLVM_VER}" -G "Ninja"
-    cmake --build   "${IWYU_BUILD}" -j$(nproc)
+    cmake --build   "${IWYU_BUILD}" -j $(nproc --all)
     cmake --install "${IWYU_BUILD}"
-
     rm -rf "${IWYU_SRC}"
 
     iwyu_resources="$(include-what-you-use --print-resource-dir 2>/dev/null)"
@@ -196,5 +207,12 @@ ENV CXX="${USE_CLANG:+"clang++"}"
 # if CC is null, set it to 'gcc' (or leave as is otherwise).
 ENV CC="${CC:-"gcc"}"
 ENV CXX="${CXX:-"g++"}"
+
+COPY <<EOF "$HOME/.gitconfig"
+[init]
+    defaultBranch = main
+[safe]
+    directory = /workspaces
+EOF
 
 CMD sleep infinity
