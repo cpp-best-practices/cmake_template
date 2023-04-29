@@ -33,7 +33,7 @@ jobs:
           - OFF
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
@@ -74,7 +74,7 @@ jobs:
       - name: Insert new org and project
         run: |
           # rename the CMake project to match the github project
-          find src include test fuzz_test cmake -type f -exec sed -i "s/myproject/${{ env.NEW_SAFE_PROJECT }}/gi" CMakeLists.txt Dependencies.cmake ProjectOptions.cmake .github/workflows/ci.yml .github/workflows/codeql-analysis.yml configured_files/config.hpp.in {} +
+          find src include test fuzz_test cmake -type f -exec sed -i "s/myproject/${{ env.NEW_SAFE_PROJECT }}/gi" .github/constants.env CMakeLists.txt Dependencies.cmake ProjectOptions.cmake .github/workflows/ci.yml .github/workflows/codeql-analysis.yml configured_files/config.hpp.in {} +
 
           # Update URL placeholders for project
           sed -i "s|%%myurl%%|${{ fromJson(steps.get_repo_meta.outputs.data).html_url }}|gi" CMakeLists.txt
@@ -122,10 +122,16 @@ jobs:
           gcovr: false
           opencppcoverage: false
 
+      - name: Project Name
+        uses: cardinalby/export-env-action@v2
+        with:
+          envFile: '.github/constants.env'
+
+
 
       - name: Test simple configuration to make sure nothing broke
         run: |
-          cmake -S . -B ./build -G "${{ matrix.generator }}" -DCMAKE_BUILD_TYPE:STRING=${{ matrix.build_type }} -DENABLE_DEVELOPER_MODE:BOOL=${{ matrix.developer_mode }} -DOPT_ENABLE_COVERAGE:BOOL=OFF
+          cmake -S . -B ./build -G "${{ matrix.generator }}" -DCMAKE_BUILD_TYPE:STRING=${{ matrix.build_type }} -D${{ env.NEW_SAFE_PROJECT }}_PACKAGING_MAINTAINER_MODE:BOOL=ON
           # Build it because we may have broken something in the cpp/hpp files
           cmake --build build
 
@@ -156,7 +162,7 @@ jobs:
           - OFF
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
@@ -223,9 +229,9 @@ jobs:
 
       - name: Test simple configuration to make sure nothing broke (default compiler,cmake,developer_mode OFF)
         run: |
-          cmake -S . -B ./build -G "${{ matrix.generator }}" -DCMAKE_BUILD_TYPE:STRING=${{ matrix.build_type }} -DENABLE_DEVELOPER_MODE:BOOL=${{ matrix.developer_mode }} -DOPT_ENABLE_COVERAGE:BOOL=OFF
+          cmake -S . -B ./build -G "${{ matrix.generator }}" -DCMAKE_BUILD_TYPE:STRING=${{ matrix.build_type }} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=ON
 
-      - uses: EndBug/add-and-commit@v4
+      - uses: EndBug/add-and-commit@v9
         # only commit and push if we are a template and project name has changed
         if: fromJson(steps.get_repo_meta.outputs.data).is_template == true && env.TEST_RUN == 'false'
         with:
