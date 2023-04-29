@@ -1,8 +1,8 @@
 #ifndef MYPROJECT_CONFIG_HPP
 #define MYPROJECT_CONFIG_HPP
 
-// this is a basic example of how a CMake configured file might look in this particular case,
-// we are using it to set the version number of our executable
+// this is a basic example of how a CMake configured file might look in this
+// particular case, we are using it to set the version number of our executable
 
 #include <string_view>
 
@@ -17,6 +17,6 @@ inline constexpr int project_version_minor { @PROJECT_VERSION_MINOR@ };
 inline constexpr int project_version_patch { @PROJECT_VERSION_PATCH@ };
 inline constexpr int project_version_tweak { @PROJECT_VERSION_TWEAK@ };
 // clang-format on
-}// namespace myproject::cmake
+} // namespace myproject::cmake
 
 #endif
