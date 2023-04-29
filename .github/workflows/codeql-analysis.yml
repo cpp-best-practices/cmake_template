@@ -20,8 +20,6 @@ on:
   schedule:
     - cron: "38 0 * * 5"
 
-env:
-  PROJECT_NAME: myproject
 
 jobs:
   analyze:
@@ -49,7 +47,7 @@ jobs:
           - ON
 
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
@@ -59,11 +57,11 @@ jobs:
           packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
           generator: ${{ matrix.generator }}
 
-      - name: Setup Cpp
-        uses: aminya/setup-cpp@v1
-        with:
-          compiler: ${{ matrix.compiler }}
-          vcvarsall: ${{ contains(matrix.os, 'windows' )}}
+    - name: Project Name
+      uses: cardinalby/export-env-action@v2
+      with:
+        envFile: '.github/constants.env'
+
 
           cmake: true
           ninja: true

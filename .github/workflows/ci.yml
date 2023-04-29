@@ -11,7 +11,6 @@ on:
 env:
   CLANG_TIDY_VERSION: "15.0.2"
   VERBOSE: 1
-  PROJECT_NAME: myproject
 
 jobs:
   Test:
@@ -40,7 +39,7 @@ jobs:
         build_type:
           - Release
           - Debug
-        package_maintainer_mode:
+        packaging_maintainer_mode:
           - ON
           - OFF
         build_shared:
@@ -67,7 +66,7 @@ jobs:
 
           # Set up preferred package generators, for given build configurations
           - build_type: Release
-            package_maintainer_mode: OFF
+            packaging_maintainer_mode: OFF
             package_generator: TBZ2
 
           # This exists solely to make sure a non-multiconfig build works
@@ -76,7 +75,7 @@ jobs:
             generator: "Unix Makefiles"
             build_type: Debug
             gcov_executable: gcov
-            package_maintainer_mode: On
+            packaging_maintainer_mode: On
             enable_ipo: Off
 
           # Windows msvc builds
@@ -84,34 +83,34 @@ jobs:
             compiler: msvc
             generator: "Visual Studio 17 2022"
             build_type: Debug
-            package_maintainer_mode: On
+            packaging_maintainer_mode: On
             enable_ipo: On
 
           - os: windows-2022
             compiler: msvc
             generator: "Visual Studio 17 2022"
             build_type: Release
-            package_maintainer_mode: On
+            packaging_maintainer_mode: On
             enable_ipo: On
 
           - os: windows-2022
             compiler: msvc
             generator: "Visual Studio 17 2022"
             build_type: Debug
-            package_maintainer_mode: Off
+            packaging_maintainer_mode: Off
 
           - os: windows-2022
             compiler: msvc
             generator: "Visual Studio 17 2022"
             build_type: Release
-            package_maintainer_mode: Off
+            packaging_maintainer_mode: Off
             package_generator: ZIP
 
           - os: windows-2022
             compiler: msvc
             generator: "Visual Studio 17 2022"
             build_type: Release
-            package_maintainer_mode: On
+            packaging_maintainer_mode: On
             enable_ipo: On
             build_shared: On
 
@@ -123,15 +122,21 @@ jobs:
           script: |
             core.setFailed('There is a mismatch between configured llvm compiler and clang-tidy version chosen')
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
           compiler: ${{ matrix.compiler }}
           build_type: ${{ matrix.build_type }}
-          package_maintainer_mode: ${{ matrix.package_maintainer_mode }}
+          packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
           generator: ${{ matrix.generator }}
+
+      - name: Project Name
+        uses: cardinalby/export-env-action@v2
+        with:
+          envFile: '.github/constants.env'
+
 
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
@@ -152,7 +157,7 @@ jobs:
 
       - name: Configure CMake
         run: |
-          cmake -S . -B ./build -G "${{matrix.generator}}" -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.package_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }}
+          cmake -S . -B ./build -G "${{matrix.generator}}" -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }}
 
       - name: Build
         # Execute the build.  You can specify a specific target with "--target <NAME>"

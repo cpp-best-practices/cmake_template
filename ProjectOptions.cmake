@@ -3,14 +3,8 @@ include(cmake/LibFuzzer.cmake)
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 
-macro(myproject_setup_options)
-  option(myproject_ENABLE_HARDENING "Enable hardening" ON)
-  option(myproject_ENABLE_COVERAGE "Enable coverage reporting" OFF)
-  cmake_dependent_option(
-    myproject_ENABLE_GLOBAL_HARDENING "Attempt to push hardening options to built dependencies" ON
-    myproject_ENABLE_HARDENING OFF
-  )
 
+macro(myproject_supports_sanitizers)
   if((CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*") AND NOT WIN32)
     set(SUPPORTS_UBSAN ON)
   else()
@@ -22,6 +16,19 @@ macro(myproject_setup_options)
   else()
     set(SUPPORTS_ASAN ON)
   endif()
+endmacro()
+
+macro(myproject_setup_options)
+  option(myproject_ENABLE_HARDENING "Enable hardening" ON)
+  option(myproject_ENABLE_COVERAGE "Enable coverage reporting" OFF)
+  cmake_dependent_option(
+    myproject_ENABLE_GLOBAL_HARDENING
+    "Attempt to push hardening options to built dependencies"
+    ON
+    myproject_ENABLE_HARDENING
+    OFF)
+
+  myproject_supports_sanitizers()
 
   if(NOT PROJECT_IS_TOP_LEVEL OR myproject_PACKAGING_MAINTAINER_MODE)
     option(myproject_ENABLE_IPO "Enable IPO/LTO" OFF)
@@ -93,9 +100,12 @@ macro(myproject_global_options)
     myproject_enable_ipo()
   endif()
 
+  myproject_supports_sanitizers()
+
   if(myproject_ENABLE_HARDENING AND myproject_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
-    if(myproject_ENABLE_SANITIZER_UNDEFINED
+    if(NOT SUPPORTS_UBSAN 
+       OR myproject_ENABLE_SANITIZER_UNDEFINED
        OR myproject_ENABLE_SANITIZER_ADDRESS
        OR myproject_ENABLE_SANITIZER_THREAD
        OR myproject_ENABLE_SANITIZER_LEAK
@@ -167,7 +177,11 @@ macro(myproject_local_options)
 
   if(myproject_ENABLE_HARDENING AND NOT myproject_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
-    if(myproject_ENABLE_SANITIZER_UNDEFINED)
+    if(NOT SUPPORTS_UBSAN 
+       OR myproject_ENABLE_SANITIZER_UNDEFINED
+       OR myproject_ENABLE_SANITIZER_ADDRESS
+       OR myproject_ENABLE_SANITIZER_THREAD
+       OR myproject_ENABLE_SANITIZER_LEAK)
       set(ENABLE_UBSAN_MINIMAL_RUNTIME FALSE)
     else()
       set(ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
