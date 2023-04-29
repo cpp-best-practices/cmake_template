@@ -12,7 +12,6 @@ on:
 env:
   CLANG_TIDY_VERSION: "15.0.2"
   VERBOSE: 1
-  PROJECT_NAME: myproject
 
 
 jobs:
@@ -135,6 +134,11 @@ jobs:
           build_type: ${{ matrix.build_type }}
           package_maintainer_mode: ${{ matrix.package_maintainer_mode }}
           generator: ${{ matrix.generator }}
+
+      - name: Project name 
+        run: |
+          echo "PROJECT_NAME=`cat .github/variables/project_name`" >> $GITHUB_ENV
+
 
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
