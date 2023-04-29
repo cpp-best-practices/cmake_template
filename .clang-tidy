@@ -7,10 +7,6 @@ Checks: "*,
   -llvm*,
   -zircon-*,
   -*-non-private-member-variables-in-classes,
-  -modernize-use-trailing-return-type,
-  -readability-avoid-const-params-in-decls,
-  -readability-else-after-return,
-  -readability-static-accessed-through-instance,
   "
 
 CheckOptions:

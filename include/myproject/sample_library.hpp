@@ -3,9 +3,9 @@
 
 #include <myproject/sample_library_export.hpp>
 
-[[nodiscard]] SAMPLE_LIBRARY_EXPORT int factorial(int) noexcept;
+[[nodiscard]] SAMPLE_LIBRARY_EXPORT auto factorial(int) noexcept -> int;
 
-[[nodiscard]] constexpr int factorial_constexpr(int input) noexcept
+[[nodiscard]] constexpr auto factorial_constexpr(int input) noexcept -> int
 {
   if (input == 0) { return 1; }
 
