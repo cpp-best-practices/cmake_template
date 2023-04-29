@@ -20,8 +20,6 @@ on:
   schedule:
     - cron: '38 0 * * 5'
 
-env:
-  PROJECT_NAME: myproject
 
 jobs:
   analyze:
@@ -50,7 +48,7 @@ jobs:
 
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Setup Cache
       uses: ./.github/actions/setup_cache
@@ -59,6 +57,11 @@ jobs:
         build_type: ${{ matrix.build_type }}
         packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
         generator: ${{ matrix.generator }}
+
+    - name: Project Name
+      uses: cardinalby/export-env-action@v2
+      with:
+        envFile: '.github/constants.env'
 
 
     - name: Setup Cpp
