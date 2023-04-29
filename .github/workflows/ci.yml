@@ -12,7 +12,7 @@ on:
 env:
   CLANG_TIDY_VERSION: "15.0.2"
   VERBOSE: 1
-  PROJECT_NAME: ${{ env.PROJECT_NAME }}
+  PROJECT_NAME: myproject
 
 
 jobs:
