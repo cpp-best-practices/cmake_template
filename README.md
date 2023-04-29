@@ -1,11 +1,14 @@
-# ftxui_template
+# cmake_template
 
-[![ci](https://github.com/cpp-best-practices/ftxui_template/actions/workflows/ci.yml/badge.svg)](https://github.com/cpp-best-practices/ftxui_template/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/cpp-best-practices/ftxui_template/branch/main/graph/badge.svg)](https://codecov.io/gh/cpp-best-practices/ftxui_template)
-[![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/github/cpp-best-practices/ftxui_template)](https://lgtm.com/projects/g/cpp-best-practices/ftxui_template/context:cpp)
-[![CodeQL](https://github.com/cpp-best-practices/ftxui_template/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/cpp-best-practices/ftxui_template/actions/workflows/codeql-analysis.yml)
+[![ci](https://github.com/cpp-best-practices/cmake_template/actions/workflows/ci.yml/badge.svg)](https://github.com/cpp-best-practices/cmake_template/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/cpp-best-practices/cmake_template/branch/main/graph/badge.svg)](https://codecov.io/gh/cpp-best-practices/cmake_template)
+[![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/github/cpp-best-practices/cmake_template)](https://lgtm.com/projects/g/cpp-best-practices/cmake_template/context:cpp)
+[![CodeQL](https://github.com/cpp-best-practices/cmake_template/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/cpp-best-practices/cmake_template/actions/workflows/codeql-analysis.yml)
 
-## About ftxui_template
+## About cmake_template
+
+**NOTE** This is undergoing a major overhaul on a new branch currently.
+
 
 This is a C++ Best Practices GitHub template for getting up and running with C++ quickly.
 
@@ -14,7 +17,7 @@ By default (collectively known as `ENABLE_DEVELOPER_MODE`)
  * Address Sanitizer and Undefined Behavior Sanitizer enabled where possible
  * Warnings as errors
  * clang-tidy and cppcheck static analysis
- * conan for dependencies
+ * CPM for dependencies
 
 It includes
 
@@ -25,7 +28,6 @@ It includes
 It requires
 
  * cmake
- * conan
  * a compiler
 
 
@@ -36,7 +38,7 @@ This project gets you started with a simple example of using FTXUI, which happen
 
 ### Use the Github template
 First, click the green `Use this template` button near the top of this page.
-This will take you to Github's ['Generate Repository'](https://github.com/cpp-best-practices/ftxui_template/generate) page.
+This will take you to Github's ['Generate Repository'](https://github.com/cpp-best-practices/cmake_template/generate) page.
 Fill in a repository name and short description, and click 'Create repository from template'.
 This will allow you to create a new repository in your Github account,
 prepopulated with the contents of this project.

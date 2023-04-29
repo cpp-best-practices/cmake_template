@@ -11,9 +11,8 @@ For the subsequent builds, in case you change the source code, you only need to 
 
 By default (if you don't set environment variables `CC` and `CXX`), the system default compiler will be used.
 
-Conan and CMake use the environment variables CC and CXX to decide which compiler to use. So to avoid the conflict issues only specify the compilers using these variables.
+CMake uses the environment variables CC and CXX to decide which compiler to use. So to avoid the conflict issues only specify the compilers using these variables.
 
-CMake will detect which compiler was used to build each of the Conan targets. If you build all of your Conan targets with one compiler, and then build your CMake targets with a different compiler, the project may fail to build.
 
 <details>
 <summary>Commands for setting the compilers </summary>
