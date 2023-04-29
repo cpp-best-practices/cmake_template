@@ -48,7 +48,7 @@ jobs:
 
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Setup Cache
       uses: ./.github/actions/setup_cache
@@ -61,7 +61,7 @@ jobs:
     - name: Project Name
       uses: cardinalby/export-env-action@v2
       with:
-        envFile: 'constants.env'
+        envFile: '.github/workflows/constants.env'
 
 
     - name: Setup Cpp
