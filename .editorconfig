@@ -6,3 +6,6 @@ end_of_line = lf
 indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
+
+[*.{c,cpp,h,hpp}]
+indent_size = 4

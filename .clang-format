@@ -1,4 +1,47 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/grizzie17/clang-format-schema/master/clang-format-schema.json
 
+# Reference: https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+
+AlignArrayOfStructures: Left
+AlignConsecutiveAssignments:
+  AlignCompound: true
+  Enabled: true
+AlignConsecutiveBitFields:
+  Enabled: true
+AlignConsecutiveDeclarations:
+  Enabled: true
+AlignConsecutiveMacros:
+  Enabled: true
+AlignEscapedNewlines: Left
+AlignOperands: AlignAfterOperator
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: Empty
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLambdasOnASingleLine: Empty
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakConstructorInitializers: AfterColon
+BreakInheritanceList: AfterColon
 ColumnLimit: 120
+EmptyLineBeforeAccessModifier: Always
+ExperimentalAutoDetectBinPacking: true
+IncludeBlocks: Regroup
+IndentCaseLabels: true
+IndentExternBlock: Indent
 IndentWidth: 4
+InsertBraces: true
+InsertTrailingCommas: Wrapped
+KeepEmptyLinesAtTheStartOfBlocks: false
+NamespaceIndentation: All
+PackConstructorInitializers: CurrentLine
+QualifierAlignment: Left
+RemoveSemicolon: true
+RequiresClausePosition: SingleLine
+SeparateDefinitionBlocks: Always
+SortIncludes: CaseInsensitive
+SortUsingDeclarations: LexicographicNumeric
