@@ -20,8 +20,6 @@ on:
   schedule:
     - cron: '38 0 * * 5'
 
-env:
-  PROJECT_NAME: myproject
 
 jobs:
   analyze:
@@ -59,6 +57,10 @@ jobs:
         build_type: ${{ matrix.build_type }}
         packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
         generator: ${{ matrix.generator }}
+
+    - name: Project Name
+      run: |
+        echo "PROJECT_NAME=`cat .github/variables/PROJECT_NAME`" >> $GITHUB_ENV
 
 
     - name: Setup Cpp
