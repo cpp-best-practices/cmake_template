@@ -61,7 +61,7 @@ jobs:
     - name: Project Name
       uses: cardinalby/export-env-action@v2
       with:
-        envFile: '.github/workflows/constants.env'
+        envFile: '.github/constants.env'
 
 
     - name: Setup Cpp
