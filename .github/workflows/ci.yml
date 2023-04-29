@@ -136,8 +136,9 @@ jobs:
           generator: ${{ matrix.generator }}
 
       - name: Project Name
-        run: |
-          echo "PROJECT_NAME=`cat .github/variables/PROJECT_NAME`" >> $GITHUB_ENV
+        uses: cardinalby/export-env-action@v2
+        with:
+          envFile: 'constants.env'
 
 
       - name: Setup Cpp

@@ -74,7 +74,7 @@ jobs:
       - name: Insert new org and project
         run: |
           # rename the CMake project to match the github project
-          find src include test fuzz_test cmake -type f -exec sed -i "s/myproject/${{ env.NEW_SAFE_PROJECT }}/gi" .github/variables/PROJECT_NAME CMakeLists.txt Dependencies.cmake ProjectOptions.cmake .github/workflows/ci.yml .github/workflows/codeql-analysis.yml configured_files/config.hpp.in {} +
+          find src include test fuzz_test cmake -type f -exec sed -i "s/myproject/${{ env.NEW_SAFE_PROJECT }}/gi" .github/workflows/constants.env CMakeLists.txt Dependencies.cmake ProjectOptions.cmake .github/workflows/ci.yml .github/workflows/codeql-analysis.yml configured_files/config.hpp.in {} +
 
           # Update URL placeholders for project
           sed -i "s|%%myurl%%|${{ fromJson(steps.get_repo_meta.outputs.data).html_url }}|gi" CMakeLists.txt
@@ -122,10 +122,16 @@ jobs:
           gcovr: false
           opencppcoverage: false
 
+      - name: Project Name
+        uses: cardinalby/export-env-action@v2
+        with:
+          envFile: 'constants.env'
+
+
 
       - name: Test simple configuration to make sure nothing broke
         run: |
-          cmake -S . -B ./build -G "${{ matrix.generator }}" -DCMAKE_BUILD_TYPE:STRING=${{ matrix.build_type }} -DENABLE_DEVELOPER_MODE:BOOL=${{ matrix.developer_mode }} -DOPT_ENABLE_COVERAGE:BOOL=OFF
+          cmake -S . -B ./build -G "${{ matrix.generator }}" -DCMAKE_BUILD_TYPE:STRING=${{ matrix.build_type }} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=ON
           # Build it because we may have broken something in the cpp/hpp files
           cmake --build build
 
