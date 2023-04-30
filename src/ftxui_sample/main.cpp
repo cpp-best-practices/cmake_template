@@ -151,9 +151,12 @@ auto consequence_game() -> void {
     static constexpr int randomization_iterations = 100;
     static constexpr int random_seed              = 42;
 
-    std::mt19937                               gen32{random_seed}; // NOLINT(cert-msc32-c, cert-msc51-cpp)
+    std::mt19937 gen32{random_seed}; // NOLINT(cert-msc32-c, cert-msc51-cpp)
+
+    // NOLINTBEGIN(misc-const-correctness)
     std::uniform_int_distribution<std::size_t> cur_x(static_cast<std::size_t>(0), decltype(game_board)::width - 1);
     std::uniform_int_distribution<std::size_t> cur_y(static_cast<std::size_t>(0), decltype(game_board)::height - 1);
+    // NOLINTEND(misc-const-correctness)
 
     for (int i = 0; i < randomization_iterations; ++i) {
         game_board.press(cur_x(gen32), cur_y(gen32));

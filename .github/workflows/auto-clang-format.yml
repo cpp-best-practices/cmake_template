@@ -1,23 +1,32 @@
 name: auto-clang-format
-on: [pull_request]
+
+on:
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: DoozyX/clang-format-lint-action@v0.13
-      with:
-        source: '.'
-        exclude: './third_party ./external'
-        extensions: 'h,cpp,hpp'
-        clangFormatVersion: 12
-        inplace: True
-    - uses: EndBug/add-and-commit@v4
-      with:
-        author_name: Clang Robot
-        author_email: robot@example.com
-        message: ':art: Committing clang-format changes'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout repository
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+
+      - name: Run clang-format
+        uses: DoozyX/clang-format-lint-action@v0.13
+        with:
+          clangFormatVersion: 12
+          exclude: "./third_party ./external"
+          extensions: "h,cpp,hpp"
+          inplace: True
+          source: "."
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          author_email: robot@example.com
+          author_name: Clang Robot
+          message: ":art: Committing clang-format changes"

@@ -2,14 +2,10 @@ name: Devcontainer
 
 on:
   pull_request:
-    branches:
-      - "main"
     paths:
       - ".devcontainer/**"
 
   push:
-    branches:
-      - "main"
     paths:
       - ".devcontainer/**"
 
