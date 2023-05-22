@@ -7,10 +7,11 @@ on:
   release:
     types: [published]
   push:
-    tags:
     branches:
       - main
       - develop
+permissions:
+  contents: write
 
 env:
   TEMPLATES_PATH: ".github/template"
