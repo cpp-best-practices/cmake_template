@@ -103,7 +103,7 @@ The following compilers should work:
 	</details>
 
 
-2. [CMake 3.15+](https://cmake.org/)
+2. [CMake 3.21+](https://cmake.org/)
 	<details>
 	<summary>Install Command</summary>
 
