@@ -6,9 +6,6 @@
 
 ## About cmake_template
 
-**NOTE** This is undergoing a major overhaul on a new branch currently.
-
-
 This is a C++ Best Practices GitHub template for getting up and running with C++ quickly.
 
 By default (collectively known as `ENABLE_DEVELOPER_MODE`)
@@ -53,7 +50,6 @@ Now you can clone the project locally and get to work!
 
  * [Dependency Setup](README_dependencies.md)
  * [Building Details](README_building.md)
- * [Troubleshooting](README_troubleshooting.md)
  * [Docker](README_docker.md)
 
 ## Testing
