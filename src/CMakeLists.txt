@@ -1,2 +1,4 @@
-add_subdirectory(sample_library)
-add_subdirectory(ftxui_sample)
+foreach(d ${MY_PROJECT_SUBDIRECTORIES})
+   MESSAGE(STATUS "Adding subdirectory: ${d}")
+   add_subdirectory(${d})
+endforeach()
