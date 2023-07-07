@@ -1,0 +1,39 @@
+version: "3.9"
+
+x-ptrace: &ptrace
+  cap_add:
+    - SYS_PTRACE
+  security_opt:
+    - seccomp:unconfined
+
+x-wslg: &wslg
+  environment:
+    DISPLAY: :0
+    PULSE_SERVER: /mnt/wslg/PulseServer
+    WAYLAND_DISPLAY: wayland-0
+    XDG_RUNTIME_DIR: /mnt/wslg/runtime-dir
+  volumes:
+    - /run/desktop/mnt/host/wslg:/mnt/wslg
+    - /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix
+
+x-base: &base
+  <<: [*ptrace, *wslg]
+  init: true
+  volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /etc/timezone:/etc/timezone:ro
+
+services:
+  app:
+    <<: *base
+    # TODO: https://github.com/microsoft/vscode-remote-release/issues/8158
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: ghcr.io/fruzitent/devcontainers/cpp:latest
+    pull_policy: if_not_present
+    volumes:
+      - data:/workspaces
+
+volumes:
+  data:

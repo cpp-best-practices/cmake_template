@@ -1,0 +1,40 @@
+{
+  /** c++ */
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "clangd.fallbackFlags": ["-I${workspaceFolder}", "-std=c++20"],
+  "cmake.configureOnOpen": false,
+  "cmakeFormat.args": [
+    "--config-file",
+    "${workspaceFolder}/.cmake-format.json"
+  ],
+  /** formatting */
+  "editor.formatOnSave": true,
+  "files.autoSave": "onFocusChange",
+  "[c][cpp]": {
+    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+  },
+  "[dockercompose][json][jsonc][yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  /** telemetry */
+  "gitlens.telemetry.enabled": false,
+  "telemetry.telemetryLevel": "off",
+  /** ui */
+  "editor.accessibilitySupport": "off",
+  "editor.fontLigatures": true,
+  "editor.inlayHints.enabled": "on",
+  "editor.inlineSuggest.enabled": true,
+  "editor.minimap.enabled": false,
+  "editor.stickyScroll.enabled": true,
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.openEditors.visible": 9,
+  "gitlens.views.searchAndCompare.files.layout": "tree",
+  "scm.defaultViewMode": "tree",
+  "window.commandCenter": true,
+  "workbench.colorTheme": "GitHub Dark Default",
+  "workbench.startupEditor": "none",
+  /** vsc */
+  "git.autofetch": true,
+  "git.confirmSync": false
+}

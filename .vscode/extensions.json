@@ -1,0 +1,18 @@
+{
+  "recommendations": [
+    "cheshirekow.cmake-format",
+    "cschlosser.doxdocgen",
+    "eamodio.gitlens",
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "github.vscode-github-actions",
+    "github.vscode-pull-request-github",
+    "llvm-vs-code-extensions.vscode-clangd",
+    "ms-vscode.cpptools-extension-pack",
+    "ms-vscode.makefile-tools",
+    "ms-vscode.vscode-github-issue-notebooks",
+    "mutantdino.resourcemonitor",
+    "usernamehw.errorlens",
+    "vadimcn.vscode-lldb"
+  ]
+}
