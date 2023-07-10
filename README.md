@@ -19,7 +19,7 @@ It includes
 
  * a basic CLI example
  * examples for fuzz, unit, and constexpr testing
- * large github action testing matrix
+ * large GitHub action testing matrix
 
 It requires
 
@@ -32,15 +32,16 @@ This project gets you started with a simple example of using FTXUI, which happen
 
 ## Getting Started
 
-### Use the Github template
+### Use the GitHub template
 First, click the green `Use this template` button near the top of this page.
-This will take you to Github's ['Generate Repository'](https://github.com/cpp-best-practices/cmake_template/generate) page.
+This will take you to GitHub's ['Generate Repository'](https://github.com/cpp-best-practices/cmake_template/generate)
+page.
 Fill in a repository name and short description, and click 'Create repository from template'.
-This will allow you to create a new repository in your Github account,
+This will allow you to create a new repository in your GitHub account,
 prepopulated with the contents of this project.
 
 After creating the project please wait until the cleanup workflow has finished 
-setting up your project and commited the changes.
+setting up your project and committed the changes.
 
 Now you can clone the project locally and get to work!
 
