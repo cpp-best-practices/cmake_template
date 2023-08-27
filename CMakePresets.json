@@ -50,6 +50,9 @@
                     "Darwin"
                 ]
             },
+            "cacheVariables": {
+                "CMAKE_UNITY_BUILD": true
+            },
             "vendor": {
                 "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
                     "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
@@ -142,6 +145,8 @@
             "description": "Target Unix-like OS with the gcc compiler, debug build type",
             "inherits": "conf-unixlike-common",
             "cacheVariables": {
+                "myproject_ENABLE_COVERAGE": false,
+                "CMAKE_SKIP_INSTALL_RULES": true,
                 "CMAKE_C_COMPILER": "gcc",
                 "CMAKE_CXX_COMPILER": "g++",
                 "CMAKE_BUILD_TYPE": "Debug"
@@ -164,6 +169,8 @@
             "description": "Target Unix-like OS with the clang compiler, debug build type",
             "inherits": "conf-unixlike-common",
             "cacheVariables": {
+                "myproject_ENABLE_COVERAGE": false,
+                "CMAKE_SKIP_INSTALL_RULES": true,
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_BUILD_TYPE": "Debug"
