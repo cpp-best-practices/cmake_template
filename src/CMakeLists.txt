@@ -1,2 +1,4 @@
 add_subdirectory(sample_library)
-add_subdirectory(ftxui_sample)
+if(NOT CMAKE_UNITY_BUILD)
+  add_subdirectory(ftxui_sample)
+endif()
