@@ -10,6 +10,7 @@ CMakeUserPresets.json
 # IDE files
 .vs/
 .idea/
+.direnv/
 .vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
