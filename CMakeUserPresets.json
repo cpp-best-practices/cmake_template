@@ -1,0 +1,171 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 26,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "default-config",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_HOST_SYSTEM_PROCESSOR": "$penv{PROCESSOR_ARCHITECTURE}"
+            }
+        },
+        {
+            "name": "common-config",
+            "description": "Settings for all toolchains",
+            "hidden": true,
+            "inherits": "default-config",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/install/${presetName}",
+            "cacheVariables": {
+                "ENABLE_DOXYGEN": false,
+                "ENABLE_CPPCHECK": false,
+                "ENABLE_CLANG_TIDY": false
+            },
+            "vendor": {
+                "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+                    "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+                }
+            }
+        },
+        {
+            "name": "debug",
+            "displayName": "Debug",
+            "description": "Debug build type",
+            "inherits": "conf-unixlike-common",
+            "cacheVariables": {
+                "CMAKE_SKIP_INSTALL_RULES": true,
+                "CMAKE_BUILD_TYPE": "Debug",
+                "myproject_ENABLE_COVERAGE": true
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release",
+            "description": "Release build type",
+            "inherits": "conf-unixlike-common",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "ENABLE_DOXYGEN": true
+            }
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "common-test",
+            "description":
+                "Test CMake settings that apply to all configurations",
+            "hidden": true,
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "error",
+                "stopOnFailure": true
+            }
+        },
+        {
+            "name": "debug",
+            "displayName": "Strict",
+            "description": "Enable output and stop on failure",
+            "inherits": "common-test",
+            "configuration": "Debug",
+            "configurePreset": "debug"
+        },
+        {
+            "name": "release",
+            "displayName": "Strict",
+            "description": "Enable output and stop on failure",
+            "inherits": "common-test",
+            "configuration": "Release",
+            "configurePreset": "release"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "release",
+            "configurePreset": "release"
+        },
+        {
+            "name": "install",
+            "configurePreset": "release",
+            "targets": [
+                "install"
+            ]
+        },
+        {
+            "name": "doxygen-docs",
+            "configurePreset": "release",
+            "targets": [
+                "doxygen-docs"
+            ]
+        },
+        {
+            "name": "debug",
+            "configurePreset": "debug"
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "release",
+            "configurePreset": "release",
+            "generators": [
+                "TGZ"
+            ]
+        }
+    ],
+    "workflowPresets": [
+        {
+            "description": "Developer workflow without installation",
+            "name": "debug",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "debug"
+                },
+                {
+                    "type": "build",
+                    "name": "debug"
+                },
+                {
+                    "type": "test",
+                    "name": "debug"
+                }
+            ]
+        },
+        {
+            "description": "Release workflow without test",
+            "name": "release",
+            "steps": [
+                {
+                    "name": "release",
+                    "type": "configure"
+                },
+                {
+                    "name": "release",
+                    "type": "build"
+                },
+                {
+                    "name": "release",
+                    "type": "test"
+                },
+                {
+                    "name": "install",
+                    "type": "build"
+                },
+                {
+                    "name": "doxygen-docs",
+                    "type": "build"
+                },
+                {
+                    "name": "release",
+                    "type": "package"
+                }
+            ]
+        }
+    ]
+}

@@ -94,6 +94,11 @@ endif()
 # set the startup project for the "play" button in MSVC
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT intro)
 
+if(ENABLE_DOXYGEN)
+  include(cmake/Doxygen.cmake)
+  myproject_enable_doxygen("")
+endif()
+
 if(CMAKE_SKIP_INSTALL_RULES)
   return()
 endif()
