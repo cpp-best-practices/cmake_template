@@ -1,8 +1,8 @@
 {
-    "version": 3,
+    "version": 6,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 21,
+        "minor": 25,
         "patch": 0
     },
     "configurePresets": [
@@ -16,7 +16,8 @@
         },
         {
             "name": "conf-windows-common",
-            "description": "Windows settings for MSBuild toolchain that apply to msvc and clang",
+            "description":
+                "Windows settings for MSBuild toolchain that apply to msvc and clang",
             "hidden": true,
             "inherits": "conf-common",
             "condition": {
@@ -50,6 +51,9 @@
                     "Darwin"
                 ]
             },
+            "cacheVariables": {
+                "CMAKE_UNITY_BUILD": true
+            },
             "vendor": {
                 "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
                     "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
@@ -59,7 +63,8 @@
         {
             "name": "windows-msvc-debug-developer-mode",
             "displayName": "msvc Debug (Developer Mode)",
-            "description": "Target Windows with the msvc compiler, debug build type",
+            "description":
+                "Target Windows with the msvc compiler, debug build type",
             "inherits": "conf-windows-common",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl",
@@ -71,7 +76,8 @@
         {
             "name": "windows-msvc-release-developer-mode",
             "displayName": "msvc Release (Developer Mode)",
-            "description": "Target Windows with the msvc compiler, release build type",
+            "description":
+                "Target Windows with the msvc compiler, release build type",
             "inherits": "conf-windows-common",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl",
@@ -83,7 +89,8 @@
         {
             "name": "windows-msvc-debug-user-mode",
             "displayName": "msvc Debug (User Mode)",
-            "description": "Target Windows with the msvc compiler, debug build type",
+            "description":
+                "Target Windows with the msvc compiler, debug build type",
             "inherits": "conf-windows-common",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl",
@@ -95,7 +102,8 @@
         {
             "name": "windows-msvc-release-user-mode",
             "displayName": "msvc Release (User Mode)",
-            "description": "Target Windows with the msvc compiler, release build type",
+            "description":
+                "Target Windows with the msvc compiler, release build type",
             "inherits": "conf-windows-common",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl",
@@ -107,7 +115,8 @@
         {
             "name": "windows-clang-debug",
             "displayName": "clang Debug",
-            "description": "Target Windows with the clang compiler, debug build type",
+            "description":
+                "Target Windows with the clang compiler, debug build type",
             "inherits": "conf-windows-common",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "clang-cl",
@@ -123,7 +132,8 @@
         {
             "name": "windows-clang-release",
             "displayName": "clang Release",
-            "description": "Target Windows with the clang compiler, release build type",
+            "description":
+                "Target Windows with the clang compiler, release build type",
             "inherits": "conf-windows-common",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "clang-cl",
@@ -137,20 +147,24 @@
             }
         },
         {
-            "name": "unixlike-gcc-debug",
+            "name": "gcc-debug",
             "displayName": "gcc Debug",
-            "description": "Target Unix-like OS with the gcc compiler, debug build type",
+            "description":
+                "Target Unix-like OS with the gcc compiler, debug build type",
             "inherits": "conf-unixlike-common",
             "cacheVariables": {
+                "myproject_ENABLE_COVERAGE": false,
+                "CMAKE_SKIP_INSTALL_RULES": true,
                 "CMAKE_C_COMPILER": "gcc",
                 "CMAKE_CXX_COMPILER": "g++",
                 "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
-            "name": "unixlike-gcc-release",
+            "name": "gcc-release",
             "displayName": "gcc Release",
-            "description": "Target Unix-like OS with the gcc compiler, release build type",
+            "description":
+                "Target Unix-like OS with the gcc compiler, release build type",
             "inherits": "conf-unixlike-common",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "gcc",
@@ -159,20 +173,24 @@
             }
         },
         {
-            "name": "unixlike-clang-debug",
+            "name": "clang-debug",
             "displayName": "clang Debug",
-            "description": "Target Unix-like OS with the clang compiler, debug build type",
+            "description":
+                "Target Unix-like OS with the clang compiler, debug build type",
             "inherits": "conf-unixlike-common",
             "cacheVariables": {
+                "myproject_ENABLE_COVERAGE": false,
+                "CMAKE_SKIP_INSTALL_RULES": true,
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
-            "name": "unixlike-clang-release",
+            "name": "clang-release",
             "displayName": "clang Release",
-            "description": "Target Unix-like OS with the clang compiler, release build type",
+            "description":
+                "Target Unix-like OS with the clang compiler, release build type",
             "inherits": "conf-unixlike-common",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "clang",
@@ -184,7 +202,8 @@
     "testPresets": [
         {
             "name": "test-common",
-            "description": "Test CMake settings that apply to all configurations",
+            "description":
+                "Test CMake settings that apply to all configurations",
             "hidden": true,
             "output": {
                 "outputOnFailure": true
@@ -223,32 +242,118 @@
             "configurePreset": "windows-clang-release"
         },
         {
-            "name": "test-unixlike-gcc-debug",
+            "name": "gcc-debug",
             "displayName": "Strict",
             "description": "Enable output and stop on failure",
             "inherits": "test-common",
-            "configurePreset": "unixlike-gcc-debug"
+            "configurePreset": "gcc-debug"
         },
         {
-            "name": "test-unixlike-gcc-release",
+            "name": "gcc-release",
             "displayName": "Strict",
             "description": "Enable output and stop on failure",
             "inherits": "test-common",
-            "configurePreset": "unixlike-gcc-release"
+            "configurePreset": "gcc-release"
         },
         {
-            "name": "test-unixlike-clang-debug",
+            "name": "clang-debug",
             "displayName": "Strict",
             "description": "Enable output and stop on failure",
             "inherits": "test-common",
-            "configurePreset": "unixlike-clang-debug"
+            "configurePreset": "clang-debug"
         },
         {
-            "name": "test-unixlike-clang-release",
+            "name": "clang-release",
             "displayName": "Strict",
             "description": "Enable output and stop on failure",
             "inherits": "test-common",
-            "configurePreset": "unixlike-clang-release"
+            "configurePreset": "clang-release"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "clang-release",
+            "configurePreset": "clang-release"
+        },
+        {
+            "name": "clang-install",
+            "configurePreset": "clang-release",
+            "targets": [
+                "install"
+            ]
+        },
+        {
+            "name": "clang-debug",
+            "configurePreset": "clang-debug"
+        },
+        {
+            "name": "gcc-release",
+            "configurePreset": "gcc-release"
+        },
+        {
+            "name": "gcc-install",
+            "configurePreset": "gcc-release",
+            "targets": [
+                "install"
+            ]
+        },
+        {
+            "name": "gcc-debug",
+            "configurePreset": "gcc-debug"
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "clang-release",
+            "configurePreset": "clang-release",
+            "generators": [
+                "TGZ"
+            ]
+        },
+        {
+            "name": "gcc-release",
+            "configurePreset": "gcc-release",
+            "generators": [
+                "TGZ"
+            ]
+        }
+    ],
+    "workflowPresets": [
+        {
+            "description": "Developer workflow without installation",
+            "name": "clang-debug",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "clang-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "clang-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "clang-debug"
+                }
+            ]
+        },
+        {
+            "description": "Release workflow without test",
+            "name": "clang-release",
+            "steps": [
+                {
+                    "name": "clang-release",
+                    "type": "configure"
+                },
+                {
+                    "name": "clang-release",
+                    "type": "build"
+                },
+                {
+                    "name": "clang-release",
+                    "type": "package"
+                }
+            ]
         }
     ]
 }
