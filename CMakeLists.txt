@@ -14,7 +14,7 @@ endif()
 # when compiling with PCH enabled
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(myproject_variables.cmake)
+include(project_variables.cmake)
 
 # Set the project name and language
 project(
