@@ -18,14 +18,3 @@ target_link_system_libraries(
 
 target_include_directories(intro PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")
 
-if(MSVC AND myproject_ENABLE_SANITIZER_ADDRESS)
-    cmake_path(GET CMAKE_CXX_COMPILER PARENT_PATH MSVC_TOOLS_DIR)
-    install(
-        FILES 
-            "${MSVC_TOOLS_DIR}/clang_rt.asan_dbg_dynamic-x86_64.dll"
-            "${MSVC_TOOLS_DIR}/clang_rt.asan_dbg_dynamic-x86_64.pdb"
-            "${MSVC_TOOLS_DIR}/clang_rt.asan_dynamic-x86_64.dll"
-            "${MSVC_TOOLS_DIR}/clang_rt.asan_dynamic-x86_64.pdb"
-        TYPE BIN
-    )
-endif()
