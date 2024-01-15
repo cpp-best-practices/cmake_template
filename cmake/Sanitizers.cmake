@@ -45,7 +45,11 @@ function(
     endif()
   elseif(MSVC)
     if(${ENABLE_SANITIZER_ADDRESS})
-      list(APPEND SANITIZERS "address")
+       if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+          message(WARNING "MSVC only supports address sanitizer in release builds")
+       else()
+          list(APPEND SANITIZERS "address")
+       endif()
     endif()
     if(${ENABLE_SANITIZER_LEAK}
        OR ${ENABLE_SANITIZER_UNDEFINED_BEHAVIOR}

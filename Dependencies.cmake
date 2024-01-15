@@ -9,7 +9,7 @@ function(myproject_setup_dependencies)
   # already been provided to us by a parent project
 
   if(NOT TARGET fmtlib::fmtlib)
-    cpmaddpackage("gh:fmtlib/fmt#9.1.0")
+    cpmaddpackage("gh:fmtlib/fmt#10.2.1")
   endif()
 
   if(NOT TARGET spdlog::spdlog)
@@ -17,7 +17,7 @@ function(myproject_setup_dependencies)
       NAME
       spdlog
       VERSION
-      1.11.0
+      1.13.0
       GITHUB_REPOSITORY
       "gabime/spdlog"
       OPTIONS
