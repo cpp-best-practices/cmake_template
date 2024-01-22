@@ -257,6 +257,8 @@ void game_iteration_canvas()
     case 2:
       small_bm_pixel.B += 11;// NOLINT Magic Number
       break;
+    default:
+      break;
     }
 
 
