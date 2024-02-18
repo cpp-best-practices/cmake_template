@@ -1,0 +1,36 @@
+pipeline {
+    agent none
+    stages {
+        stage('BuildAndTest') {
+            matrix {
+                agent any
+                axes {
+                    axis {
+                        name 'PLATFORM'
+                        values 'linux', 'windows', 'mac'
+                    }
+                    axis {
+                        name 'ARCH'
+                        values 'x86', 'x86_64', 'ARM'
+                    }
+					axis {
+                        name 'CONFIG'
+                        values 'Release', 'Debug'
+                    }
+                }
+                stages {
+                    stage('Build') {
+                        steps {
+                            echo "Do Build for ${PLATFORM} - ${BROWSER} - ${CONFIG}"
+                        }
+                    }
+                    stage('Test') {
+                        steps {
+                            echo "Do Test for ${PLATFORM} - ${BROWSER}  - ${CONFIG}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
