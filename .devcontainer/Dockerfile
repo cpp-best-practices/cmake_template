@@ -50,10 +50,12 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - 2>/dev/
     apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y --no-install-recommends \
         clang-${LLVM_VER} lldb-${LLVM_VER} lld-${LLVM_VER} clangd-${LLVM_VER} \
-        llvm-${LLVM_VER}-dev libclang-${LLVM_VER}-dev clang-tidy-${LLVM_VER}
+        llvm-${LLVM_VER}-dev libclang-${LLVM_VER}-dev clang-tidy-${LLVM_VER} clang-format-${LLVM_VER}
 
 # Set the default clang-tidy, so CMake can find it
 RUN update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-${LLVM_VER}) 1 \
+# Set the default clang-format, so CMake can find it
+    && update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-${LLVM_VER}) 1 \
 # Set clang-${LLVM_VER} as default clang
     && update-alternatives --install /usr/bin/clang clang $(which clang-${LLVM_VER}) 100 \
     && update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-${LLVM_VER}) 100
