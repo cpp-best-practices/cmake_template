@@ -1,9 +1,15 @@
 #include <array>
-#include <functional>
-#include <iostream>
 #include <optional>
 
+#ifdef __INTELLISENSE__
+#pragma diag_suppress 20, 59
+#endif
+#include <functional>
+#include <iostream>
 #include <random>
+#ifdef __INTELLISENSE__
+#pragma diag_default 20, 59
+#endif
 
 #include <CLI/CLI.hpp>
 #include <ftxui/component/captured_mouse.hpp>// for ftxui
