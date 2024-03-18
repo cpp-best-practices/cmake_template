@@ -11,6 +11,7 @@ on:
 
 env:
   CLANG_TIDY_VERSION: "15.0.2"
+  CPM_SOURCE_CACHE: ~/.cache/CPM
   VERBOSE: 1
 
 
@@ -29,9 +30,9 @@ jobs:
       # and your own projects needs
       matrix:
         os:
-          - ubuntu-20.04
-          - macos-10.15
-          - windows-2019
+          - ubuntu-latest
+          - macos-latest
+          - windows-2022
         compiler:
           # you can specify the version after `-` like "llvm-15.0.2".
           - llvm-15.0.2
@@ -49,21 +50,21 @@ jobs:
 
         exclude:
           # mingw is determined by this author to be too buggy to support
-          - os: windows-2019
+          - os: windows-2022
             compiler: gcc-11
 
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
           # if you try to use a compiler that does not have gcov set
           - compiler: gcc-11
-            gcov_executable: gcov
+            gcov_executable: gcov-11
             enable_ipo: On
 
           - compiler: llvm-15.0.2
             enable_ipo: Off
             gcov_executable: "llvm-cov gcov"
 
-          - os: macos-10.15
+          - os: macos-latest
             enable_ipo: Off
 
           # Set up preferred package generators, for given build configurations
@@ -72,11 +73,11 @@ jobs:
             package_generator: TBZ2
 
           # This exists solely to make sure a non-multiconfig build works
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             compiler: gcc-11
             generator: "Unix Makefiles"
             build_type: Debug
-            gcov_executable: gcov
+            gcov_executable: gcov-11
             packaging_maintainer_mode: On
             enable_ipo: Off
 
