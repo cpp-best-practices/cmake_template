@@ -132,7 +132,7 @@ macro(myproject_local_options)
 
   if(myproject_ENABLE_USER_LINKER)
     include(cmake/Linker.cmake)
-    configure_linker(myproject_options)
+    myproject_configure_linker(myproject_options)
   endif()
 
   include(cmake/Sanitizers.cmake)

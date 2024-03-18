@@ -18,7 +18,7 @@ macro(myproject_configure_linker project_name)
         "Using custom linker: '${USER_LINKER_OPTION}', explicitly supported entries are ${USER_LINKER_OPTION_VALUES}")
   endif()
 
-  if(NOT ENABLE_USER_LINKER)
+  if(NOT myproject_ENABLE_USER_LINKER)
     return()
   endif()
 
