@@ -6,44 +6,55 @@ stages:
 .setup_linux: &setup_linux |
   DEBIAN_FRONTEND=noninteractive
 
-  # set time-zone
   TZ=Canada/Pacific
   ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-  # for downloading
   apt-get update -qq
-  apt-get install -y --no-install-recommends curl gnupg ca-certificates
+  apt-get install -y --no-install-recommends git make curl gnupg ca-certificates python3-pip
 
-  # keys used by apt
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1E9377A2BA9EF27F
 
+# with foldable multi-line commands
 .setup_cpp: &setup_cpp |
-  curl -LJO "https://github.com/aminya/setup-cpp/releases/download/v0.10.0/setup_cpp_linux"
-  chmod +x setup_cpp_linux
-  ./setup_cpp_linux --compiler $compiler --cmake true --ninja true  --conan true --ccache true --clangtidy true --clangformat true --cppcheck true
-  source ~/.profile
+  curl -LJO "https://github.com/aminya/setup-cpp/releases/download/v0.35.3/setup-cpp-x64-linux"
+  chmod +x setup-cpp-x64-linux
+  echo -e "section_end:"`date +%s`":.setup_cpp\r\e[0Ksection_start:"`date +%s`":hidden_section\r\e[0K setup cpp"
+  # export PATH="$HOME/.local/bin:$PATH"
+  ./setup-cpp-x64-linux --compiler $compiler --cmake true --ninja true  --ccache true \
+    --clangtidy true --clangformat true --cppcheck true --gcovr true
+  source ~/.cpprc
+  echo -e "section_end:"`date +%s`":hidden_section\r\e[0Ksection_start:"`date +%s`":.setup_cpp\r\e[0K"
+  clang-tidy --version
+  cmake --version
+  ninja --version
+  gcc --version
+  which gcovr && gcovr --version
 
-.test: &test |
-  # Build and Test
-  cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo
-  cmake --build ./build --config RelWithDebInfo
+# with foldable multi-line commands
+.build:
+  script:
+    - *setup_cpp
+    - echo -e "section_end:"`date +%s`":.build\r\e[0Ksection_start:"`date +%s`":hidden_section\r\e[0K configure"
+    - cmake -S . -B ./build -G Ninja -D CMAKE_BUILD_TYPE=Debug -D CMAKE_UNITY_BUILD=YES -D CMAKE_SKIP_INSTALL_RULES=YES
+    - echo -e "section_end:"`date +%s`":hidden_section\r\e[0Ksection_start:"`date +%s`":.build\r\e[0K"
+    - cmake --build ./build --config Debug
+    - cmake --build ./build --config Debug --target test
+    - gcovr .
+
+default:
+  before_script:
+    - *setup_linux
 
 test_linux_llvm:
   stage: test
   variables:
     compiler: llvm
-  script:
-    - *setup_linux
-    - *setup_cpp
-    - *test
+  extends: .build
 
 test_linux_gcc:
   stage: test
   variables:
     compiler: gcc
-  script:
-    - *setup_linux
-    - *setup_cpp
-    - *test
+  extends: .build

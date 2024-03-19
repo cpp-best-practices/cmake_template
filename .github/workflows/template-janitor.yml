@@ -44,7 +44,7 @@ jobs:
           developer_mode: ${{ matrix.developer_mode }}
           generator: ${{ matrix.generator }}
 
-      - name: Get organization and project name 
+      - name: Get organization and project name
         run: |
           echo "NEW_ORG=${{ github.repository_owner }}" >> $GITHUB_ENV
           echo "NEW_PROJECT=${{ github.event.repository.name }}" >> $GITHUB_ENV
@@ -69,9 +69,9 @@ jobs:
         run: |
           # hyphens and dots in c++ identifiers are forbidden. Use underscores instead.
           NEW_SAFE_PROJECT=$(echo ${{ env.NEW_PROJECT }} | sed "s/-/_/g" | sed "s/\./_/g" )
-          echo "NEW_SAFE_PROJECT=$NEW_SAFE_PROJECT" >> $GITHUB_ENV 
+          echo "NEW_SAFE_PROJECT=$NEW_SAFE_PROJECT" >> $GITHUB_ENV
 
-      # Rename all cpp_starter_project occurences to current repository and remove this workflow
+      # Rename all cpp_starter_project occurrences to current repository and remove this workflow
       - name: Insert new org and project
         run: |
           # rename the CMake project to match the github project
@@ -129,7 +129,6 @@ jobs:
           envFile: '.github/constants.env'
 
 
-
       - name: Test simple configuration to make sure nothing broke
         run: |
           cmake -S . -B ./build -G "${{ matrix.generator }}" -DCMAKE_BUILD_TYPE:STRING=${{ matrix.build_type }} -D${{ env.NEW_SAFE_PROJECT }}_PACKAGING_MAINTAINER_MODE:BOOL=ON
@@ -147,7 +146,6 @@ jobs:
           pathspec_error_handling: exitImmediately
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
 
   template-rename:
@@ -175,7 +173,7 @@ jobs:
           developer_mode: ${{ matrix.developer_mode }}
           generator: ${{ matrix.generator }}
 
-      - name: Get organization and project name 
+      - name: Get organization and project name
         run: |
           echo "TEST_RUN=false" >> $GITHUB_ENV
           echo "NEW_ORG=${{ github.repository_owner }}" >> $GITHUB_ENV
@@ -205,7 +203,7 @@ jobs:
       # Rename all cpp_starter_project occurrences to current repository and remove this workflow
       - name: Update repository to match new template information
         run: |
-          # Update the README and template files to match the new org / repository names 
+          # Update the README and template files to match the new org / repository names
           sed -i "s|${{ env.TEMPLATE_REPOSITORY }}|${{ env.NEW_REPOSITORY }}|g" README.md ${{ env.TEMPLATES_PATH }}/template_repository
           sed -i "s|${{ env.TEMPLATE_NAME }}|${{ env.NEW_PROJECT }}|g" README.md ${{ env.TEMPLATES_PATH }}/template_name
 
