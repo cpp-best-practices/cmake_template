@@ -1,4 +1,4 @@
-# find a subtring from a string by a given prefix such as VCVARSALL_ENV_START
+# find a substring from a string by a given prefix such as VCVARSALL_ENV_START
 function(
   find_substring_by_prefix
   output

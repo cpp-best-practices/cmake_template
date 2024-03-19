@@ -42,7 +42,7 @@ macro(myproject_target_link_cuda target)
   if(WIN32 AND "$ENV{VSCMD_VER}" STREQUAL "")
     message(
       WARNING
-        "Compiling Cuda on Windows outside the Visual Studio Commant prompt or without running `vcvarsall.bat x64` probably fails"
+        "Compiling CUDA on Windows outside the Visual Studio Command prompt or without running `vcvarsall.bat x64` probably fails"
     )
   endif()
 endmacro()

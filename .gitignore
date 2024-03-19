@@ -1,6 +1,7 @@
 # Build directories and binary files
 build/
 out/
+out/coverage/*
 cmake-build-*/
 conan-cache/
 
@@ -15,6 +16,7 @@ CMakeUserPresets.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+*.bak
 *.swp
 *~
 _ReSharper*

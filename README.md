@@ -2,13 +2,9 @@
 
 [![ci](https://github.com/cpp-best-practices/cmake_template/actions/workflows/ci.yml/badge.svg)](https://github.com/cpp-best-practices/cmake_template/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/cpp-best-practices/cmake_template/branch/main/graph/badge.svg)](https://codecov.io/gh/cpp-best-practices/cmake_template)
-[![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/github/cpp-best-practices/cmake_template)](https://lgtm.com/projects/g/cpp-best-practices/cmake_template/context:cpp)
 [![CodeQL](https://github.com/cpp-best-practices/cmake_template/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/cpp-best-practices/cmake_template/actions/workflows/codeql-analysis.yml)
 
 ## About cmake_template
-
-**NOTE** This is undergoing a major overhaul on a new branch currently.
-
 
 This is a C++ Best Practices GitHub template for getting up and running with C++ quickly.
 
@@ -23,7 +19,7 @@ It includes
 
  * a basic CLI example
  * examples for fuzz, unit, and constexpr testing
- * large github action testing matrix
+ * large GitHub action testing matrix
 
 It requires
 
@@ -36,15 +32,16 @@ This project gets you started with a simple example of using FTXUI, which happen
 
 ## Getting Started
 
-### Use the Github template
+### Use the GitHub template
 First, click the green `Use this template` button near the top of this page.
-This will take you to Github's ['Generate Repository'](https://github.com/cpp-best-practices/cmake_template/generate) page.
+This will take you to GitHub's ['Generate Repository'](https://github.com/cpp-best-practices/cmake_template/generate)
+page.
 Fill in a repository name and short description, and click 'Create repository from template'.
-This will allow you to create a new repository in your Github account,
+This will allow you to create a new repository in your GitHub account,
 prepopulated with the contents of this project.
 
 After creating the project please wait until the cleanup workflow has finished 
-setting up your project and commited the changes.
+setting up your project and committed the changes.
 
 Now you can clone the project locally and get to work!
 
@@ -54,7 +51,6 @@ Now you can clone the project locally and get to work!
 
  * [Dependency Setup](README_dependencies.md)
  * [Building Details](README_building.md)
- * [Troubleshooting](README_troubleshooting.md)
  * [Docker](README_docker.md)
 
 ## Testing
