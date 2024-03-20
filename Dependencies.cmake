@@ -33,7 +33,7 @@ function(myproject_setup_dependencies)
   endif()
 
   if(NOT TARGET ftxui::screen)
-    cpmaddpackage("gh:ArthurSonzogni/FTXUI@6.0.2")
+    cpmaddpackage("gh:ArthurSonzogni/FTXUI@6.1.9")
   endif()
 
   if(NOT TARGET tools::tools)
