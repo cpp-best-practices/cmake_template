@@ -92,7 +92,8 @@ macro(myproject_enable_clang_tidy target WARNINGS_AS_ERRORS)
 
     # set warnings as errors
     if(${WARNINGS_AS_ERRORS})
-      list(APPEND CLANG_TIDY_OPTIONS -warnings-as-errors=*)
+      message("clang-tidy warnings as errors excludes: 'misc-include-cleaner'")
+      list(APPEND CLANG_TIDY_OPTIONS -warnings-as-errors=*,-misc-include-cleaner)
     endif()
 
     message("Also setting clang-tidy globally")
