@@ -247,7 +247,7 @@ void game_iteration_canvas()
     auto &small_bm_pixel =
       small_bm->data().at(static_cast<std::size_t>(elapsed_time.count()) % small_bm->data().size());
 
-    switch (elapsed_time.count() % 3) {
+    switch (elapsed_time.count() % 3) {// NOLINT(bugprone-switch-missing-default-case)
     case 0:
       small_bm_pixel.R += 11;// NOLINT Magic Number
       break;
@@ -256,8 +256,6 @@ void game_iteration_canvas()
       break;
     case 2:
       small_bm_pixel.B += 11;// NOLINT Magic Number
-      break;
-    default:
       break;
     }
 
