@@ -20,7 +20,7 @@ runs:
   using: "composite"
   steps:
     - name: Cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         # You might want to add .ccache to your cache configuration?
         path: |
