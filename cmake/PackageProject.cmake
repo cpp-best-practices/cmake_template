@@ -179,9 +179,7 @@ function(myproject_package_project)
   # download ycm
   FetchContent_Declare(_ycm URL https://github.com/robotology/ycm/archive/refs/tags/v0.13.0.zip)
   FetchContent_GetProperties(_ycm)
-  if(NOT _ycm_POPULATED)
-    FetchContent_Populate(_ycm)
-  endif()
+  FetchContent_MakeAvailable(_ycm)
   include("${_ycm_SOURCE_DIR}/modules/InstallBasicPackageFiles.cmake")
 
   install_basic_package_files(${_PackageProject_NAME} "${_FARGS_LIST}")

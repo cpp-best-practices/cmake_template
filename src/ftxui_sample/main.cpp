@@ -1,15 +1,26 @@
+#include <CLI/App.hpp>
 #include <array>
-#include <functional>
-#include <iostream>
+#include <atomic>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <exception>
+#include <ftxui/screen/screen.hpp>
 #include <optional>
+#include <utility>
+#include <vector>
 
+#include <fmt/core.h>
 #include <random>
 
-#include <CLI/CLI.hpp>
-#include <ftxui/component/captured_mouse.hpp>// for ftxui
+#include <CLI/CLI.hpp>//NOLINT
 #include <ftxui/component/component.hpp>// for Slider
 #include <ftxui/component/screen_interactive.hpp>// for ScreenInteractive
+#include <ftxui/dom/elements.hpp>
 #include <spdlog/spdlog.h>
+#include <string>
+#include <thread>
 
 #include <lefticus/tools/non_promoting_ints.hpp>
 
@@ -90,6 +101,8 @@ template<std::size_t Width, std::size_t Height> struct GameBoard
 };
 
 
+namespace {
+
 void consequence_game()
 {
   auto screen = ftxui::ScreenInteractive::TerminalOutput();
@@ -162,6 +175,7 @@ void consequence_game()
 
   screen.Loop(renderer);
 }
+}// namespace
 
 struct Color
 {
@@ -177,12 +191,12 @@ struct Bitmap : ftxui::Node
     : width_(width), height_(height)
   {}
 
-  Color &at(std::size_t cur_x, std::size_t cur_y) { return pixels.at(width_ * cur_y + cur_x); }
+  Color &at(std::size_t cur_x, std::size_t cur_y) { return pixels.at((width_ * cur_y) + cur_x); }
 
   void ComputeRequirement() override
   {
     requirement_ = ftxui::Requirement{
-      .min_x = static_cast<int>(width_), .min_y = static_cast<int>(height_ / 2), .selected_box{ 0, 0, 0, 0 }
+      .min_x = static_cast<int>(width_), .min_y = static_cast<int>(height_ / 2), .selected_box{ 0, 0, 0, 0 }// NOLINT
     };
   }
 
@@ -193,7 +207,7 @@ struct Bitmap : ftxui::Node
         auto &pixel = screen.PixelAt(box_.x_min + static_cast<int>(cur_x), box_.y_min + static_cast<int>(cur_y));
         pixel.character = "▄";
         const auto &top_color = at(cur_x, cur_y * 2);
-        const auto &bottom_color = at(cur_x, cur_y * 2 + 1);
+        const auto &bottom_color = at(cur_x, (cur_y * 2) + 1);
         pixel.background_color = ftxui::Color{ top_color.R.get(), top_color.G.get(), top_color.B.get() };
         pixel.foreground_color = ftxui::Color{ bottom_color.R.get(), bottom_color.G.get(), bottom_color.B.get() };
       }
@@ -212,6 +226,8 @@ private:
 
   std::vector<Color> pixels = std::vector<Color>(width_ * height_, Color{});
 };
+
+namespace {
 
 void game_iteration_canvas()
 {
@@ -256,6 +272,8 @@ void game_iteration_canvas()
       break;
     case 2:
       small_bm_pixel.B += 11;// NOLINT Magic Number
+      break;
+    default:
       break;
     }
 
@@ -308,6 +326,7 @@ void game_iteration_canvas()
   refresh_ui_continue = false;
   refresh_ui.join();
 }
+}// namespace
 
 // NOLINTNEXTLINE(bugprone-exception-escape)
 int main(int argc, const char **argv)
