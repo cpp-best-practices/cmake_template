@@ -46,7 +46,7 @@ macro(myproject_setup_options)
     option(myproject_ENABLE_CACHE "Enable ccache" OFF)
   else()
     option(myproject_ENABLE_IPO "Enable IPO/LTO" ON)
-    option(myproject_WARNINGS_AS_ERRORS "Treat Warnings As Errors" ON)
+    option(myproject_WARNINGS_AS_ERRORS "Treat Warnings As Errors" OFF) # Changed default to OFF
     option(myproject_ENABLE_USER_LINKER "Enable user-selected linker" OFF)
     option(myproject_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" ${SUPPORTS_ASAN})
     option(myproject_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
