@@ -12,7 +12,7 @@ jobs:
         source: '.'
         exclude: './third_party ./external'
         extensions: 'h,cpp,hpp'
-        clangFormatVersion: 12
+        clangFormatVersion: 20
         inplace: True
     - uses: EndBug/add-and-commit@v4
       with:
