@@ -154,34 +154,34 @@ function(myproject_package_project)
 
   unset(_PackageProject_TARGETS)
 
-  # download ForwardArguments
-  FetchContent_Declare(
-    _fargs
-    URL https://github.com/polysquare/cmake-forward-arguments/archive/8c50d1f956172edb34e95efa52a2d5cb1f686ed2.zip)
-  FetchContent_GetProperties(_fargs)
-  if(NOT _fargs_POPULATED)
-    FetchContent_Populate(_fargs)
-  endif()
-  include("${_fargs_SOURCE_DIR}/ForwardArguments.cmake")
-
-  # prepare the forward arguments for ycm
+  # Manually construct the argument list for install_basic_package_files
+  # This replaces the need for the external cmake-forward-arguments module.
   set(_FARGS_LIST)
-  cmake_forward_arguments(
-    _PackageProject
-    _FARGS_LIST
-    OPTION_ARGS
-    "${_options};"
-    SINGLEVAR_ARGS
-    "${_oneValueArgs};EXPORT_DESTINATION;INSTALL_DESTINATION;NAMESPACE;VARS_PREFIX;EXPORT"
-    MULTIVAR_ARGS
-    "${_multiValueArgs};DEPENDENCIES;PRIVATE_DEPENDENCIES")
+  # Options
+  foreach(_opt IN LISTS _options)
+    if(_PackageProject_${_opt})
+      list(APPEND _FARGS_LIST "OPTION" "${_opt}")
+    endif()
+  endforeach()
+  # Single Value Arguments
+  set(_combined_oneValueArgs ${_oneValueArgs} EXPORT_DESTINATION INSTALL_DESTINATION NAMESPACE VARS_PREFIX EXPORT)
+  foreach(_arg IN LISTS _combined_oneValueArgs)
+    if(DEFINED _PackageProject_${_arg})
+      list(APPEND _FARGS_LIST "SINGLEVAR" "${_arg}" "${_PackageProject_${_arg}}")
+    endif()
+  endforeach()
+  # Multi Value Arguments
+  set(_combined_multiValueArgs ${_multiValueArgs} DEPENDENCIES PRIVATE_DEPENDENCIES)
+   foreach(_arg IN LISTS _combined_multiValueArgs)
+    if(DEFINED _PackageProject_${_arg})
+      # Important: Pass the list variable itself, not its content quoted
+      list(APPEND _FARGS_LIST "MULTIVAR" "${_arg}" ${_PackageProject_${_arg}})
+    endif()
+  endforeach()
 
   # download ycm
   FetchContent_Declare(_ycm URL https://github.com/robotology/ycm/archive/refs/tags/v0.13.0.zip)
-  FetchContent_GetProperties(_ycm)
-  if(NOT _ycm_POPULATED)
-    FetchContent_Populate(_ycm)
-  endif()
+  FetchContent_MakeAvailable(_ycm)
   include("${_ycm_SOURCE_DIR}/modules/InstallBasicPackageFiles.cmake")
 
   install_basic_package_files(${_PackageProject_NAME} "${_FARGS_LIST}")
