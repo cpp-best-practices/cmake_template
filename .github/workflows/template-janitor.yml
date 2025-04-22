@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         compiler:
-          - gcc-11
+          - gcc-14
         generator:
           - "Unix Makefiles"
         build_type:
