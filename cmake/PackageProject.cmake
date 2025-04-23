@@ -155,13 +155,12 @@ function(myproject_package_project)
   unset(_PackageProject_TARGETS)
 
   # download ForwardArguments
-  FetchContent_Declare(
+  FetchContent_Populate (
     _fargs
     URL https://github.com/polysquare/cmake-forward-arguments/archive/8c50d1f956172edb34e95efa52a2d5cb1f686ed2.zip)
+
   FetchContent_GetProperties(_fargs)
-  if(NOT _fargs_POPULATED)
-    FetchContent_Populate(_fargs)
-  endif()
+
   include("${_fargs_SOURCE_DIR}/ForwardArguments.cmake")
 
   # prepare the forward arguments for ycm
@@ -177,11 +176,8 @@ function(myproject_package_project)
     "${_multiValueArgs};DEPENDENCIES;PRIVATE_DEPENDENCIES")
 
   # download ycm
-  FetchContent_Declare(_ycm URL https://github.com/robotology/ycm/archive/refs/tags/v0.13.0.zip)
+  FetchContent_Populate(_ycm URL https://github.com/robotology/ycm/archive/refs/tags/v0.13.0.zip)
   FetchContent_GetProperties(_ycm)
-  if(NOT _ycm_POPULATED)
-    FetchContent_Populate(_ycm)
-  endif()
   include("${_ycm_SOURCE_DIR}/modules/InstallBasicPackageFiles.cmake")
 
   install_basic_package_files(${_PackageProject_NAME} "${_FARGS_LIST}")
