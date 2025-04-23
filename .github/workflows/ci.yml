@@ -10,7 +10,7 @@ on:
       - develop
 
 env:
-  CLANG_TIDY_VERSION: "15.0.2"
+  CLANG_TIDY_VERSION: "19.1.1"
   VERBOSE: 1
 
 
@@ -29,13 +29,13 @@ jobs:
       # and your own projects needs
       matrix:
         os:
-          - ubuntu-20.04
-          - macos-10.15
-          - windows-2019
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
         compiler:
           # you can specify the version after `-` like "llvm-15.0.2".
-          - llvm-15.0.2
-          - gcc-11
+          - llvm-19.1.1
+          - gcc-14
         generator:
           - "Ninja Multi-Config"
         build_type:
@@ -49,66 +49,66 @@ jobs:
 
         exclude:
           # mingw is determined by this author to be too buggy to support
-          - os: windows-2019
-            compiler: gcc-11
+          - os: windows-latest
+            compiler: gcc-14
 
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
           # if you try to use a compiler that does not have gcov set
-          - compiler: gcc-11
-            gcov_executable: gcov
+          - compiler: gcc-14
+            gcov_executable: gcov-14
             enable_ipo: On
 
-          - compiler: llvm-15.0.2
+          - compiler: llvm-19.1.1
             enable_ipo: Off
             gcov_executable: "llvm-cov gcov"
 
-          - os: macos-10.15
+          - os: macos-latest
             enable_ipo: Off
 
           # Set up preferred package generators, for given build configurations
           - build_type: Release
-            packaging_maintainer_mode: OFF
+            packaging_maintainer_mode: On
             package_generator: TBZ2
 
           # This exists solely to make sure a non-multiconfig build works
-          - os: ubuntu-20.04
-            compiler: gcc-11
+          - os: ubuntu-latest
+            compiler: gcc-14
             generator: "Unix Makefiles"
             build_type: Debug
-            gcov_executable: gcov
+            gcov_executable: gcov-14
             packaging_maintainer_mode: On
             enable_ipo: Off
 
           # Windows msvc builds
-          - os: windows-2022
+          - os: windows-latest
             compiler: msvc
             generator: "Visual Studio 17 2022"
             build_type: Debug
             packaging_maintainer_mode: On
             enable_ipo: On
 
-          - os: windows-2022
+          - os: windows-latest
             compiler: msvc
             generator: "Visual Studio 17 2022"
             build_type: Release
             packaging_maintainer_mode: On
             enable_ipo: On
 
-          - os: windows-2022
+          - os: windows-latest
             compiler: msvc
             generator: "Visual Studio 17 2022"
             build_type: Debug
             packaging_maintainer_mode: Off
 
-          - os: windows-2022
+          - os: windows-latest
             compiler: msvc
             generator: "Visual Studio 17 2022"
             build_type: Release
             packaging_maintainer_mode: Off
             package_generator: ZIP
 
-          - os: windows-2022
+          - os: windows-latest
             compiler: msvc
             generator: "Visual Studio 17 2022"
             build_type: Release
@@ -175,7 +175,7 @@ jobs:
         # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
         run: |
           ctest -C ${{matrix.build_type}}
-          gcovr -j ${{env.nproc}} --delete --root ../ --print-summary --xml-pretty --xml coverage.xml . --gcov-executable '${{ matrix.gcov_executable }}'
+          gcovr -j ${{env.nproc}} --root ../ --print-summary --xml-pretty --xml coverage.xml . --gcov-executable '${{ matrix.gcov_executable }}'
 
       - name: Windows - Test and coverage
         if: runner.os == 'Windows'

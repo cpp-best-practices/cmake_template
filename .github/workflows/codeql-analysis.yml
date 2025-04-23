@@ -38,7 +38,7 @@ jobs:
         # Learn more about CodeQL language support at https://git.io/codeql-language-support
         compiler:
           # you can specify the version after `-` like "llvm-13.0.0".
-          - gcc-11
+          - gcc-14
         generator:
           - "Ninja Multi-Config"
         build_type:
