@@ -30,7 +30,7 @@ jobs:
           - "Unix Makefiles"
         build_type:
           - Debug
-        developer_mode:
+        packaging_maintainer_mode:
           - OFF
 
     steps:
@@ -41,7 +41,7 @@ jobs:
         with:
           compiler: ${{ matrix.compiler }}
           build_type: ${{ matrix.build_type }}
-          developer_mode: ${{ matrix.developer_mode }}
+          package_maintainer_mode: ${{ matrix.package_maintainer_mode }}
           generator: ${{ matrix.generator }}
 
       - name: Get organization and project name 
@@ -53,9 +53,7 @@ jobs:
       - uses: octokit/request-action@v2.x
         id: get_repo_meta
         with:
-          route: GET /repos/{owner}/{repo}
-          owner: ${{ env.NEW_ORG }}
-          repo: ${{ env.NEW_PROJECT }}
+          route: GET /repos/${{ env.NEW_ORG }}/${{ env.NEW_PROJECT }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -161,8 +159,8 @@ jobs:
           - "Unix Makefiles"
         build_type:
           - Debug
-        developer_mode:
-          - OFF
+        packaging_maintainer_mode:
+          - ON
 
     steps:
       - uses: actions/checkout@v3
@@ -172,7 +170,7 @@ jobs:
         with:
           compiler: ${{ matrix.compiler }}
           build_type: ${{ matrix.build_type }}
-          developer_mode: ${{ matrix.developer_mode }}
+          packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
           generator: ${{ matrix.generator }}
 
       - name: Get organization and project name 
@@ -230,7 +228,7 @@ jobs:
           opencppcoverage: false
 
 
-      - name: Test simple configuration to make sure nothing broke (default compiler,cmake,developer_mode OFF)
+      - name: Test simple configuration to make sure nothing broke (default compiler,cmake,packaging_maintainer_mode OFF)
         run: |
           cmake -S . -B ./build -G "${{ matrix.generator }}" -DCMAKE_BUILD_TYPE:STRING=${{ matrix.build_type }} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=ON
 

@@ -68,7 +68,7 @@ jobs:
 
           # Set up preferred package generators, for given build configurations
           - build_type: Release
-            packaging_maintainer_mode: OFF
+            packaging_maintainer_mode: On
             package_generator: TBZ2
 
           # This exists solely to make sure a non-multiconfig build works
