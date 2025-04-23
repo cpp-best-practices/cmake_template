@@ -190,7 +190,7 @@ jobs:
           cpack -C ${{matrix.build_type}} -G ${{matrix.package_generator}}
 
       - name: Publish Tagged Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.package_generator != '' }}
         with:
           files: |
