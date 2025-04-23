@@ -1,15 +1,15 @@
 #include <array>
-#include <cstddef>
-#include <ftxui/dom/elements.hpp>
-#include <cstdint>
-#include <ftxui/dom/node.hpp>
-#include <ftxui/screen/screen.hpp>
-#include <chrono>
 #include <atomic>
-#include <fmt/format.h>
-#include <fmt/base.h>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
 #include <cstdlib>
 #include <exception>
+#include <fmt/base.h>
+#include <fmt/format.h>
+#include <ftxui/dom/elements.hpp>
+#include <ftxui/dom/node.hpp>
+#include <ftxui/screen/screen.hpp>
 #include <functional>
 #include <optional>
 
@@ -27,9 +27,9 @@
 // the source template at `configured_files/config.hpp.in`.
 #include <internal_use_only/config.hpp>
 #include <string>
-#include <vector>
-#include <utility>
 #include <thread>
+#include <utility>
+#include <vector>
 
 template<std::size_t Width, std::size_t Height> struct GameBoard
 {
@@ -175,7 +175,7 @@ void consequence_game()
 
   screen.Loop(renderer);
 }
-}
+}// namespace
 
 struct Color
 {
@@ -271,7 +271,7 @@ void game_iteration_canvas()
     case 2:
       small_bm_pixel.B += 11;// NOLINT Magic Number
       break;
-    default: // literally impossible
+    default:// literally impossible
       std::unreachable();
     }
 
@@ -324,7 +324,7 @@ void game_iteration_canvas()
   refresh_ui_continue = false;
   refresh_ui.join();
 }
-}
+}// namespace
 
 // NOLINTNEXTLINE(bugprone-exception-escape)
 int main(int argc, const char **argv)

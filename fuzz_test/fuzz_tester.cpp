@@ -1,5 +1,5 @@
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 #include <fmt/base.h>
 #include <iterator>
 
