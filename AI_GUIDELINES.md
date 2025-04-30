@@ -124,6 +124,25 @@ The project supports code coverage reporting using gcovr. When working with this
 3. **Static Analysis**: Address issues reported by clang-tidy and cppcheck.
 4. **Code Complexity**: Keep cyclomatic complexity and function length within Lizard's limits.
 5. **Modern C++**: Use modern C++ features instead of legacy approaches.
+6. **Type Safety**: Prefer strong types over primitive types (e.g., create a `Velocity` type rather than using plain `int`).
+7. **Compile-time Evaluation**: Mark functions as `constexpr` by default, especially in C++23 mode.
+8. **Resource Management**: Follow the Rule of 0; avoid manual resource management.
+
+### Missing Tools
+
+This project is designed to fail configuration if required tools are missing. This is intentional and acts as a guardrail.
+
+1. **NEVER disable tools**: If build configuration fails due to missing tools, do not suggest disabling the tools
+2. **ALWAYS suggest installing missing tools**: Provide instructions for installing the required tools
+3. **Example missing tool message**: If you see "clang-tidy requested but executable not found", recommend installing clang-tidy, not disabling it
+4. **Common required tools**:
+   - clang-tidy: C++ static analyzer
+   - cppcheck: C++ static analyzer
+   - lizard: Code complexity analyzer
+   - ccache: Compilation cache tool
+   - include-what-you-use: Header dependency analyzer
+
+Remember, the project's guardrails exist for a reason. Help the user install and use the required tools rather than circumventing them.
 
 ### Code Conventions
 
@@ -139,12 +158,40 @@ The project supports code coverage reporting using gcovr. When working with this
    - This reduces friction in code reviews and CI pipeline failures
    - Let clang-format handle all style decisions rather than manual formatting
 
+### Modern C++ Coding Guidelines
+
+1. **Format Strings**: Use `std::format` and `std::print` instead of iostream or printf
+2. **Memory Management**: 
+   - No raw `new`/`delete` operations
+   - Prefer stack allocation, then std::vector/array
+   - Use smart pointers if heap allocation is necessary
+3. **Algorithms over Loops**: 
+   - Use standard algorithms and ranges instead of raw loops when possible
+   - Use ranged-for with `auto` when algorithms aren't suitable
+4. **Function Design**:
+   - Mark functions that return values as `[[nodiscard]]`
+   - Use concepts to constrain template parameters
+   - Return by value for small objects, avoid returning raw pointers
+5. **Container Selection**:
+   - Use `std::array` when size is known at compile time
+   - Default to `std::vector` for dynamic containers
+   - Select other containers only when their specific properties are needed
+6. **Control Flow**:
+   - Make case statements return values, avoid default in switch statements
+   - Use scoped enums instead of unscoped enums
+   - Use `if constexpr` for compile-time conditions
+
 ### Building and Testing
 
 1. Before making significant changes, ensure you can build the project
 2. Run tests after making changes to verify functionality
 3. Use the provided CMake presets for consistency
 4. Ensure your changes pass in all build configurations
+5. **Preferred build configuration**:
+   - Always prefer a Debug build
+   - Set `<project_name>_PACKAGING_MAINTAINER_MODE=OFF`
+   - Enable coverage with `-D<project_name>_ENABLE_COVERAGE=ON`
+   - Example: `cmake -DCMAKE_BUILD_TYPE=Debug -Dmyproject_PACKAGING_MAINTAINER_MODE=OFF -Dmyproject_ENABLE_COVERAGE=ON ..`
 
 ## Technical Implementation Details
 
@@ -163,12 +210,14 @@ The project uses Lizard for code complexity analysis with the following threshol
 - **Cyclomatic Complexity**: Functions should have CCN ≤ 15
 - **Function Length**: Functions should be ≤ 100 lines
 - **Parameter Count**: Functions should have ≤ 6 parameters
+- **Copy-Paste Detection**: Detects duplicated code segments
 
 When encountering functions that exceed these limits:
 1. Consider splitting them into smaller, more focused functions
 2. Extract complex logic into separate methods
 3. Reduce nesting levels and simplify control flow
 4. Use parameter objects for functions with many parameters
+5. **For duplicated code**: Extract common functionality into shared functions or templates
 
 To run the analysis manually:
 ```bash
@@ -200,6 +249,36 @@ The project typically supports these build modes:
 - RelWithDebInfo: Optimized but with debug information
 
 ## Common Problems and Solutions
+
+### Recommending Development Workflow
+
+When helping users with code changes, suggest setting up a quick iteration workflow:
+
+```bash
+# Suggest this development setup for quick iteration
+mkdir -p build && cd build
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -Dmyproject_PACKAGING_MAINTAINER_MODE=OFF -Dmyproject_ENABLE_COVERAGE=ON ..
+ninja
+```
+
+For testing code changes, recommend focusing on the non-constexpr tests first:
+```bash
+# For running runtime tests after changes (not constexpr tests)
+cd build
+ninja tests relaxed_constexpr_tests
+ctest -R "unittests|relaxed_constexpr" --output-on-failure
+```
+
+For checking test coverage:
+```bash
+# For generating coverage reports
+cd build
+ninja
+ctest
+gcovr -r .. --config=../gcovr.cfg
+```
+
+This workflow helps the user quickly test your suggestions and allows you, as an AI assistant, to get fast feedback on proposed changes. Using Ninja as the generator speeds up compilation significantly.
 
 ### Fixing Build Errors
 

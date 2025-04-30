@@ -18,6 +18,7 @@ function(myproject_setup_lizard WARNINGS_AS_ERRORS)
         -C ${LIZARD_CCN_THRESHOLD}
         -L ${LIZARD_LENGTH_THRESHOLD}
         -a ${LIZARD_PARAM_THRESHOLD}
+        -Eduplicate
         -x "*/build/*"
         -x "*/test/*"
         -x "*/fuzz_test/*"

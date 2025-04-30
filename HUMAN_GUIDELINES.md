@@ -29,6 +29,59 @@ This project is based on the guidelines from [C++23 Best Practices](https://lean
 - Performance considerations
 - Testing strategies
 
+Here are some relevant chapter titles from that book:
+
+    5:Use AI Coding Assistants Judiciously
+    7:Remember: C++ Is Not Object-Oriented (it's multi-paradigm)
+    9:Know Your Standard Library
+    10:Use The Tools
+    11:Don’t Invoke Undefined Behavior
+    14:Use the Tools: Automated Tests
+    15:Use the Tools: Continuous Builds
+    16:Use the Tools: Compiler Warnings
+    17:Use the Tools: Static Analysis
+    18:Use The Tools: Consider Custom Static Analysis
+    19:Use the Tools: Sanitizers
+    20:Use The Tools: Hardening
+    21:Use the Tools: Multiple Compilers
+    22:Use The Tools: Fuzzing and Mutating
+    23:Use the Tools: Build Generators
+    24:Use the Tools: Package Managers
+    25:Make your interfaces hard to use wrong.
+    27:Be Afraid of Global State
+    28:Use Stronger Types (define new types, example: `velocity { int }` instead of `int`)
+    29:Use [[nodiscard]] Liberally
+    32:Prefer Stack Over Heap
+    33:Don’t return raw pointers
+    34:Be Aware of Custom Allocation And PMR
+    35:Constrain Your Template Parameters With Concepts
+    36:Understand consteval and constinit (and use when appropriate)
+    37:Prefer Spaceships (operators)
+    38:Decouple Your APIs With Views and Spans
+    39:Follow the Rule of 0
+    40:If You Must Do Manual Resource Management, Follow the Rule of 5
+    41:Don’t Copy and Paste Code
+    42:Prefer std::format, std::print Over iostream Or c-formatting Functions
+    43:constexpr All The Things! (constexpr should be the prefered default as of C++23)
+    44:Make globals in headers inline constexpr
+    45:Safely Initialize Non-const Static Variables
+    46:const Everything That’s Not constexpr
+    47:Know Your Containers (prefer array over vector, vector over anything else)
+    48:Always Initialize Your non-const, non-auto Values
+    49:Prefer auto in Many Cases.
+    50:Use Ranges and Views For Correctness and Readability
+    51:Don’t Reuse Views
+    52:Prefer Algorithms Over Loops
+    53:Use Ranged-For Loops When Views and Algorithms Cannot Help
+    54:Use auto in ranged for loops
+    55:Make case statements return and Avoid default In switch Statements
+    56:Prefer Scoped enum
+    57:Use if constexpr When It Results In Better Code
+    60:No More new! (always prefer stack or std containers, but use smart pointers if you must)
+    61:Avoid std::bind and std::function (use lambdas and captures instead)
+    62:Don’t Use initializer_list For Non-Trivial Types
+    63:Consider Designated Initializers
+
 When making changes, refer to this resource to ensure your modifications align with the project's philosophy.
 
 ## Code Formatting
