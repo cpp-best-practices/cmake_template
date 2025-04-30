@@ -141,6 +141,7 @@ This project is designed to fail configuration if required tools are missing. Th
    - lizard: Code complexity analyzer
    - ccache: Compilation cache tool
    - include-what-you-use: Header dependency analyzer
+   - bloaty: Binary size analyzer (optional, disabled by default)
 
 Remember, the project's guardrails exist for a reason. Help the user install and use the required tools rather than circumventing them.
 
@@ -230,6 +231,37 @@ cmake --build build --target lizard_html
 # Generate XML report for CI integration
 cmake --build build --target lizard_xml
 ```
+
+### Binary Size Analysis with Bloaty McBloatface
+
+The project includes optional support for Bloaty McBloatface, a binary size analyzer. This tool helps identify what's contributing to executable size, which is valuable for embedded systems and performance optimization.
+
+Note: Bloaty is disabled by default as it may not be installed on all systems. Enable with `-D<project_name>_ENABLE_BLOATY=ON`.
+
+When Bloaty is enabled, it provides several analysis targets for each executable:
+
+```bash
+# Basic size analysis for a specific target (e.g., "intro")
+cmake --build build --target bloaty_intro
+
+# Generate CSV report
+cmake --build build --target bloaty_intro_csv
+
+# Store current binary as a baseline for comparisons
+cmake --build build --target bloaty_intro_store
+
+# Analyze template usage (particularly useful for C++ binary bloat)
+cmake --build build --target bloaty_intro_templates
+
+# Run analysis on all executable targets
+cmake --build build --target bloaty_all
+```
+
+When addressing binary size issues:
+1. Look for excessive template instantiations
+2. Check for large static data or string literals
+3. Consider enabling Link Time Optimization (LTO)
+4. Evaluate if all included functionality is necessary
 
 ### Compiler Warning Configuration
 

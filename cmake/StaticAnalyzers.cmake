@@ -128,3 +128,15 @@ macro(myproject_enable_lizard WARNINGS_AS_ERRORS)
     myproject_tool_not_found_warning("lizard")
   endif()
 endmacro()
+
+# Enable Bloaty McBloatface for binary size analysis
+macro(myproject_enable_bloaty)
+  find_program(BLOATY bloaty)
+  if(BLOATY)
+    include(cmake/Bloaty.cmake)
+    # Function defined in Bloaty.cmake
+    myproject_enable_bloaty()
+  else()
+    myproject_tool_not_found_warning("bloaty")
+  endif()
+endmacro()

@@ -79,6 +79,7 @@ macro(myproject_setup_options)
     option(myproject_ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
     option(myproject_ENABLE_CPPCHECK "Enable cpp-check analysis" OFF)
     option(myproject_ENABLE_LIZARD "Enable Lizard complexity analysis" OFF)
+    option(myproject_ENABLE_BLOATY "Enable Bloaty McBloatface binary size analysis" OFF)
     option(myproject_ENABLE_PCH "Enable precompiled headers" OFF)
     option(myproject_ENABLE_CACHE "Enable ccache" OFF)
   else()
@@ -94,6 +95,7 @@ macro(myproject_setup_options)
     option(myproject_ENABLE_CLANG_TIDY "Enable clang-tidy" ON)
     option(myproject_ENABLE_CPPCHECK "Enable cpp-check analysis" ON)
     option(myproject_ENABLE_LIZARD "Enable Lizard complexity analysis" ON)
+    option(myproject_ENABLE_BLOATY "Enable Bloaty McBloatface binary size analysis" OFF)
     option(myproject_ENABLE_PCH "Enable precompiled headers" OFF)
     option(myproject_ENABLE_CACHE "Enable ccache" ON)
   endif()
@@ -112,6 +114,7 @@ macro(myproject_setup_options)
       myproject_ENABLE_CLANG_TIDY
       myproject_ENABLE_CPPCHECK
       myproject_ENABLE_LIZARD
+      myproject_ENABLE_BLOATY
       myproject_ENABLE_COVERAGE
       myproject_ENABLE_PCH
       myproject_ENABLE_CACHE)
@@ -211,6 +214,10 @@ macro(myproject_local_options)
   
   if(myproject_ENABLE_LIZARD)
     myproject_enable_lizard(${myproject_WARNINGS_AS_ERRORS})
+  endif()
+  
+  if(myproject_ENABLE_BLOATY)
+    myproject_enable_bloaty()
   endif()
 
   if(myproject_ENABLE_COVERAGE)
