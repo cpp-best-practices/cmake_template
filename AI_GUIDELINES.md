@@ -1,0 +1,220 @@
+# AI Agent Guidelines
+
+This document provides guidance for AI agents working with this C++ project template. These guidelines are designed to be useful for any AI assistant, not specific to any particular system.
+
+**Important**: AI agents should also review the `HUMAN_GUIDELINES.md` file, which contains:
+- The project's purpose and philosophy
+- Information about the strict static analysis approach
+- Reference to C++23 Best Practices book by Jason Turner
+- Additional guidelines that both humans and AIs should follow
+
+AI agents should align their suggestions and implementations with the best practices and project philosophy outlined in that document.
+
+## Project Overview
+
+This is a C++ project template that enforces best practices through tooling. It is designed to help you quickly set up a new C++ project with:
+
+- Modern CMake (3.21+) with C++23 support
+- Comprehensive warning configurations
+- Sanitizers (Address, Undefined Behavior)
+- Static analysis (clang-tidy, cppcheck)
+- Dependency management with CPM
+- Testing framework support (unit, constexpr, fuzz)
+- CI integration
+
+## Project Structure
+
+- `CMakeLists.txt` - Main CMake configuration file
+- `ProjectOptions.cmake` - Project-wide CMake options
+- `Dependencies.cmake` - External dependency management
+- `/cmake` - CMake modules and utilities
+- `/configured_files` - Templates for generated files
+- `/include` - Public header files
+- `/src` - Source code files
+- `/test` - Test files
+- `/fuzz_test` - Fuzzing test files
+
+## Common Tasks
+
+### 1. Adding a New Component
+
+When adding a new component:
+
+1. Check existing components for naming conventions and structure
+2. Follow the established pattern for CMakeLists.txt configuration
+3. Use the project's existing target structure and namespacing
+4. Ensure new code follows the project's warning and style guidelines
+
+### 2. Working with CMake
+
+- Use modern CMake practices (target-based approach)
+- Set properties at the target level, not globally when possible
+- Use `myproject::` namespace for targets
+- Follow the established pattern for adding libraries and executables
+
+### 3. Managing Dependencies
+
+- External dependencies should be added to `Dependencies.cmake`
+- Use CPM for dependency management when possible
+- Always specify versions for dependencies
+- Consider vendoring small dependencies that don't change often
+
+### 4. Testing
+
+The project has three primary test targets, each with specific purposes:
+
+1. **constexpr_tests**:
+   - Tests are compiled as static assertions (`STATIC_REQUIRE`)
+   - If the project compiles, we know the code passes these tests
+   - Errors are detected at compile-time
+   - Located in `/test/constexpr_tests.cpp`
+
+2. **relaxed_constexpr_tests**:
+   - Same tests as constexpr_tests but as runtime assertions
+   - Compiled with `-DCATCH_CONFIG_RUNTIME_STATIC_REQUIRE`
+   - When adding new tests, compile and run this target first
+   - Allows for debugging test failures that would otherwise be compile errors
+   - After tests pass in this target, they should pass in constexpr_tests
+
+3. **tests**:
+   - Contains tests that cannot be made constexpr
+   - Uses runtime assertions (`REQUIRE`)
+   - Use for tests involving I/O, runtime-only features, etc.
+   - Located in `/test/tests.cpp`
+
+**Workflow for Adding Tests:**
+1. Start by adding tests to `relaxed_constexpr_tests` if they can be constexpr
+2. Debug and fix any issues
+3. Once passing, ensure they compile in `constexpr_tests`
+4. For non-constexpr functionality, add tests to `tests.cpp`
+
+The project also supports fuzz testing for code that handles external inputs, located in `/fuzz_test`.
+
+### 5. Code Coverage
+
+The project supports code coverage reporting using gcovr. When working with this project:
+
+1. **Enabling Coverage:**
+   - Configure with `-D<project_name>_ENABLE_COVERAGE=ON`
+   - Note: After template instantiation, the variable prefix will change from `myproject_` to your specific project name (e.g., `fizzbuzz_ENABLE_COVERAGE=ON`)
+
+2. **Running Coverage:**
+   - Build and run the tests
+   - Use gcovr to generate reports: `gcovr -r . --config=gcovr.cfg`
+   - The HTML report will be generated at `./out/coverage/index.html`
+   - XML report (Cobertura format) at `out/cobertura.xml`
+
+3. **Coverage Goals:**
+   - Always work toward increasing coverage percentages
+   - Focus on branch coverage in addition to line coverage
+   - Use gcovr's branch coverage reporting (`--branch-coverage`) for detailed analysis
+   - Prioritize covering error handling paths and edge cases
+
+4. **Configuration:**
+   - Coverage settings are in `gcovr.cfg`
+   - Excludes test directories and dependencies
+   - Focuses on your project's source and include directories
+
+## Best Practices
+
+### Following Project Standards
+
+1. **Warnings**: Do not disable warnings. Fix the underlying issues instead.
+2. **Sanitizers**: Do not disable sanitizers. Fix the detected problems.
+3. **Static Analysis**: Address issues reported by clang-tidy and cppcheck.
+4. **Code Complexity**: Keep cyclomatic complexity and function length within Lizard's limits.
+5. **Modern C++**: Use modern C++ features instead of legacy approaches.
+
+### Code Conventions
+
+1. Follow the existing code style for consistency
+2. Use strong typing and avoid C-style casts
+3. Prefer compile-time safety when possible
+4. Make correct use of const-correctness
+5. **Always recommend running clang-format** on modified files:
+   ```bash
+   clang-format -i path/to/changed/files/*.cpp path/to/changed/files/*.hpp
+   ```
+   - clang-format is the source of truth for formatting
+   - This reduces friction in code reviews and CI pipeline failures
+   - Let clang-format handle all style decisions rather than manual formatting
+
+### Building and Testing
+
+1. Before making significant changes, ensure you can build the project
+2. Run tests after making changes to verify functionality
+3. Use the provided CMake presets for consistency
+4. Ensure your changes pass in all build configurations
+
+## Technical Implementation Details
+
+### CMake Configuration
+
+The project uses several CMake patterns:
+
+- Interface libraries for options and warnings
+- Conditional feature enabling based on compiler support
+- Presets for different build configurations
+
+### Complexity Analysis with Lizard
+
+The project uses Lizard for code complexity analysis with the following thresholds:
+
+- **Cyclomatic Complexity**: Functions should have CCN ≤ 15
+- **Function Length**: Functions should be ≤ 100 lines
+- **Parameter Count**: Functions should have ≤ 6 parameters
+
+When encountering functions that exceed these limits:
+1. Consider splitting them into smaller, more focused functions
+2. Extract complex logic into separate methods
+3. Reduce nesting levels and simplify control flow
+4. Use parameter objects for functions with many parameters
+
+To run the analysis manually:
+```bash
+# Run Lizard with warning output only
+cmake --build build --target lizard
+
+# Generate HTML report
+cmake --build build --target lizard_html
+
+# Generate XML report for CI integration
+cmake --build build --target lizard_xml
+```
+
+### Compiler Warning Configuration
+
+Each supported compiler (GCC, Clang, MSVC) has specific warning flags enabled:
+
+- All reasonable warnings are enabled
+- Sign conversions are checked
+- Shadowing is detected
+- Unused code is flagged
+
+### Build Modes
+
+The project typically supports these build modes:
+
+- Debug: No optimization, full debug information
+- Release: Optimized build with minimal debug information
+- RelWithDebInfo: Optimized but with debug information
+
+## Common Problems and Solutions
+
+### Fixing Build Errors
+
+1. **Warning as Errors**: The template treats warnings as errors. Fix the warning rather than disabling it.
+2. **Sanitizer Errors**: Address issues found by sanitizers at their root cause.
+3. **Static Analysis**: Address the issues reported by clang-tidy and cppcheck.
+
+### Dependency Issues
+
+1. Check `Dependencies.cmake` for how dependencies are configured
+2. Ensure correct version compatibility
+3. Use the project's dependency management system rather than adding ad-hoc include paths
+
+### Cross-Platform Concerns
+
+1. Use conditional compilation sparingly and only when necessary
+2. Consider implications of your changes on all supported platforms
+3. Use the provided abstractions for platform-specific code
