@@ -90,6 +90,11 @@ The project has three primary test targets, each with specific purposes:
 
 The project also supports fuzz testing for code that handles external inputs, located in `/fuzz_test`.
 
+
+* ALWAYS prefer test-driven development
+* ALWAYS write tests for new code
+* NEVER filter tests when running test binaries - you need to know if the feature broke other tests!
+
 ### 5. Code Coverage
 
 The project supports code coverage reporting using gcovr. When working with this project:
@@ -161,11 +166,14 @@ Remember, the project's guardrails exist for a reason. Help the user install and
 
 ### Modern C++ Coding Guidelines
 
-1. **Format Strings**: Use `std::format` and `std::print` instead of iostream or printf
+1. **Format Strings**: 
+   - Use `std::format` and `std::print` instead of iostream or printf
+   - NEVER use printf (this will not pass static analysis)
 2. **Memory Management**: 
    - No raw `new`/`delete` operations
    - Prefer stack allocation, then std::vector/array
    - Use smart pointers if heap allocation is necessary
+   - ALWAYS prefer unique_ptr over shared_ptr
 3. **Algorithms over Loops**: 
    - Use standard algorithms and ranges instead of raw loops when possible
    - Use ranged-for with `auto` when algorithms aren't suitable
@@ -193,6 +201,7 @@ Remember, the project's guardrails exist for a reason. Help the user install and
    - Set `<project_name>_PACKAGING_MAINTAINER_MODE=OFF`
    - Enable coverage with `-D<project_name>_ENABLE_COVERAGE=ON`
    - Example: `cmake -DCMAKE_BUILD_TYPE=Debug -Dmyproject_PACKAGING_MAINTAINER_MODE=OFF -Dmyproject_ENABLE_COVERAGE=ON ..`
+6. ALWAYS commit changes after significant change has been made AND tests pass
 
 ## Technical Implementation Details
 
@@ -231,37 +240,6 @@ cmake --build build --target lizard_html
 # Generate XML report for CI integration
 cmake --build build --target lizard_xml
 ```
-
-### Binary Size Analysis with Bloaty McBloatface
-
-The project includes optional support for Bloaty McBloatface, a binary size analyzer. This tool helps identify what's contributing to executable size, which is valuable for embedded systems and performance optimization.
-
-Note: Bloaty is disabled by default as it may not be installed on all systems. Enable with `-D<project_name>_ENABLE_BLOATY=ON`.
-
-When Bloaty is enabled, it provides several analysis targets for each executable:
-
-```bash
-# Basic size analysis for a specific target (e.g., "intro")
-cmake --build build --target bloaty_intro
-
-# Generate CSV report
-cmake --build build --target bloaty_intro_csv
-
-# Store current binary as a baseline for comparisons
-cmake --build build --target bloaty_intro_store
-
-# Analyze template usage (particularly useful for C++ binary bloat)
-cmake --build build --target bloaty_intro_templates
-
-# Run analysis on all executable targets
-cmake --build build --target bloaty_all
-```
-
-When addressing binary size issues:
-1. Look for excessive template instantiations
-2. Check for large static data or string literals
-3. Consider enabling Link Time Optimization (LTO)
-4. Evaluate if all included functionality is necessary
 
 ### Compiler Warning Configuration
 
