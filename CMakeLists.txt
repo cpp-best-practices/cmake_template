@@ -28,6 +28,12 @@ include(ProjectOptions.cmake)
 
 myproject_setup_options()
 
+if (myproject_WARNINGS_AS_ERRORS)
+  set(myproject_WARNING_TYPE SEND_ERROR)
+else()
+  set(myproject_WARNING_TYPE WARNING)
+endif()
+
 myproject_global_options()
 include(Dependencies.cmake)
 myproject_setup_dependencies()
