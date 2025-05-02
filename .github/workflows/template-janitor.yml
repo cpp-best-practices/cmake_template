@@ -57,17 +57,43 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Export description to variable
+        # This is basically needed as we have to have the value in an env variable to further process it in a safe manner.
+        # Also we can inject a mock-string for testing if the project is still the template.
+        if: fromJson(steps.get_repo_meta.outputs.data).is_template == false
+        run: |
+          # description can contain characters that mess with the sed command, so store it in a variable first.
+          # The content of the description will be copied as-is by the action which makes it nearly impossible to "just" use it.
+          # But by storing it in a variable with a heredoc the sed command will accept quotes and single quotes without a problem.
+          # The heredoc delimiter is deliberately verbose and complex to reduce the likeliness someone accidentally puts it in their
+          # description.
+          echo NEW_DESCRIPTION="$(cat <<'do;not(include}this[in%the$description'
+          ${{ fromJson(steps.get_repo_meta.outputs.data).description }}
+          do;not(include}this[in%the$description
+          )" >> $GITHUB_ENV
+
       - name: Use testing variables if still a template
         if: fromJson(steps.get_repo_meta.outputs.data).is_template == true
         run: |
           # This name is unsafe because it is not a valid C++ identifier
           echo "NEW_PROJECT=my-unsafe.project" >> $GITHUB_ENV
+          # This name is unsafe as the sed command later uses surrounding quotes and the pipe symbol. The other characters are generally harmful too.
+          NEW_DESCRIPTION=$(cat <<'EOF'
+          Unsafe because of "quotes" and unbalanced "quotes ('Also' 'unbalanced single). The sed uses | and used to have /. Variable expansion might be bad $GITHUB_ENV as well. Also \ should stay.
+          EOF
+          )
+          echo NEW_DESCRIPTION="$NEW_DESCRIPTION" >> $GITHUB_ENV
 
       - name: Add safe replacement variable versions
         run: |
           # hyphens and dots in c++ identifiers are forbidden. Use underscores instead.
           NEW_SAFE_PROJECT=$(echo ${{ env.NEW_PROJECT }} | sed "s/-/_/g" | sed "s/\./_/g" )
-          echo "NEW_SAFE_PROJECT=$NEW_SAFE_PROJECT" >> $GITHUB_ENV 
+          echo "NEW_SAFE_PROJECT=$NEW_SAFE_PROJECT" >> $GITHUB_ENV
+          # The sed command uses the pipe as the delimiter so escape that to make it safe.
+          # Also as we would remove any literal \ we have to escape those aswell and that has to
+          # be done first as it would mess with the escape for the | otherwise.
+          NEW_SAFE_DESCRIPTION="$(echo "$NEW_DESCRIPTION" | sed 's/\\/\\\\/g' | sed 's/|/\\|/g' )"
+          echo "NEW_SAFE_DESCRIPTION=$NEW_SAFE_DESCRIPTION" >> $GITHUB_ENV
 
       # Rename all cpp_starter_project occurences to current repository and remove this workflow
       - name: Insert new org and project
@@ -81,7 +107,8 @@ jobs:
           # fill in placeholders of readme and move it into place
           sed -i "s/%%myorg%%/${{ env.NEW_ORG }}/g" ${{ env.TEMPLATES_PATH }}/README.md
           sed -i "s/%%myproject%%/${{ env.NEW_PROJECT }}/g" ${{ env.TEMPLATES_PATH }}/README.md
-          sed -i "s|%%description%%|${{ fromJson(steps.get_repo_meta.outputs.data).description }}|g" ${{ env.TEMPLATES_PATH }}/README.md
+          # Use the variable from the env directly as githubs expansion would break the sed command.
+          sed -i "s|%%description%%|$NEW_SAFE_DESCRIPTION|g" ${{ env.TEMPLATES_PATH }}/README.md
           mv include/myproject include/${{ env.NEW_SAFE_PROJECT }}
           cp ${{ env.TEMPLATES_PATH }}/README.md README.md
 
