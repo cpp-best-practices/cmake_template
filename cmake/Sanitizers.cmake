@@ -45,7 +45,20 @@ function(
     endif()
   elseif(MSVC)
     if(${ENABLE_SANITIZER_ADDRESS})
-      list(APPEND SANITIZERS "address")
+       if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+          message(WARNING "MSVC only supports address sanitizer in release builds")
+       else()
+          list(APPEND SANITIZERS "address")
+          cmake_path(GET CMAKE_CXX_COMPILER PARENT_PATH MSVC_TOOLS_DIR)
+          install(
+              FILES 
+                  "${MSVC_TOOLS_DIR}/clang_rt.asan_dbg_dynamic-x86_64.dll"
+                  "${MSVC_TOOLS_DIR}/clang_rt.asan_dbg_dynamic-x86_64.pdb"
+                  "${MSVC_TOOLS_DIR}/clang_rt.asan_dynamic-x86_64.dll"
+                  "${MSVC_TOOLS_DIR}/clang_rt.asan_dynamic-x86_64.pdb"
+              TYPE BIN
+          )
+       endif()
     endif()
     if(${ENABLE_SANITIZER_LEAK}
        OR ${ENABLE_SANITIZER_UNDEFINED_BEHAVIOR}

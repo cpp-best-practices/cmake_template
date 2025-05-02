@@ -17,3 +17,4 @@ target_link_system_libraries(
           ftxui::component)
 
 target_include_directories(intro PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")
+
