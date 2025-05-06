@@ -1,0 +1,5 @@
+[codespell]
+builtin = clear,rare,en-GB_to_en-US,names,informal,code
+check-hidden =
+skip = ./.git,./out/*,./.direnv/*,./cmake-build-*,./build/*,./prefix/*,./conan/*,./stagedir/*,*.log,.*.swp,*~,*.bak
+quiet-level = 2
