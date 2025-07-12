@@ -12,7 +12,19 @@
             "hidden": true,
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "installDir": "${sourceDir}/out/install/${presetName}"
+            "installDir": "${sourceDir}/out/install/${presetName}",
+            "cacheVariables": {
+                "CMAKE_PREFIX_PATH": {
+                    "type": "path",
+                    "value": "${sourceDir}/out/install/${presetName}"
+                },
+                "CMAKE_CXX_EXTENSIONS": false,
+                "CMAKE_CXX_STANDARD": "23",
+                "CMAKE_CXX_STANDARD_REQUIRED": true,
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "CMAKE_MESSAGE_LOG_LEVEL": "TRACE",
+                "CMAKE_SKIP_TEST_ALL_DEPENDENCY": false
+            }
         },
         {
             "name": "conf-windows-common",
@@ -186,6 +198,54 @@
                 "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_BUILD_TYPE": "RelWithDebInfo"
             }
+        }
+    ],
+    "buildPresets":[
+        {
+            "name": "build-common",
+            "description": "Build CMake settings that apply to all configurations",
+            "hidden": true,
+            "jobs": 4
+        },
+        {
+            "name": "build-windows-msvc-debug-developer-mode",
+            "inherits": "build-common",
+            "configurePreset": "windows-msvc-debug-developer-mode"
+        },
+        {
+            "name": "build-windows-msvc-release-developer-mode",
+            "inherits": "build-common",
+            "configurePreset": "windows-msvc-release-developer-mode"
+        },
+        {
+            "name": "build-windows-clang-debug",
+            "inherits": "build-common",
+            "configurePreset": "windows-clang-debug"
+        },
+        {
+            "name": "build-windows-clang-release",
+            "inherits": "build-common",
+            "configurePreset": "windows-clang-release"
+        },
+        {
+            "name": "build-unixlike-gcc-debug",
+            "inherits": "build-common",
+            "configurePreset": "unixlike-gcc-debug"
+        },
+        {
+            "name": "build-unixlike-gcc-release",
+            "inherits": "build-common",
+            "configurePreset": "unixlike-gcc-release"
+        },
+        {
+            "name": "build-unixlike-clang-debug",
+            "inherits": "build-common",
+            "configurePreset": "unixlike-clang-debug"
+        },
+        {
+            "name": "build-unixlike-clang-release",
+            "inherits": "build-common",
+            "configurePreset": "unixlike-clang-release"
         }
     ],
     "testPresets": [

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21...3.27)
+cmake_minimum_required(VERSION 3.21...4.1)
 
 project(CmakeConfigPackageTests LANGUAGES CXX)
 
@@ -17,7 +17,11 @@ endif()
 
 # ---- Dependencies ----
 
-include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
+if(Catch2_DIR)
+  include(${Catch2_DIR}/Catch.cmake)
+else()
+  include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
+endif()
 
 if(TARGET intro)
   # Provide a simple smoke test to make sure that the CLI works and can display a --help message

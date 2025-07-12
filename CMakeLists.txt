@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21...3.27)
+cmake_minimum_required(VERSION 3.21...4.1)
 
 # This template attempts to be "fetch_content"-able
 # so that it works well with tools like CPM or other

@@ -1,3 +1,10 @@
+---
+BasedOnStyle:    LLVM
+Language:        Json
+IndentWidth:     4
+UseTab:          Never
+---
+Language:        Cpp
 AccessModifierOffset: -2
 AlignAfterOpenBracket: DontAlign
 AlignConsecutiveAssignments: false
@@ -69,7 +76,6 @@ IndentWrappedFunctionNames: true
 JavaScriptQuotes: Leave
 JavaScriptWrapImports: true
 KeepEmptyLinesAtTheStartOfBlocks: true
-Language: Cpp
 MacroBlockBegin: ''
 MacroBlockEnd: ''
 MaxEmptyLinesToKeep: 2
