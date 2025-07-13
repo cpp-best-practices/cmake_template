@@ -211,7 +211,7 @@
             }
         }
     ],
-    "buildPresets":[
+    "buildPresets": [
         {
             "name": "build-common",
             "description": "Build CMake settings that apply to all configurations",
@@ -239,24 +239,34 @@
             "configurePreset": "windows-clang-release"
         },
         {
-            "name": "build-unixlike-gcc-debug",
-            "inherits": "build-common",
-            "configurePreset": "unixlike-gcc-debug"
+            "name": "clang-release",
+            "configurePreset": "clang-release"
         },
         {
-            "name": "build-unixlike-gcc-release",
-            "inherits": "build-common",
-            "configurePreset": "unixlike-gcc-release"
+            "name": "clang-install",
+            "configurePreset": "clang-release",
+            "targets": [
+                "install"
+            ]
         },
         {
-            "name": "build-unixlike-clang-debug",
-            "inherits": "build-common",
-            "configurePreset": "unixlike-clang-debug"
+            "name": "clang-debug",
+            "configurePreset": "clang-debug"
         },
         {
-            "name": "build-unixlike-clang-release",
-            "inherits": "build-common",
-            "configurePreset": "unixlike-clang-release"
+            "name": "gcc-release",
+            "configurePreset": "gcc-release"
+        },
+        {
+            "name": "gcc-install",
+            "configurePreset": "gcc-release",
+            "targets": [
+                "install"
+            ]
+        },
+        {
+            "name": "gcc-debug",
+            "configurePreset": "gcc-debug"
         }
     ],
     "testPresets": [
@@ -328,38 +338,6 @@
             "description": "Enable output and stop on failure",
             "inherits": "test-common",
             "configurePreset": "clang-release"
-        }
-    ],
-    "buildPresets": [
-        {
-            "name": "clang-release",
-            "configurePreset": "clang-release"
-        },
-        {
-            "name": "clang-install",
-            "configurePreset": "clang-release",
-            "targets": [
-                "install"
-            ]
-        },
-        {
-            "name": "clang-debug",
-            "configurePreset": "clang-debug"
-        },
-        {
-            "name": "gcc-release",
-            "configurePreset": "gcc-release"
-        },
-        {
-            "name": "gcc-install",
-            "configurePreset": "gcc-release",
-            "targets": [
-                "install"
-            ]
-        },
-        {
-            "name": "gcc-debug",
-            "configurePreset": "gcc-debug"
         }
     ],
     "packagePresets": [

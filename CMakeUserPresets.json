@@ -12,19 +12,26 @@
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_HOST_SYSTEM_PROCESSOR": "$penv{PROCESSOR_ARCHITECTURE}"
+            },
+            "environment": {
+                "CPM_USE_LOCAL_PACKAGES": "1"
             }
         },
         {
             "name": "common-config",
             "description": "Settings for all toolchains",
             "hidden": true,
-            "inherits": "default-config",
+            "inherits": ["conf-unixlike-common", "default-config"],
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "installDir": "${sourceDir}/out/install/${presetName}",
             "cacheVariables": {
+                "myproject_BUILD_FTXUI": false,
                 "ENABLE_DOXYGEN": false,
                 "ENABLE_CPPCHECK": false,
                 "ENABLE_CLANG_TIDY": false
+            },
+            "environment": {
+                "CPM_USE_LOCAL_PACKAGES": "0"
             },
             "vendor": {
                 "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
@@ -36,7 +43,7 @@
             "name": "debug",
             "displayName": "Debug",
             "description": "Debug build type",
-            "inherits": "conf-unixlike-common",
+            "inherits": "common-config",
             "cacheVariables": {
                 "CMAKE_SKIP_INSTALL_RULES": true,
                 "CMAKE_BUILD_TYPE": "Debug",
@@ -47,7 +54,7 @@
             "name": "release",
             "displayName": "Release",
             "description": "Release build type",
-            "inherits": "conf-unixlike-common",
+            "inherits": "common-config",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "ENABLE_DOXYGEN": true
