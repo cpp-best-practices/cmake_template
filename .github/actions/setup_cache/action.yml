@@ -24,6 +24,17 @@ runs:
       with:
         # You might want to add .ccache to your cache configuration?
         path: |
+          ./build/
+          ~/vcpkg
+          ~/.cache/vcpkg/archives
+          ${{ env.LOCALAPPDATA }}/vcpkg/archives
+          ${{ env.APPDATA }}/vcpkg/archives
+          ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
+          ~/.cache/ccache
+          ~/.config/ccache
+          ~/Library/Caches/ccache
+          ${{ env.LOCALAPPDATA }}/ccache
+          ${{ env.XDG_CACHE_HOME }}/ccache
           ~/.cache/pip
           ~/.ccache
         key: ${{ runner.os }}-${{ inputs.compiler }}-${{ inputs.build_type }}-${{ inputs.generator }}-${{ inputs.packaging_maintainer_mode }}-${{ hashFiles('**/CMakeLists.txt') }}

@@ -72,7 +72,7 @@ jobs:
 
         cmake: true
         ninja: true
-        vcpkg: false
+        vcpkg: true
         ccache: true
         clangtidy: false
 
@@ -85,7 +85,7 @@ jobs:
       # has meaningful results
     - name: Configure CMake
       run: |
-        cmake -S . -B ./build -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }}
+        cmake -S . -B ./build -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DCMAKE_TOOLCHAIN_FILE:PATH=~/vcpkg/scripts/buildsystems/vcpkg.cmake
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
