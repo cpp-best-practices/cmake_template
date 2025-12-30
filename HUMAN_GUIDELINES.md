@@ -62,7 +62,7 @@ Here are some relevant chapter titles from that book:
     40:If You Must Do Manual Resource Management, Follow the Rule of 5
     41:Don’t Copy and Paste Code
     42:Prefer std::format, std::print Over iostream Or c-formatting Functions
-    43:constexpr All The Things! (constexpr should be the prefered default as of C++23)
+    43:constexpr All The Things! (constexpr should be the preferred default as of C++23)
     44:Make globals in headers inline constexpr
     45:Safely Initialize Non-const Static Variables
     46:const Everything That’s Not constexpr
