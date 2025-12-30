@@ -17,7 +17,10 @@ macro(
     list(APPEND NEW_CXX_DEFINITIONS -D_GLIBCXX_ASSERTIONS)
     message(STATUS "*** GLIBC++ Assertions (vector[], string[], ...) enabled")
 
-    list(APPEND NEW_COMPILE_OPTIONS -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3)
+    if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
+      list(APPEND NEW_COMPILE_OPTIONS -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3)
+    endif()
+    
     message(STATUS "*** g++/clang _FORTIFY_SOURCE=3 enabled")
 
     #    check_cxx_compiler_flag(-fpie PIE)
