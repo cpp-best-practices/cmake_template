@@ -9,9 +9,9 @@ macro(
   message(STATUS "** Enabling Hardening (Target ${target}) **")
 
   if(MSVC)
-    set(NEW_COMPILE_OPTIONS "${NEW_COMPILE_OPTIONS} /sdl /DYNAMICBASE /guard:cf")
+    list(APPEND NEW_COMPILE_OPTIONS /sdl /DYNAMICBASE /guard:cf)
     message(STATUS "*** MSVC flags: /sdl /DYNAMICBASE /guard:cf /NXCOMPAT /CETCOMPAT")
-    set(NEW_LINK_OPTIONS "${NEW_LINK_OPTIONS} /NXCOMPAT /CETCOMPAT")
+    list(APPEND NEW_LINK_OPTIONS /NXCOMPAT /CETCOMPAT)
 
   elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
     list(APPEND NEW_CXX_DEFINITIONS -D_GLIBCXX_ASSERTIONS)
