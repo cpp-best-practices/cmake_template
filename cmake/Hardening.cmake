@@ -14,14 +14,14 @@ macro(
     set(NEW_LINK_OPTIONS "${NEW_LINK_OPTIONS} /NXCOMPAT /CETCOMPAT")
 
   elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
-    set(NEW_CXX_DEFINITIONS "${NEW_CXX_DEFINITIONS} -D_GLIBCXX_ASSERTIONS")
+    list(APPEND NEW_CXX_DEFINITIONS -D_GLIBCXX_ASSERTIONS)
     message(STATUS "*** GLIBC++ Assertions (vector[], string[], ...) enabled")
 
-    if (NOT ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-      set(NEW_COMPILE_OPTIONS "${NEW_COMPILE_OPTIONS} -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3")
+    if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
+      list(APPEND NEW_COMPILE_OPTIONS -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3)
       message(STATUS "*** g++/clang _FORTIFY_SOURCE=3 enabled")
     endif()
-    
+
     #    check_cxx_compiler_flag(-fpie PIE)
     #if(PIE)
     #  set(NEW_COMPILE_OPTIONS ${NEW_COMPILE_OPTIONS} -fpie)
@@ -34,7 +34,7 @@ macro(
 
     check_cxx_compiler_flag(-fstack-protector-strong STACK_PROTECTOR)
     if(STACK_PROTECTOR)
-      set(NEW_COMPILE_OPTIONS "${NEW_COMPILE_OPTIONS} -fstack-protector-strong")
+      list(APPEND NEW_COMPILE_OPTIONS -fstack-protector-strong)
       message(STATUS "*** g++/clang -fstack-protector-strong enabled")
     else()
       message(STATUS "*** g++/clang -fstack-protector-strong NOT enabled (not supported)")
@@ -42,7 +42,7 @@ macro(
 
     check_cxx_compiler_flag(-fcf-protection CF_PROTECTION)
     if(CF_PROTECTION)
-      set(NEW_COMPILE_OPTIONS "${NEW_COMPILE_OPTIONS} -fcf-protection")
+      list(APPEND NEW_COMPILE_OPTIONS -fcf-protection)
       message(STATUS "*** g++/clang -fcf-protection enabled")
     else()
       message(STATUS "*** g++/clang -fcf-protection NOT enabled (not supported)")
@@ -51,7 +51,7 @@ macro(
     check_cxx_compiler_flag(-fstack-clash-protection CLASH_PROTECTION)
     if(CLASH_PROTECTION)
       if(LINUX OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-        set(NEW_COMPILE_OPTIONS "${NEW_COMPILE_OPTIONS} -fstack-clash-protection")
+        list(APPEND NEW_COMPILE_OPTIONS -fstack-clash-protection)
         message(STATUS "*** g++/clang -fstack-clash-protection enabled")
       else()
         message(STATUS "*** g++/clang -fstack-clash-protection NOT enabled (clang on non-Linux)")
@@ -65,12 +65,12 @@ macro(
     check_cxx_compiler_flag("-fsanitize=undefined -fno-sanitize-recover=undefined -fsanitize-minimal-runtime"
                             MINIMAL_RUNTIME)
     if(MINIMAL_RUNTIME)
-      set(NEW_COMPILE_OPTIONS "${NEW_COMPILE_OPTIONS} -fsanitize=undefined -fsanitize-minimal-runtime")
-      set(NEW_LINK_OPTIONS "${NEW_LINK_OPTIONS} -fsanitize=undefined -fsanitize-minimal-runtime")
+      list(APPEND NEW_COMPILE_OPTIONS -fsanitize=undefined -fsanitize-minimal-runtime)
+      list(APPEND NEW_LINK_OPTIONS -fsanitize=undefined -fsanitize-minimal-runtime)
 
       if(NOT ${global})
-        set(NEW_COMPILE_OPTIONS "${NEW_COMPILE_OPTIONS} -fno-sanitize-recover=undefined")
-        set(NEW_LINK_OPTIONS "${NEW_LINK_OPTIONS} -fno-sanitize-recover=undefined")
+        list(APPEND NEW_COMPILE_OPTIONS -fno-sanitize-recover=undefined)
+        list(APPEND NEW_LINK_OPTIONS -fno-sanitize-recover=undefined)
       else()
         message(STATUS "** not enabling -fno-sanitize-recover=undefined for global consumption")
       endif()
