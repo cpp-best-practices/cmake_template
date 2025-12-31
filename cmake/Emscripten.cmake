@@ -61,7 +61,7 @@ function(myproject_configure_wasm_target target)
       # Environment - need both web and worker for pthread support
       "-sENVIRONMENT=web,worker"
       # Export runtime methods for JavaScript interop
-      "-sEXPORTED_RUNTIME_METHODS=['ccall','cwrap','UTF8ToString','stringToUTF8','lengthBytesUTF8']"
+      "-sEXPORTED_RUNTIME_METHODS=['FS','ccall','cwrap','UTF8ToString','stringToUTF8','lengthBytesUTF8']"
       # Export malloc/free for MAIN_THREAD_EM_ASM usage
       "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free']"
       # Enable native WebAssembly exception handling
