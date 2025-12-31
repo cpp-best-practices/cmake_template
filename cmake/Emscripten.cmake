@@ -1,6 +1,12 @@
 # cmake/Emscripten.cmake
 # Emscripten/WebAssembly build configuration
 
+# Common paths for web assets
+set(MYPROJECT_WEB_DIR "${CMAKE_SOURCE_DIR}/web")
+set(MYPROJECT_COI_WORKER "${MYPROJECT_WEB_DIR}/coi-serviceworker.min.js")
+set(MYPROJECT_SHELL_TEMPLATE "${MYPROJECT_WEB_DIR}/shell_template.html.in")
+set(MYPROJECT_INDEX_TEMPLATE "${MYPROJECT_WEB_DIR}/index_template.html.in")
+
 # Helper function to escape HTML special characters
 function(escape_html output_var input)
   set(result "${input}")
@@ -24,9 +30,9 @@ if(EMSCRIPTEN)
   endforeach()
 
   # Disable static analysis and strict warnings for Emscripten builds
-  set(myproject_ENABLE_CLANG_TIDY OFF CACHE BOOL "Disabled for Emscripten")
-  set(myproject_ENABLE_CPPCHECK OFF CACHE BOOL "Disabled for Emscripten")
-  set(myproject_WARNINGS_AS_ERRORS OFF CACHE BOOL "Disabled for Emscripten")
+  foreach(option CLANG_TIDY CPPCHECK WARNINGS_AS_ERRORS)
+    set(myproject_ENABLE_${option} OFF CACHE BOOL "Disabled for Emscripten")
+  endforeach()
 
   # Disable testing - no way to execute WASM test targets
   set(BUILD_TESTING OFF CACHE BOOL "No test runner for WASM")
@@ -88,7 +94,6 @@ function(myproject_configure_wasm_target target)
       "-sEXPORTED_RUNTIME_METHODS=['FS','ccall','cwrap','UTF8ToString','stringToUTF8','lengthBytesUTF8']"
       # Export malloc/free for MAIN_THREAD_EM_ASM usage
       "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free']"
-      # Note: -fwasm-exceptions already set in global CMAKE_CXX_FLAGS (line 36)
       # Debug: enable assertions for better error messages
       "-sASSERTIONS=1"
     )
@@ -109,13 +114,12 @@ function(myproject_configure_wasm_target target)
     set(TARGET_TITLE "${WASM_TITLE}")
     set(TARGET_DESCRIPTION "${WASM_DESCRIPTION}")
     set(AT "@")  # For escaping @ in npm package URLs
-    set(TEMPLATE_FILE "${CMAKE_SOURCE_DIR}/web/shell_template.html.in")
     set(CONFIGURED_SHELL "${CMAKE_BINARY_DIR}/web/${target}_shell.html")
 
     # Generate target-specific shell file (configure_file creates parent directories automatically)
-    if(EXISTS "${TEMPLATE_FILE}")
+    if(EXISTS "${MYPROJECT_SHELL_TEMPLATE}")
       configure_file(
-        "${TEMPLATE_FILE}"
+        "${MYPROJECT_SHELL_TEMPLATE}"
         "${CONFIGURED_SHELL}"
         @ONLY
       )
@@ -127,21 +131,20 @@ function(myproject_configure_wasm_target target)
 
       # Add both template and configured file as link dependencies
       set_property(TARGET ${target} APPEND PROPERTY LINK_DEPENDS
-        "${TEMPLATE_FILE}"
+        "${MYPROJECT_SHELL_TEMPLATE}"
         "${CONFIGURED_SHELL}"
       )
 
       message(STATUS "Configured WASM shell for ${target}: ${CONFIGURED_SHELL}")
     else()
-      message(FATAL_ERROR "Shell template not found: ${TEMPLATE_FILE}")
+      message(FATAL_ERROR "Shell template not found: ${MYPROJECT_SHELL_TEMPLATE}")
     endif()
 
     # Copy service worker to target build directory for standalone target builds
-    set(COI_WORKER "${CMAKE_SOURCE_DIR}/web/coi-serviceworker.min.js")
-    if(EXISTS "${COI_WORKER}")
+    if(EXISTS "${MYPROJECT_COI_WORKER}")
       add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-          "${COI_WORKER}"
+          "${MYPROJECT_COI_WORKER}"
           "$<TARGET_FILE_DIR:${target}>/coi-serviceworker.min.js"
         COMMENT "Copying coi-serviceworker.min.js to ${target} build directory"
       )
@@ -190,30 +193,24 @@ function(myproject_create_web_dist)
   endforeach()
 
   # Generate index.html from template
-  set(INDEX_TEMPLATE "${CMAKE_SOURCE_DIR}/web/index_template.html.in")
   set(INDEX_OUTPUT "${WEB_DIST_DIR}/index.html")
 
-  if(EXISTS "${INDEX_TEMPLATE}")
-    configure_file("${INDEX_TEMPLATE}" "${INDEX_OUTPUT}" @ONLY)
+  if(EXISTS "${MYPROJECT_INDEX_TEMPLATE}")
+    configure_file("${MYPROJECT_INDEX_TEMPLATE}" "${INDEX_OUTPUT}" @ONLY)
   else()
-    message(WARNING "Index template not found: ${INDEX_TEMPLATE}")
+    message(WARNING "Index template not found: ${MYPROJECT_INDEX_TEMPLATE}")
   endif()
 
   # Build list of copy commands
   set(COPY_COMMANDS "")
 
-  # Service worker location
-  set(COI_WORKER "${CMAKE_SOURCE_DIR}/web/coi-serviceworker.min.js")
-
   # For each WASM target, copy artifacts to subdirectory
   # Each target gets its own service worker copy for standalone deployment
   foreach(target ${WASM_TARGETS})
-    # Determine source directory (where target was built)
     get_target_property(TARGET_BINARY_DIR ${target} BINARY_DIR)
-
-    # Create target subdirectory
     set(TARGET_DIST_DIR "${WEB_DIST_DIR}/${target}")
 
+    # Copy WASM artifacts: .html (as index.html), .js, .wasm, and service worker
     list(APPEND COPY_COMMANDS
       COMMAND ${CMAKE_COMMAND} -E make_directory "${TARGET_DIST_DIR}"
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -226,7 +223,7 @@ function(myproject_create_web_dist)
         "${TARGET_BINARY_DIR}/${target}.wasm"
         "${TARGET_DIST_DIR}/${target}.wasm"
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${COI_WORKER}"
+        "${MYPROJECT_COI_WORKER}"
         "${TARGET_DIST_DIR}/coi-serviceworker.min.js"
     )
   endforeach()
