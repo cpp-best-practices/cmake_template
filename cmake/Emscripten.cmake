@@ -23,8 +23,13 @@ if(EMSCRIPTEN)
   # Disable testing - no way to execute WASM test targets
   set(BUILD_TESTING OFF CACHE BOOL "No test runner for WASM")
 
-  # Resource embedding path (optional)
-  set(INTRO_RESOURCES_DIR "" CACHE PATH "Resources directory (optional)")
+  # WASM runtime configuration - tunable performance parameters
+  set(MYPROJECT_WASM_INITIAL_MEMORY "33554432" CACHE STRING
+      "Initial WASM memory in bytes (default: 32MB)")
+  set(MYPROJECT_WASM_PTHREAD_POOL_SIZE "4" CACHE STRING
+      "Pthread pool size for WASM builds (default: 4)")
+  set(MYPROJECT_WASM_ASYNCIFY_STACK_SIZE "65536" CACHE STRING
+      "Asyncify stack size in bytes (default: 64KB)")
 
   # For Emscripten WASM builds, FTXUI requires pthreads
   # Set these flags early so they propagate to all dependencies
@@ -46,7 +51,7 @@ function(myproject_configure_wasm_target target)
   if(EMSCRIPTEN)
     # Parse optional named arguments
     set(options "")
-    set(oneValueArgs TITLE DESCRIPTION)
+    set(oneValueArgs TITLE DESCRIPTION RESOURCES_DIR)
     set(multiValueArgs "")
     cmake_parse_arguments(WASM "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -71,33 +76,33 @@ function(myproject_configure_wasm_target target)
       # Enable pthreads - REQUIRED by FTXUI's WASM implementation
       "-sUSE_PTHREADS=1"
       "-sPROXY_TO_PTHREAD=1"
-      "-sPTHREAD_POOL_SIZE=4"
+      "-sPTHREAD_POOL_SIZE=${MYPROJECT_WASM_PTHREAD_POOL_SIZE}"
       # Enable asyncify for emscripten_sleep and async operations
       "-sASYNCIFY=1"
-      "-sASYNCIFY_STACK_SIZE=65536"
+      "-sASYNCIFY_STACK_SIZE=${MYPROJECT_WASM_ASYNCIFY_STACK_SIZE}"
       # Memory configuration
       "-sALLOW_MEMORY_GROWTH=1"
-      "-sINITIAL_MEMORY=33554432"
+      "-sINITIAL_MEMORY=${MYPROJECT_WASM_INITIAL_MEMORY}"
       # Environment - need both web and worker for pthread support
       "-sENVIRONMENT=web,worker"
       # Export runtime methods for JavaScript interop
       "-sEXPORTED_RUNTIME_METHODS=['FS','ccall','cwrap','UTF8ToString','stringToUTF8','lengthBytesUTF8']"
       # Export malloc/free for MAIN_THREAD_EM_ASM usage
       "-sEXPORTED_FUNCTIONS=['_main','_malloc','_free']"
-      # Enable native WebAssembly exception handling
-      "-fwasm-exceptions"
+      # Note: -fwasm-exceptions already set in global CMAKE_CXX_FLAGS (line 36)
       # Debug: enable assertions for better error messages
       "-sASSERTIONS=1"
     )
 
-    # Embed resources into WASM binary (optional)
-    if(INTRO_RESOURCES_DIR AND EXISTS "${INTRO_RESOURCES_DIR}")
+    # Embed resources into WASM binary (optional, per-target)
+    if(WASM_RESOURCES_DIR AND EXISTS "${WASM_RESOURCES_DIR}")
+      # Convert to absolute path to avoid issues with Emscripten path resolution
+      get_filename_component(ABS_RESOURCES_DIR "${WASM_RESOURCES_DIR}" ABSOLUTE BASE_DIR "${CMAKE_SOURCE_DIR}")
+
       target_link_options(${target} PRIVATE
-        "--embed-file=${INTRO_RESOURCES_DIR}@/resources"
+        "--embed-file=${ABS_RESOURCES_DIR}@/resources"
       )
-      message(STATUS "Embedding resources from ${INTRO_RESOURCES_DIR}")
-    else()
-      message(STATUS "No resources directory configured, skipping resource embedding")
+      message(STATUS "Embedding resources for ${target} from ${ABS_RESOURCES_DIR}")
     endif()
 
     # Configure the shell HTML template for this target
@@ -135,14 +140,14 @@ function(myproject_configure_wasm_target target)
       message(WARNING "Shell template not found: ${TEMPLATE_FILE}")
     endif()
 
-    # Copy service worker for COOP/COEP headers (needed for GitHub Pages)
+    # Copy service worker to target build directory for standalone target builds
     set(COI_WORKER "${CMAKE_SOURCE_DIR}/web/coi-serviceworker.min.js")
     if(EXISTS "${COI_WORKER}")
       add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
           "${COI_WORKER}"
           "$<TARGET_FILE_DIR:${target}>/coi-serviceworker.min.js"
-        COMMENT "Copying coi-serviceworker.min.js for COOP/COEP headers"
+        COMMENT "Copying coi-serviceworker.min.js to ${target} build directory"
       )
     endif()
 
@@ -176,10 +181,21 @@ function(myproject_create_web_dist)
     get_property(TITLE GLOBAL PROPERTY MYPROJECT_WASM_TARGET_${target}_TITLE)
     get_property(DESCRIPTION GLOBAL PROPERTY MYPROJECT_WASM_TARGET_${target}_DESCRIPTION)
 
+    # Escape HTML special characters to prevent injection
+    string(REPLACE "&" "&amp;" TITLE_ESCAPED "${TITLE}")
+    string(REPLACE "<" "&lt;" TITLE_ESCAPED "${TITLE_ESCAPED}")
+    string(REPLACE ">" "&gt;" TITLE_ESCAPED "${TITLE_ESCAPED}")
+    string(REPLACE "\"" "&quot;" TITLE_ESCAPED "${TITLE_ESCAPED}")
+
+    string(REPLACE "&" "&amp;" DESC_ESCAPED "${DESCRIPTION}")
+    string(REPLACE "<" "&lt;" DESC_ESCAPED "${DESC_ESCAPED}")
+    string(REPLACE ">" "&gt;" DESC_ESCAPED "${DESC_ESCAPED}")
+    string(REPLACE "\"" "&quot;" DESC_ESCAPED "${DESC_ESCAPED}")
+
     string(APPEND WASM_APPS_HTML
 "            <a href=\"${target}/\" class=\"app-card\">
-                <div class=\"app-title\">${TITLE}</div>
-                <div class=\"app-description\">${DESCRIPTION}</div>
+                <div class=\"app-title\">${TITLE_ESCAPED}</div>
+                <div class=\"app-description\">${DESC_ESCAPED}</div>
             </a>
 ")
   endforeach()
@@ -197,17 +213,11 @@ function(myproject_create_web_dist)
   # Build list of copy commands
   set(COPY_COMMANDS "")
 
-  # Copy service worker (shared by all apps)
+  # Service worker location
   set(COI_WORKER "${CMAKE_SOURCE_DIR}/web/coi-serviceworker.min.js")
-  if(EXISTS "${COI_WORKER}")
-    list(APPEND COPY_COMMANDS
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${COI_WORKER}"
-        "${WEB_DIST_DIR}/coi-serviceworker.min.js"
-    )
-  endif()
 
   # For each WASM target, copy artifacts to subdirectory
+  # Each target gets its own service worker copy for standalone deployment
   foreach(target ${WASM_TARGETS})
     # Determine source directory (where target was built)
     get_target_property(TARGET_BINARY_DIR ${target} BINARY_DIR)
@@ -227,7 +237,7 @@ function(myproject_create_web_dist)
         "${TARGET_BINARY_DIR}/${target}.wasm"
         "${TARGET_DIST_DIR}/${target}.wasm"
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${TARGET_BINARY_DIR}/coi-serviceworker.min.js"
+        "${COI_WORKER}"
         "${TARGET_DIST_DIR}/coi-serviceworker.min.js"
     )
   endforeach()
