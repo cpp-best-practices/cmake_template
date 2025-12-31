@@ -91,6 +91,31 @@
         <div id="terminal" class="hidden"></div>
 
         <div id="error"></div>
+
+        <div id="usage-info" style="margin-top: 30px; padding: 20px; background-color: #16213e; border-radius: 8px; font-size: 13px; line-height: 1.6;">
+            <h3 style="color: #e94560; margin-bottom: 15px;">Command-Line Arguments via URL</h3>
+            <p style="margin-bottom: 10px;">Pass command-line arguments to the application using URL parameters:</p>
+
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #e94560;">Conversion Rules:</strong>
+                <ul style="list-style: none; padding-left: 0; margin-top: 5px;">
+                    <li>• Single-character params → short flags: <code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">?v</code> → <code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">-v</code></li>
+                    <li>• Multi-character params → long flags: <code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">?version</code> → <code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">--version</code></li>
+                    <li>• Params with values: <code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">?file=test.txt</code> → <code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">--file test.txt</code></li>
+                    <li>• Multiple params: <code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">?v&help</code> → <code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">-v --help</code></li>
+                </ul>
+            </div>
+
+            <div>
+                <strong style="color: #e94560;">Examples:</strong>
+                <ul style="list-style: none; padding-left: 0; margin-top: 5px; color: #888;">
+                    <li><code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">intro.html?version</code></li>
+                    <li><code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">intro.html?h</code></li>
+                    <li><code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">intro.html?file=data.txt</code></li>
+                    <li><code style="background-color: #0f0f23; padding: 2px 6px; border-radius: 3px;">intro.html?verbose&config=settings.json</code></li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
@@ -178,9 +203,20 @@
                 const args = [];
                 const urlParams = new URLSearchParams(window.location.search);
 
-                // Support ?version flag
-                if (urlParams.has('version')) {
-                    args.push('--version');
+                // Convert all URL parameters to command-line arguments
+                for (const [key, value] of urlParams.entries()) {
+                    // Single character params become short flags: ?v → -v
+                    // Multi-character params become long flags: ?version → --version
+                    const prefix = key.length === 1 ? '-' : '--';
+
+                    if (value === '' || value === null) {
+                        // Boolean flag without value: ?help → --help
+                        args.push(prefix + key);
+                    } else {
+                        // Parameter with value: ?file=test.txt → --file test.txt
+                        args.push(prefix + key);
+                        args.push(value);
+                    }
                 }
 
                 console.log('Module.arguments:', args);
@@ -268,5 +304,45 @@
         });
     </script>
     {{{ SCRIPT }}}
+
+    <!--
+    URL Parameter to Command-Line Argument Conversion
+    ==================================================
+
+    URL parameters are automatically converted to command-line arguments
+    passed to the intro executable:
+
+    Conversion Rules:
+    -----------------
+    1. Single-character parameters → Short flags (with -)
+       Example: ?v → -v
+                ?h → -h
+
+    2. Multi-character parameters → Long flags (with --)
+       Example: ?version → --version
+                ?help → --help
+
+    3. Parameters without values → Boolean flags
+       Example: ?verbose → --verbose
+                ?debug → --debug
+
+    4. Parameters with values → Flag + value (as separate arguments)
+       Example: ?file=test.txt → --file test.txt
+                ?config=settings.json → --config settings.json
+
+    5. Multiple parameters → Multiple arguments
+       Example: ?v&file=data.txt → -v --file data.txt
+
+    Usage Examples:
+    ---------------
+    intro.html?version              → --version
+    intro.html?h                    → -h
+    intro.html?file=data.txt        → --file data.txt
+    intro.html?v&config=app.cfg     → -v --config app.cfg
+    intro.html?verbose&input=x.txt  → --verbose --input x.txt
+
+    Note: This allows any CLI argument supported by the intro executable
+    to be passed via URL parameters for web-based usage.
+    -->
 </body>
 </html>
