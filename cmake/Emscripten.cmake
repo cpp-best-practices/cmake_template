@@ -44,6 +44,21 @@ endif()
 # Function to apply WASM settings to a target
 function(myproject_configure_wasm_target target)
   if(EMSCRIPTEN)
+    # Parse optional named arguments
+    set(options "")
+    set(oneValueArgs TITLE DESCRIPTION)
+    set(multiValueArgs "")
+    cmake_parse_arguments(WASM "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    # Set defaults if not provided
+    if(NOT WASM_TITLE)
+      set(WASM_TITLE "${target}")
+    endif()
+
+    if(NOT WASM_DESCRIPTION)
+      set(WASM_DESCRIPTION "WebAssembly application")
+    endif()
+
     target_compile_definitions(${target} PRIVATE MYPROJECT_WASM_BUILD=1)
 
     # Emscripten link flags
@@ -80,14 +95,39 @@ function(myproject_configure_wasm_target target)
       message(STATUS "No resources directory configured, skipping resource embedding")
     endif()
 
-    # Use custom HTML shell if it exists
-    set(SHELL_FILE "${CMAKE_SOURCE_DIR}/web/shell.html")
-    if(EXISTS "${SHELL_FILE}")
-      target_link_options(${target} PRIVATE
-        "--shell-file=${SHELL_FILE}"
+    # Configure the shell HTML template for this target
+    set(TARGET_NAME "${target}")
+    set(TARGET_TITLE "${WASM_TITLE}")
+    set(TARGET_DESCRIPTION "${WASM_DESCRIPTION}")
+    set(AT "@")  # For escaping @ in npm package URLs
+    set(TEMPLATE_FILE "${CMAKE_SOURCE_DIR}/web/shell_template.html.in")
+    set(CONFIGURED_SHELL "${CMAKE_BINARY_DIR}/web/${target}_shell.html")
+
+    # Create output directory
+    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/web")
+
+    # Generate target-specific shell file
+    if(EXISTS "${TEMPLATE_FILE}")
+      configure_file(
+        "${TEMPLATE_FILE}"
+        "${CONFIGURED_SHELL}"
+        @ONLY
       )
-      # Add shell file as a link dependency so changes trigger rebuild
-      set_property(TARGET ${target} APPEND PROPERTY LINK_DEPENDS "${SHELL_FILE}")
+
+      # Use the generated shell file
+      target_link_options(${target} PRIVATE
+        "--shell-file=${CONFIGURED_SHELL}"
+      )
+
+      # Add both template and configured file as link dependencies
+      set_property(TARGET ${target} APPEND PROPERTY LINK_DEPENDS
+        "${TEMPLATE_FILE}"
+        "${CONFIGURED_SHELL}"
+      )
+
+      message(STATUS "Configured WASM shell for ${target}: ${CONFIGURED_SHELL}")
+    else()
+      message(WARNING "Shell template not found: ${TEMPLATE_FILE}")
     endif()
 
     # Copy service worker for COOP/COEP headers (needed for GitHub Pages)

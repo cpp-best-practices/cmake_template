@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intro - FTXUI Sample</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/css/xterm.css">
+    <title>@TARGET_TITLE@</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@AT@xterm/xterm@AT@6.0.0/css/xterm.css">
     <style>
         * {
             margin: 0;
@@ -80,11 +80,11 @@
     <script src="coi-serviceworker.min.js"></script>
 
     <div id="container">
-        <h1>Intro</h1>
+        <h1>@TARGET_NAME@</h1>
 
         <div id="loading">
             <div class="spinner"></div>
-            <p>Loading application...</p>
+            <p>Loading @TARGET_NAME@...</p>
             <p id="progress"></p>
         </div>
 
@@ -182,9 +182,9 @@
     <script type="importmap">
     {
         "imports": {
-            "@xterm/xterm": "https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/+esm",
-            "@xterm/addon-fit": "https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.11.0/+esm",
-            "@xterm/addon-webgl": "https://cdn.jsdelivr.net/npm/@xterm/addon-webgl@0.18.0/+esm"
+            "@xterm/xterm": "https://cdn.jsdelivr.net/npm/@AT@xterm/xterm@AT@6.0.0/+esm",
+            "@xterm/addon-fit": "https://cdn.jsdelivr.net/npm/@AT@xterm/addon-fit@AT@0.11.0/+esm",
+            "@xterm/addon-webgl": "https://cdn.jsdelivr.net/npm/@AT@xterm/addon-webgl@AT@0.18.0/+esm"
         }
     }
     </script>
