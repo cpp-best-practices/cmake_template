@@ -11,11 +11,12 @@ RUN apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \
         software-properties-common wget apt-utils file zip \
         openssh-client gpg-agent socat rsync \
         make ninja-build git \
-        python3 python3-pip
+        python3 python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install conan
-RUN python3 -m pip install --upgrade pip setuptools && \
-    python3 -m pip install conan && \
+RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools && \
+    python3 -m pip install --no-cache-dir conan && \
     conan --version
 
 # By default, anything you run in Docker is done as superuser.
@@ -35,7 +36,8 @@ ARG GCC_VER="11"
 RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
     apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y --no-install-recommends \
-        gcc-${GCC_VER} g++-${GCC_VER} gdb
+        gcc-${GCC_VER} g++-${GCC_VER} gdb \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set gcc-${GCC_VER} as default gcc
 RUN update-alternatives --install /usr/bin/gcc gcc $(which gcc-${GCC_VER}) 100
@@ -50,7 +52,8 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - 2>/dev/
     apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y --no-install-recommends \
         clang-${LLVM_VER} lldb-${LLVM_VER} lld-${LLVM_VER} clangd-${LLVM_VER} \
-        llvm-${LLVM_VER}-dev libclang-${LLVM_VER}-dev clang-tidy-${LLVM_VER}
+        llvm-${LLVM_VER}-dev libclang-${LLVM_VER}-dev clang-tidy-${LLVM_VER} \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set the default clang-tidy, so CMake can find it
 RUN update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-${LLVM_VER}) 1
@@ -66,17 +69,20 @@ RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/nul
         | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
     apt-add-repository -y "deb ${CMAKE_URL} ${CMAKE_PKG} main" && \
     apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \
-    apt-get install -y --no-install-recommends cmake cmake-curses-gui
+    apt-get install -y --no-install-recommends cmake cmake-curses-gui \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install editors
 RUN apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y --no-install-recommends \
-        neovim emacs nano
+        neovim emacs nano \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install optional dependecies
 RUN apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -y --no-install-recommends \
-        doxygen graphviz ccache cppcheck
+        doxygen graphviz ccache cppcheck \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install include-what-you-use
 ENV IWYU /home/iwyu
@@ -100,9 +106,6 @@ RUN mkdir -p $(include-what-you-use -print-resource-dir 2>/dev/null)
 RUN ln -s $(readlink -f /usr/lib/clang/${LLVM_VER}/include) \
     $(include-what-you-use -print-resource-dir 2>/dev/null)/include
 
-## Cleanup cached apt data we don't need anymore
-RUN apt-get autoremove -y && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 # Allow the user to set compiler defaults
 ARG USE_CLANG
