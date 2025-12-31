@@ -1,6 +1,16 @@
 # cmake/Emscripten.cmake
 # Emscripten/WebAssembly build configuration
 
+# Helper function to escape HTML special characters
+function(escape_html output_var input)
+  set(result "${input}")
+  string(REPLACE "&" "&amp;" result "${result}")
+  string(REPLACE "<" "&lt;" result "${result}")
+  string(REPLACE ">" "&gt;" result "${result}")
+  string(REPLACE "\"" "&quot;" result "${result}")
+  set(${output_var} "${result}" PARENT_SCOPE)
+endfunction()
+
 # Detect if we're building with Emscripten
 if(EMSCRIPTEN)
   message(STATUS "Emscripten build detected - configuring for WebAssembly")
@@ -9,11 +19,9 @@ if(EMSCRIPTEN)
   set(MYPROJECT_WASM_BUILD ON CACHE BOOL "Building for WebAssembly" FORCE)
 
   # Sanitizers don't work with Emscripten
-  set(myproject_ENABLE_SANITIZER_ADDRESS OFF CACHE BOOL "Not supported with Emscripten")
-  set(myproject_ENABLE_SANITIZER_LEAK OFF CACHE BOOL "Not supported with Emscripten")
-  set(myproject_ENABLE_SANITIZER_UNDEFINED OFF CACHE BOOL "Not supported with Emscripten")
-  set(myproject_ENABLE_SANITIZER_THREAD OFF CACHE BOOL "Not supported with Emscripten")
-  set(myproject_ENABLE_SANITIZER_MEMORY OFF CACHE BOOL "Not supported with Emscripten")
+  foreach(sanitizer ADDRESS LEAK UNDEFINED THREAD MEMORY)
+    set(myproject_ENABLE_SANITIZER_${sanitizer} OFF CACHE BOOL "Not supported with Emscripten")
+  endforeach()
 
   # Disable static analysis and strict warnings for Emscripten builds
   set(myproject_ENABLE_CLANG_TIDY OFF CACHE BOOL "Disabled for Emscripten")
@@ -31,19 +39,10 @@ if(EMSCRIPTEN)
   set(MYPROJECT_WASM_ASYNCIFY_STACK_SIZE "65536" CACHE STRING
       "Asyncify stack size in bytes (default: 64KB)")
 
-  # For Emscripten WASM builds, FTXUI requires pthreads
+  # For Emscripten WASM builds, FTXUI requires pthreads and native exception handling
   # Set these flags early so they propagate to all dependencies
-
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
-
-  # Enable native WebAssembly exception handling
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fwasm-exceptions")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fwasm-exceptions")
-
-
-else()
-  set(MYPROJECT_WASM_BUILD OFF CACHE BOOL "Building for WebAssembly" FORCE)
+  string(APPEND CMAKE_CXX_FLAGS " -pthread -fwasm-exceptions")
+  string(APPEND CMAKE_C_FLAGS " -pthread -fwasm-exceptions")
 endif()
 
 # Function to apply WASM settings to a target
@@ -113,10 +112,7 @@ function(myproject_configure_wasm_target target)
     set(TEMPLATE_FILE "${CMAKE_SOURCE_DIR}/web/shell_template.html.in")
     set(CONFIGURED_SHELL "${CMAKE_BINARY_DIR}/web/${target}_shell.html")
 
-    # Create output directory
-    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/web")
-
-    # Generate target-specific shell file
+    # Generate target-specific shell file (configure_file creates parent directories automatically)
     if(EXISTS "${TEMPLATE_FILE}")
       configure_file(
         "${TEMPLATE_FILE}"
@@ -137,7 +133,7 @@ function(myproject_configure_wasm_target target)
 
       message(STATUS "Configured WASM shell for ${target}: ${CONFIGURED_SHELL}")
     else()
-      message(WARNING "Shell template not found: ${TEMPLATE_FILE}")
+      message(FATAL_ERROR "Shell template not found: ${TEMPLATE_FILE}")
     endif()
 
     # Copy service worker to target build directory for standalone target builds
@@ -182,15 +178,8 @@ function(myproject_create_web_dist)
     get_property(DESCRIPTION GLOBAL PROPERTY MYPROJECT_WASM_TARGET_${target}_DESCRIPTION)
 
     # Escape HTML special characters to prevent injection
-    string(REPLACE "&" "&amp;" TITLE_ESCAPED "${TITLE}")
-    string(REPLACE "<" "&lt;" TITLE_ESCAPED "${TITLE_ESCAPED}")
-    string(REPLACE ">" "&gt;" TITLE_ESCAPED "${TITLE_ESCAPED}")
-    string(REPLACE "\"" "&quot;" TITLE_ESCAPED "${TITLE_ESCAPED}")
-
-    string(REPLACE "&" "&amp;" DESC_ESCAPED "${DESCRIPTION}")
-    string(REPLACE "<" "&lt;" DESC_ESCAPED "${DESC_ESCAPED}")
-    string(REPLACE ">" "&gt;" DESC_ESCAPED "${DESC_ESCAPED}")
-    string(REPLACE "\"" "&quot;" DESC_ESCAPED "${DESC_ESCAPED}")
+    escape_html(TITLE_ESCAPED "${TITLE}")
+    escape_html(DESC_ESCAPED "${DESCRIPTION}")
 
     string(APPEND WASM_APPS_HTML
 "            <a href=\"${target}/\" class=\"app-card\">

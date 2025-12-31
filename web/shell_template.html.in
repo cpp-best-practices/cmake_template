@@ -124,26 +124,13 @@
         // execute asynchronously and Emscripten needs Module to exist immediately.
         var Module = {
             // Parse URL parameters and convert to CLI-style arguments
+            // Single char params → short flags (?v → -v), multi-char → long flags (?version → --version)
             arguments: (function() {
                 const args = [];
-                const urlParams = new URLSearchParams(window.location.search);
-
-                // Convert all URL parameters to command-line arguments
-                for (const [key, value] of urlParams.entries()) {
-                    // Single character params become short flags: ?v → -v
-                    // Multi-character params become long flags: ?version → --version
-                    const prefix = key.length === 1 ? '-' : '--';
-
-                    if (value === '' || value === null) {
-                        // Boolean flag without value: ?help → --help
-                        args.push(prefix + key);
-                    } else {
-                        // Parameter with value: ?file=test.txt → --file test.txt
-                        args.push(prefix + key);
-                        args.push(value);
-                    }
-                }
-
+                new URLSearchParams(window.location.search).forEach((value, key) => {
+                    args.push((key.length === 1 ? '-' : '--') + key);
+                    if (value) args.push(value);
+                });
                 console.log('Module.arguments:', args);
                 return args;
             })(),
@@ -235,37 +222,32 @@
             return stdin_buffer.shift() || 0;
         }
 
-        // stdout: buffer bytes, flush on null byte (0) or newline (10)
-        function stdout(code) {
-            if (code === 0 || code === 10) {
-                // Flush buffer to terminal
-                if (code === 10) {
-                    stdout_buffer.push(code);  // Include the newline
+        // Factory function to create buffered output writers
+        function createBufferWriter(buffer, writeHandler) {
+            return function(code) {
+                if (code === 0 || code === 10) {
+                    if (code === 10) buffer.push(code);  // Include newline in buffer
+                    if (buffer.length > 0) {
+                        var text = new TextDecoder().decode(new Uint8Array(buffer));
+                        writeHandler(text);
+                        buffer.length = 0;  // Clear buffer
+                    }
+                } else {
+                    buffer.push(code);
                 }
-                if (stdout_buffer.length > 0) {
-                    var text = new TextDecoder().decode(new Uint8Array(stdout_buffer));
-                    term.write(text);
-                    stdout_buffer = [];
-                }
-            } else {
-                stdout_buffer.push(code);
-            }
+            };
         }
 
-        // stderr: buffer bytes, flush on null or newline
-        function stderr(code) {
-            if (code === 0 || code === 10) {
-                if (stderr_buffer.length > 0) {
-                    var text = new TextDecoder().decode(new Uint8Array(stderr_buffer));
-                    console.error(text);
-                    // Also write to visible terminal so users can see errors
-                    term.write(text);
-                    stderr_buffer = [];
-                }
-            } else {
-                stderr_buffer.push(code);
-            }
-        }
+        // stdout: buffer bytes, flush to terminal on null or newline
+        var stdout = createBufferWriter(stdout_buffer, function(text) {
+            term.write(text);
+        });
+
+        // stderr: buffer bytes, flush to console and terminal on null or newline
+        var stderr = createBufferWriter(stderr_buffer, function(text) {
+            console.error(text);
+            term.write(text);
+        });
 
         // Hook into Module's preRun to set up terminal before WASM starts
         Module.preRun.push(function() {
@@ -307,20 +289,21 @@
             }
         });
 
-        window.onerror = function(message, source, lineno, colno, error) {
+        // Consolidated error display helper
+        function showError(message, details) {
             var errorDiv = document.getElementById('error');
             errorDiv.textContent = 'Error: ' + message;
             errorDiv.style.display = 'block';
             document.getElementById('loading').classList.add('hidden');
-            console.error('Error:', message, source, lineno, colno, error);
+            if (details) console.error(message, details);
+        }
+
+        window.onerror = function(message, source, lineno, colno, error) {
+            showError(message, { source: source, lineno: lineno, colno: colno, error: error });
         };
 
         window.addEventListener('unhandledrejection', function(event) {
-            var errorDiv = document.getElementById('error');
-            errorDiv.textContent = 'Error: ' + event.reason;
-            errorDiv.style.display = 'block';
-            document.getElementById('loading').classList.add('hidden');
-            console.error('Unhandled rejection:', event.reason);
+            showError(event.reason);
         });
 
         // Export to window for debugging
@@ -328,45 +311,5 @@
         window.fitAddon = fitAddon;
     </script>
     {{{ SCRIPT }}}
-
-    <!--
-    URL Parameter to Command-Line Argument Conversion
-    ==================================================
-
-    URL parameters are automatically converted to command-line arguments
-    passed to the intro executable:
-
-    Conversion Rules:
-    -----------------
-    1. Single-character parameters → Short flags (with -)
-       Example: ?v → -v
-                ?h → -h
-
-    2. Multi-character parameters → Long flags (with --)
-       Example: ?version → --version
-                ?help → --help
-
-    3. Parameters without values → Boolean flags
-       Example: ?verbose → --verbose
-                ?debug → --debug
-
-    4. Parameters with values → Flag + value (as separate arguments)
-       Example: ?file=test.txt → --file test.txt
-                ?config=settings.json → --config settings.json
-
-    5. Multiple parameters → Multiple arguments
-       Example: ?v&file=data.txt → -v --file data.txt
-
-    Usage Examples:
-    ---------------
-    intro.html?version              → --version
-    intro.html?h                    → -h
-    intro.html?file=data.txt        → --file data.txt
-    intro.html?v&config=app.cfg     → -v --config app.cfg
-    intro.html?verbose&input=x.txt  → --verbose --input x.txt
-
-    Note: This allows any CLI argument supported by the intro executable
-    to be passed via URL parameters for web-based usage.
-    -->
 </body>
 </html>
