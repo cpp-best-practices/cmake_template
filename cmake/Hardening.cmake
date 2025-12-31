@@ -19,9 +19,8 @@ macro(
 
     if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
       list(APPEND NEW_COMPILE_OPTIONS -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3)
+      message(STATUS "*** g++/clang _FORTIFY_SOURCE=3 enabled")
     endif()
-    
-    message(STATUS "*** g++/clang _FORTIFY_SOURCE=3 enabled")
 
     #    check_cxx_compiler_flag(-fpie PIE)
     #if(PIE)
