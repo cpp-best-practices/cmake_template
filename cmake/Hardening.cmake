@@ -90,9 +90,9 @@ macro(
 
   if(${global})
     message(STATUS "** Setting hardening options globally for all dependencies")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEW_COMPILE_OPTIONS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${NEW_LINK_OPTIONS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEW_CXX_DEFINITIONS}")
+    add_compile_options(${NEW_COMPILE_OPTIONS})
+    add_compile_definitions(${NEW_CXX_DEFINITIONS})
+    add_link_options(${NEW_LINK_OPTIONS})
   else()
     target_compile_options(${target} INTERFACE ${NEW_COMPILE_OPTIONS})
     target_link_options(${target} INTERFACE ${NEW_LINK_OPTIONS})

@@ -23,6 +23,7 @@ project(
   LANGUAGES CXX C)
 
 include(cmake/PreventInSourceBuilds.cmake)
+include(cmake/Emscripten.cmake)
 include(ProjectOptions.cmake)
 
 
