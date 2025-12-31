@@ -41,8 +41,8 @@ if(EMSCRIPTEN)
 
   # For Emscripten WASM builds, FTXUI requires pthreads and native exception handling
   # Set these flags early so they propagate to all dependencies
-  string(APPEND CMAKE_CXX_FLAGS " -pthread -fwasm-exceptions")
-  string(APPEND CMAKE_C_FLAGS " -pthread -fwasm-exceptions")
+  add_compile_options(-pthread -fwasm-exceptions)
+  add_link_options(-pthread -fwasm-exceptions)
 endif()
 
 # Function to apply WASM settings to a target
