@@ -59,6 +59,11 @@ function(myproject_configure_wasm_target target)
       set(WASM_DESCRIPTION "WebAssembly application")
     endif()
 
+    # Register this target in the global WASM targets list
+    set_property(GLOBAL APPEND PROPERTY MYPROJECT_WASM_TARGETS "${target}")
+    set_property(GLOBAL PROPERTY MYPROJECT_WASM_TARGET_${target}_TITLE "${WASM_TITLE}")
+    set_property(GLOBAL PROPERTY MYPROJECT_WASM_TARGET_${target}_DESCRIPTION "${WASM_DESCRIPTION}")
+
     target_compile_definitions(${target} PRIVATE MYPROJECT_WASM_BUILD=1)
 
     # Emscripten link flags
@@ -146,4 +151,96 @@ function(myproject_configure_wasm_target target)
 
     message(STATUS "Configured ${target} for WebAssembly")
   endif()
+endfunction()
+
+# Create a unified web deployment directory with all WASM targets
+function(myproject_create_web_dist)
+  if(NOT EMSCRIPTEN)
+    return()
+  endif()
+
+  # Define output directory
+  set(WEB_DIST_DIR "${CMAKE_BINARY_DIR}/web-dist")
+
+  # Get list of all WASM targets
+  get_property(WASM_TARGETS GLOBAL PROPERTY MYPROJECT_WASM_TARGETS)
+
+  if(NOT WASM_TARGETS)
+    message(WARNING "No WASM targets registered. Skipping web-dist generation.")
+    return()
+  endif()
+
+  # Generate HTML for app cards
+  set(WASM_APPS_HTML "")
+  foreach(target ${WASM_TARGETS})
+    get_property(TITLE GLOBAL PROPERTY MYPROJECT_WASM_TARGET_${target}_TITLE)
+    get_property(DESCRIPTION GLOBAL PROPERTY MYPROJECT_WASM_TARGET_${target}_DESCRIPTION)
+
+    string(APPEND WASM_APPS_HTML
+"            <a href=\"${target}/\" class=\"app-card\">
+                <div class=\"app-title\">${TITLE}</div>
+                <div class=\"app-description\">${DESCRIPTION}</div>
+            </a>
+")
+  endforeach()
+
+  # Generate index.html from template
+  set(INDEX_TEMPLATE "${CMAKE_SOURCE_DIR}/web/index_template.html.in")
+  set(INDEX_OUTPUT "${WEB_DIST_DIR}/index.html")
+
+  if(EXISTS "${INDEX_TEMPLATE}")
+    configure_file("${INDEX_TEMPLATE}" "${INDEX_OUTPUT}" @ONLY)
+  else()
+    message(WARNING "Index template not found: ${INDEX_TEMPLATE}")
+  endif()
+
+  # Build list of copy commands
+  set(COPY_COMMANDS "")
+
+  # Copy service worker (shared by all apps)
+  set(COI_WORKER "${CMAKE_SOURCE_DIR}/web/coi-serviceworker.min.js")
+  if(EXISTS "${COI_WORKER}")
+    list(APPEND COPY_COMMANDS
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${COI_WORKER}"
+        "${WEB_DIST_DIR}/coi-serviceworker.min.js"
+    )
+  endif()
+
+  # For each WASM target, copy artifacts to subdirectory
+  foreach(target ${WASM_TARGETS})
+    # Determine source directory (where target was built)
+    get_target_property(TARGET_BINARY_DIR ${target} BINARY_DIR)
+
+    # Create target subdirectory
+    set(TARGET_DIST_DIR "${WEB_DIST_DIR}/${target}")
+
+    list(APPEND COPY_COMMANDS
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${TARGET_DIST_DIR}"
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${TARGET_BINARY_DIR}/${target}.html"
+        "${TARGET_DIST_DIR}/index.html"
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${TARGET_BINARY_DIR}/${target}.js"
+        "${TARGET_DIST_DIR}/${target}.js"
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${TARGET_BINARY_DIR}/${target}.wasm"
+        "${TARGET_DIST_DIR}/${target}.wasm"
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${TARGET_BINARY_DIR}/coi-serviceworker.min.js"
+        "${TARGET_DIST_DIR}/coi-serviceworker.min.js"
+    )
+  endforeach()
+
+  # Create custom target with all commands (part of ALL so it builds by default)
+  add_custom_target(web-dist ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${WEB_DIST_DIR}"
+    ${COPY_COMMANDS}
+    COMMENT "Creating unified web deployment directory"
+  )
+
+  # Ensure web-dist runs after all WASM targets are built
+  add_dependencies(web-dist ${WASM_TARGETS})
+
+  message(STATUS "Configured web-dist target with ${WASM_TARGETS}")
 endfunction()

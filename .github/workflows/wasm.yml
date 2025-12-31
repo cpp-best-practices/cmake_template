@@ -28,16 +28,14 @@ jobs:
       - name: Configure CMake
         run: emcmake cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build
-        run: emmake cmake --build build --target intro
+      - name: Build all WASM targets
+        run: emmake cmake --build build --target web-dist
 
-      - name: Prepare artifacts
+      - name: Prepare deployment
         run: |
-          mkdir -p dist
-          cp build/src/ftxui_sample/intro.html dist/index.html
-          cp build/src/ftxui_sample/intro.js dist/
-          cp build/src/ftxui_sample/intro.wasm dist/
-          cp build/src/ftxui_sample/coi-serviceworker.min.js dist/
+          # web-dist target already created build/web-dist/
+          # Just copy it to dist/ for GitHub Pages action
+          cp -r build/web-dist dist
 
       - name: Determine deploy path
         id: deploy-path
