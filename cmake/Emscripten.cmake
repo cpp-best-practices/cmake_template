@@ -2,10 +2,10 @@
 # Emscripten/WebAssembly build configuration
 
 # Common paths for web assets
-set(MYPROJECT_WEB_DIR "${CMAKE_SOURCE_DIR}/web")
-set(MYPROJECT_COI_WORKER "${MYPROJECT_WEB_DIR}/coi-serviceworker.min.js")
-set(MYPROJECT_SHELL_TEMPLATE "${MYPROJECT_WEB_DIR}/shell_template.html.in")
-set(MYPROJECT_INDEX_TEMPLATE "${MYPROJECT_WEB_DIR}/index_template.html.in")
+set(myproject_WEB_DIR "${CMAKE_SOURCE_DIR}/web")
+set(myproject_COI_WORKER "${myproject_WEB_DIR}/coi-serviceworker.min.js")
+set(myproject_SHELL_TEMPLATE "${myproject_WEB_DIR}/shell_template.html.in")
+set(myproject_INDEX_TEMPLATE "${myproject_WEB_DIR}/index_template.html.in")
 
 # Helper function to escape HTML special characters
 function(escape_html output_var input)
@@ -22,7 +22,7 @@ if(EMSCRIPTEN)
   message(STATUS "Emscripten build detected - configuring for WebAssembly")
 
   # Set WASM build flag
-  set(MYPROJECT_WASM_BUILD ON CACHE BOOL "Building for WebAssembly" FORCE)
+  set(myproject_WASM_BUILD ON CACHE BOOL "Building for WebAssembly" FORCE)
 
   # Sanitizers don't work with Emscripten
   foreach(sanitizer ADDRESS LEAK UNDEFINED THREAD MEMORY)
@@ -38,11 +38,11 @@ if(EMSCRIPTEN)
   set(BUILD_TESTING OFF CACHE BOOL "No test runner for WASM")
 
   # WASM runtime configuration - tunable performance parameters
-  set(MYPROJECT_WASM_INITIAL_MEMORY "33554432" CACHE STRING
+  set(myproject_WASM_INITIAL_MEMORY "33554432" CACHE STRING
       "Initial WASM memory in bytes (default: 32MB)")
-  set(MYPROJECT_WASM_PTHREAD_POOL_SIZE "4" CACHE STRING
+  set(myproject_WASM_PTHREAD_POOL_SIZE "4" CACHE STRING
       "Pthread pool size for WASM builds (default: 4)")
-  set(MYPROJECT_WASM_ASYNCIFY_STACK_SIZE "65536" CACHE STRING
+  set(myproject_WASM_ASYNCIFY_STACK_SIZE "65536" CACHE STRING
       "Asyncify stack size in bytes (default: 64KB)")
 
   # For Emscripten WASM builds, FTXUI requires pthreads and native exception handling
@@ -70,24 +70,24 @@ function(myproject_configure_wasm_target target)
     endif()
 
     # Register this target in the global WASM targets list
-    set_property(GLOBAL APPEND PROPERTY MYPROJECT_WASM_TARGETS "${target}")
-    set_property(GLOBAL PROPERTY MYPROJECT_WASM_TARGET_${target}_TITLE "${WASM_TITLE}")
-    set_property(GLOBAL PROPERTY MYPROJECT_WASM_TARGET_${target}_DESCRIPTION "${WASM_DESCRIPTION}")
+    set_property(GLOBAL APPEND PROPERTY myproject_WASM_TARGETS "${target}")
+    set_property(GLOBAL PROPERTY myproject_WASM_TARGET_${target}_TITLE "${WASM_TITLE}")
+    set_property(GLOBAL PROPERTY myproject_WASM_TARGET_${target}_DESCRIPTION "${WASM_DESCRIPTION}")
 
-    target_compile_definitions(${target} PRIVATE MYPROJECT_WASM_BUILD=1)
+    target_compile_definitions(${target} PRIVATE myproject_WASM_BUILD=1)
 
     # Emscripten link flags
     target_link_options(${target} PRIVATE
       # Enable pthreads - REQUIRED by FTXUI's WASM implementation
       "-sUSE_PTHREADS=1"
       "-sPROXY_TO_PTHREAD=1"
-      "-sPTHREAD_POOL_SIZE=${MYPROJECT_WASM_PTHREAD_POOL_SIZE}"
+      "-sPTHREAD_POOL_SIZE=${myproject_WASM_PTHREAD_POOL_SIZE}"
       # Enable asyncify for emscripten_sleep and async operations
       "-sASYNCIFY=1"
-      "-sASYNCIFY_STACK_SIZE=${MYPROJECT_WASM_ASYNCIFY_STACK_SIZE}"
+      "-sASYNCIFY_STACK_SIZE=${myproject_WASM_ASYNCIFY_STACK_SIZE}"
       # Memory configuration
       "-sALLOW_MEMORY_GROWTH=1"
-      "-sINITIAL_MEMORY=${MYPROJECT_WASM_INITIAL_MEMORY}"
+      "-sINITIAL_MEMORY=${myproject_WASM_INITIAL_MEMORY}"
       # Environment - need both web and worker for pthread support
       "-sENVIRONMENT=web,worker"
       # Export runtime methods for JavaScript interop
@@ -117,9 +117,9 @@ function(myproject_configure_wasm_target target)
     set(CONFIGURED_SHELL "${CMAKE_BINARY_DIR}/web/${target}_shell.html")
 
     # Generate target-specific shell file (configure_file creates parent directories automatically)
-    if(EXISTS "${MYPROJECT_SHELL_TEMPLATE}")
+    if(EXISTS "${myproject_SHELL_TEMPLATE}")
       configure_file(
-        "${MYPROJECT_SHELL_TEMPLATE}"
+        "${myproject_SHELL_TEMPLATE}"
         "${CONFIGURED_SHELL}"
         @ONLY
       )
@@ -131,20 +131,20 @@ function(myproject_configure_wasm_target target)
 
       # Add both template and configured file as link dependencies
       set_property(TARGET ${target} APPEND PROPERTY LINK_DEPENDS
-        "${MYPROJECT_SHELL_TEMPLATE}"
+        "${myproject_SHELL_TEMPLATE}"
         "${CONFIGURED_SHELL}"
       )
 
       message(STATUS "Configured WASM shell for ${target}: ${CONFIGURED_SHELL}")
     else()
-      message(FATAL_ERROR "Shell template not found: ${MYPROJECT_SHELL_TEMPLATE}")
+      message(FATAL_ERROR "Shell template not found: ${myproject_SHELL_TEMPLATE}")
     endif()
 
     # Copy service worker to target build directory for standalone target builds
-    if(EXISTS "${MYPROJECT_COI_WORKER}")
+    if(EXISTS "${myproject_COI_WORKER}")
       add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-          "${MYPROJECT_COI_WORKER}"
+          "${myproject_COI_WORKER}"
           "$<TARGET_FILE_DIR:${target}>/coi-serviceworker.min.js"
         COMMENT "Copying coi-serviceworker.min.js to ${target} build directory"
       )
@@ -167,7 +167,7 @@ function(myproject_create_web_dist)
   set(WEB_DIST_DIR "${CMAKE_BINARY_DIR}/web-dist")
 
   # Get list of all WASM targets
-  get_property(WASM_TARGETS GLOBAL PROPERTY MYPROJECT_WASM_TARGETS)
+  get_property(WASM_TARGETS GLOBAL PROPERTY myproject_WASM_TARGETS)
 
   if(NOT WASM_TARGETS)
     message(WARNING "No WASM targets registered. Skipping web-dist generation.")
@@ -177,8 +177,8 @@ function(myproject_create_web_dist)
   # Generate HTML for app cards
   set(WASM_APPS_HTML "")
   foreach(target ${WASM_TARGETS})
-    get_property(TITLE GLOBAL PROPERTY MYPROJECT_WASM_TARGET_${target}_TITLE)
-    get_property(DESCRIPTION GLOBAL PROPERTY MYPROJECT_WASM_TARGET_${target}_DESCRIPTION)
+    get_property(TITLE GLOBAL PROPERTY myproject_WASM_TARGET_${target}_TITLE)
+    get_property(DESCRIPTION GLOBAL PROPERTY myproject_WASM_TARGET_${target}_DESCRIPTION)
 
     # Escape HTML special characters to prevent injection
     escape_html(TITLE_ESCAPED "${TITLE}")
@@ -195,10 +195,10 @@ function(myproject_create_web_dist)
   # Generate index.html from template
   set(INDEX_OUTPUT "${WEB_DIST_DIR}/index.html")
 
-  if(EXISTS "${MYPROJECT_INDEX_TEMPLATE}")
-    configure_file("${MYPROJECT_INDEX_TEMPLATE}" "${INDEX_OUTPUT}" @ONLY)
+  if(EXISTS "${myproject_INDEX_TEMPLATE}")
+    configure_file("${myproject_INDEX_TEMPLATE}" "${INDEX_OUTPUT}" @ONLY)
   else()
-    message(WARNING "Index template not found: ${MYPROJECT_INDEX_TEMPLATE}")
+    message(WARNING "Index template not found: ${myproject_INDEX_TEMPLATE}")
   endif()
 
   # Build list of copy commands
@@ -223,7 +223,7 @@ function(myproject_create_web_dist)
         "${TARGET_BINARY_DIR}/${target}.wasm"
         "${TARGET_DIST_DIR}/${target}.wasm"
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${MYPROJECT_COI_WORKER}"
+        "${myproject_COI_WORKER}"
         "${TARGET_DIST_DIR}/coi-serviceworker.min.js"
     )
   endforeach()
