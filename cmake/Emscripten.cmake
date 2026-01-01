@@ -186,8 +186,8 @@ function(myproject_create_web_dist)
 
     string(APPEND WASM_APPS_HTML
 "            <a href=\"${target}/\" class=\"app-card\">
-                <div class=\"app-title\">${TITLE_ESCAPED}</div>
-                <div class=\"app-description\">${DESC_ESCAPED}</div>
+                <h3>${TITLE_ESCAPED}</h3>
+                <p>${DESC_ESCAPED}</p>
             </a>
 ")
   endforeach()
