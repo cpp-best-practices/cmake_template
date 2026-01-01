@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myproject - WebAssembly Applications</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #eee;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #e94560;
+            font-size: 2.5rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .app-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #e94560;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .app-card:hover {
+            transform: translateY(-5px);
+            background: rgba(233, 69, 96, 0.1);
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.3);
+        }
+        .app-title {
+            color: #e94560;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .app-description {
+            color: #ccc;
+            line-height: 1.6;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>myproject</h1>
+        <p class="subtitle">WebAssembly Applications</p>
+
+        <div class="app-grid">
+                        <a href="intro/" class="app-card">
+                <div class="app-title">Intro - FTXUI Sample</div>
+                <div class="app-description">FTXUI-based terminal application</div>
+            </a>
+
+        </div>
+
+        <div class="footer">
+            Built with CMake and Emscripten | Version 0.0.1
+        </div>
+    </div>
+</body>
+</html>
