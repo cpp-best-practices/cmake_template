@@ -9,7 +9,9 @@
 
 ## WebAssembly Demo
 
-Try the live WebAssembly demo: [https://%%myorg%%.github.io/%%myproject%%/](https://%%myorg%%.github.io/%%myproject%%/)
+Try the live WebAssembly demo:
+- Main: [https://%%myorg%%.github.io/%%myproject%%/](https://%%myorg%%.github.io/%%myproject%%/)
+- Develop: [https://%%myorg%%.github.io/%%myproject%%/develop/](https://%%myorg%%.github.io/%%myproject%%/develop/)
 
 The `main` branch deploys to the root, `develop` to `/develop/`, and tags to `/tagname/`.
 

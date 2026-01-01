@@ -22,7 +22,9 @@ It includes
  * large GitHub action testing matrix
  * WebAssembly build support with automatic GitHub Pages deployment
 
-**Live Demo:** If you enable GitHub Pages in your project created from this template, you'll have a working example like this: [https://cpp-best-practices.github.io/cmake_template/](https://cpp-best-practices.github.io/cmake_template/)
+**Live Demo:** If you enable GitHub Pages in your project created from this template, you'll have a working example like this:
+- Main: [https://cpp-best-practices.github.io/cmake_template/](https://cpp-best-practices.github.io/cmake_template/)
+- Develop: [https://cpp-best-practices.github.io/cmake_template/develop/](https://cpp-best-practices.github.io/cmake_template/develop/)
 
 The `main` branch deploys to the root, `develop` to `/develop/`, and tags to `/tagname/`.
 
