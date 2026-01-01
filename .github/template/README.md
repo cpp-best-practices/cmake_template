@@ -7,6 +7,12 @@
 ## About %%myproject%%
 %%description%%
 
+## WebAssembly Demo
+
+Try the live WebAssembly demo: [https://%%myorg%%.github.io/%%myproject%%/](https://%%myorg%%.github.io/%%myproject%%/)
+
+The `main` branch deploys to the root, `develop` to `/develop/`, and tags to `/tagname/`.
+
 
 ## More Details
 
