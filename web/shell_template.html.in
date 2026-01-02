@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@TARGET_TITLE@</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css" id="theme-stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@AT@xterm/xterm@AT@6.0.0/css/xterm.css">
+    <style>
+        body { max-width: 1000px; }
+        header { text-align: center; }
+        fieldset { text-align: center; border: none; }
+        #terminal {
+            margin: 2rem auto;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        #loading { text-align: center; padding: 3rem 1rem; }
+        .spinner {
+            border: 4px solid var(--background-alt);
+            border-top: 4px solid var(--links);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #error {
+            display: none;
+            background-color: #d32f2f;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+        section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--background-alt);
+            border-radius: 4px;
+        }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- Service worker for COOP/COEP headers on GitHub Pages -->
+    <script src="coi-serviceworker.min.js"></script>
+
+    <main>
+        <fieldset>
+            <label><input type="radio" name="theme" value="auto" checked> Auto</label>
+            <label><input type="radio" name="theme" value="light"> Light</label>
+            <label><input type="radio" name="theme" value="dark"> Dark</label>
+        </fieldset>
+
+        <header>
+            <h1>@TARGET_NAME@</h1>
+        </header>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            <p>Loading @TARGET_NAME@...</p>
+            <p id="progress"></p>
+        </div>
+
+        <div id="terminal" class="hidden"></div>
+
+        <div id="error"></div>
+
+        <section>
+            <h3>Command-Line Arguments via URL</h3>
+            <p>Pass command-line arguments to the application using URL parameters:</p>
+
+            <strong>Conversion Rules:</strong>
+            <ul>
+                <li>• Single-character params → short flags: <code>?v</code> → <code>-v</code></li>
+                <li>• Multi-character params → long flags: <code>?version</code> → <code>--version</code></li>
+                <li>• Params with values: <code>?file=test.txt</code> → <code>--file test.txt</code></li>
+                <li>• Multiple params: <code>?v&help</code> → <code>-v --help</code></li>
+            </ul>
+
+            <strong>Examples:</strong>
+            <ul>
+                <li><code>intro.html?version</code></li>
+                <li><code>intro.html?h</code></li>
+                <li><code>intro.html?file=data.txt</code></li>
+                <li><code>intro.html?verbose&config=settings.json</code></li>
+            </ul>
+        </section>
+    </main>
+
+    <script>
+        // Define Module configuration FIRST (synchronously, before Emscripten loads)
+        // This must be in a regular script tag, not an ES module, because ES modules
+        // execute asynchronously and Emscripten needs Module to exist immediately.
+        var Module = {
+            // Parse URL parameters and convert to CLI-style arguments
+            // Single char params → short flags (?v → -v), multi-char → long flags (?version → --version)
+            arguments: (function() {
+                const args = [];
+                new URLSearchParams(window.location.search).forEach((value, key) => {
+                    args.push((key.length === 1 ? '-' : '--') + key);
+                    if (value) args.push(value);
+                });
+                console.log('Module.arguments:', args);
+                return args;
+            })(),
+
+            preRun: [],
+            postRun: [],
+            print: function(text) {
+                console.log(text);
+            },
+            printErr: function(text) {
+                console.error(text);
+            },
+            setStatus: function(text) {
+                var progress = document.getElementById('progress');
+                if (progress) {
+                    progress.textContent = text || '';
+                }
+            },
+            totalDependencies: 0,
+            monitorRunDependencies: function(left) {
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+                if (left) {
+                    Module.setStatus('Loading... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')');
+                } else {
+                    Module.setStatus('');
+                }
+            },
+            onRuntimeInitialized: function() {
+                console.log('WASM runtime initialized');
+            }
+        };
+
+        Module.setStatus('Downloading...');
+    </script>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@xterm/xterm": "https://cdn.jsdelivr.net/npm/@AT@xterm/xterm@AT@6.0.0/+esm",
+            "@xterm/addon-fit": "https://cdn.jsdelivr.net/npm/@AT@xterm/addon-fit@AT@0.11.0/+esm",
+            "@xterm/addon-webgl": "https://cdn.jsdelivr.net/npm/@AT@xterm/addon-webgl@AT@0.18.0/+esm"
+        }
+    }
+    </script>
+    <script type="module">
+        import { Terminal } from '@xterm/xterm';
+        import { FitAddon } from '@xterm/addon-fit';
+        import { WebglAddon } from '@xterm/addon-webgl';
+
+        // Initialize xterm.js terminal
+        var term = new Terminal({
+            cols: 80,
+            rows: 35,
+            theme: {
+                background: '#0f0f23',
+                foreground: '#eee',
+                cursor: '#e94560'
+            },
+            fontFamily: '"DejaVu Sans Mono", "Fira Code", "Consolas", "Monaco", monospace',
+            fontSize: 14,
+            lineHeight: 1.0,
+            cursorBlink: false,
+            convertEol: true,
+            allowTransparency: false
+        });
+
+        var fitAddon = new FitAddon();
+        term.loadAddon(fitAddon);
+
+        // Try to use WebGL for better rendering (falls back gracefully)
+        try {
+            var webglAddon = new WebglAddon();
+            webglAddon.onContextLoss(function() {
+                webglAddon.dispose();
+            });
+            term.loadAddon(webglAddon);
+            console.log('WebGL addon loaded');
+        } catch (e) {
+            console.log('WebGL addon not available, using canvas renderer');
+        }
+
+        // Buffers for stdin/stdout/stderr
+        var stdin_buffer = [];
+        var stdout_buffer = [];
+        var stderr_buffer = [];
+
+        // stdin: return next character or 0 if empty
+        function stdin() {
+            return stdin_buffer.shift() || 0;
+        }
+
+        // Factory function to create buffered output writers
+        function createBufferWriter(buffer, writeHandler) {
+            return function(code) {
+                if (code === 0 || code === 10) {
+                    if (code === 10) buffer.push(code);  // Include newline in buffer
+                    if (buffer.length > 0) {
+                        var text = new TextDecoder().decode(new Uint8Array(buffer));
+                        writeHandler(text);
+                        buffer.length = 0;  // Clear buffer
+                    }
+                } else {
+                    buffer.push(code);
+                }
+            };
+        }
+
+        // stdout: buffer bytes, flush to terminal on null or newline
+        var stdout = createBufferWriter(stdout_buffer, function(text) {
+            term.write(text);
+        });
+
+        // stderr: buffer bytes, flush to console and terminal on null or newline
+        var stderr = createBufferWriter(stderr_buffer, function(text) {
+            console.error(text);
+            term.write(text);
+        });
+
+        // Hook into Module's preRun to set up terminal before WASM starts
+        Module.preRun.push(function() {
+            // Set up terminal
+            var terminalDiv = document.getElementById('terminal');
+            terminalDiv.classList.remove('hidden');
+            term.open(terminalDiv);
+
+            // Clear terminal and reset cursor position
+            term.clear();
+            term.write('\x1b[H\x1b[2J');
+
+            // Capture keyboard input -> stdin buffer
+            term.onData(function(data) {
+                // Filter out Cursor Position Report responses: ESC[<row>;<col>R
+                // These are terminal responses to queries, not user input
+                var filtered = data.replace(/\x1b\[[0-9]+;[0-9]+R/g, '');
+
+                for (var i = 0; i < filtered.length; i++) {
+                    stdin_buffer.push(filtered.charCodeAt(i));
+                }
+            });
+
+            // Initialize Emscripten filesystem with our stdin/stdout/stderr
+            FS.init(stdin, stdout, stderr);
+        });
+
+        // Hook into Module's postRun to finish setup after WASM loads
+        Module.postRun.push(function() {
+            document.getElementById('loading').classList.add('hidden');
+
+            // Set up resize observer for FTXUI's resize callback
+            if (Module._ftxui_on_resize) {
+                var resizeObserver = new ResizeObserver(function() {
+                    fitAddon.fit();
+                    Module._ftxui_on_resize(term.cols, term.rows);
+                });
+                resizeObserver.observe(document.getElementById('terminal'));
+            }
+        });
+
+        // Consolidated error display helper
+        function showError(message, details) {
+            var errorDiv = document.getElementById('error');
+            errorDiv.textContent = 'Error: ' + message;
+            errorDiv.style.display = 'block';
+            document.getElementById('loading').classList.add('hidden');
+            if (details) console.error(message, details);
+        }
+
+        window.onerror = function(message, source, lineno, colno, error) {
+            showError(message, { source: source, lineno: lineno, colno: colno, error: error });
+        };
+
+        window.addEventListener('unhandledrejection', function(event) {
+            showError(event.reason);
+        });
+
+        // Export to window for debugging
+        window.term = term;
+        window.fitAddon = fitAddon;
+    </script>
+
+    <script>
+        const themeStylesheet = document.getElementById('theme-stylesheet');
+        const themeRadios = document.querySelectorAll('input[name="theme"]');
+        const themes = {
+            auto: 'https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css',
+            light: 'https://cdn.jsdelivr.net/npm/water.css@2/out/light.min.css',
+            dark: 'https://cdn.jsdelivr.net/npm/water.css@2/out/dark.min.css'
+        };
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'auto';
+        themeStylesheet.href = themes[savedTheme];
+        document.querySelector(`input[value="${savedTheme}"]`).checked = true;
+
+        // Handle theme changes
+        themeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const theme = e.target.value;
+                themeStylesheet.href = themes[theme];
+                localStorage.setItem('theme', theme);
+            });
+        });
+    </script>
+
+    {{{ SCRIPT }}}
+</body>
+</html>

@@ -9,9 +9,9 @@ macro(
   message(STATUS "** Enabling Hardening (Target ${target}) **")
 
   if(MSVC)
-    set(NEW_COMPILE_OPTIONS "${NEW_COMPILE_OPTIONS} /sdl /DYNAMICBASE /guard:cf")
+    list(APPEND NEW_COMPILE_OPTIONS /sdl /DYNAMICBASE /guard:cf)
     message(STATUS "*** MSVC flags: /sdl /DYNAMICBASE /guard:cf /NXCOMPAT /CETCOMPAT")
-    set(NEW_LINK_OPTIONS "${NEW_LINK_OPTIONS} /NXCOMPAT /CETCOMPAT")
+    list(APPEND NEW_LINK_OPTIONS /NXCOMPAT /CETCOMPAT)
 
   elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
     list(APPEND NEW_CXX_DEFINITIONS -D_GLIBCXX_ASSERTIONS)
@@ -19,9 +19,8 @@ macro(
 
     if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
       list(APPEND NEW_COMPILE_OPTIONS -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3)
+      message(STATUS "*** g++/clang _FORTIFY_SOURCE=3 enabled")
     endif()
-    
-    message(STATUS "*** g++/clang _FORTIFY_SOURCE=3 enabled")
 
     #    check_cxx_compiler_flag(-fpie PIE)
     #if(PIE)
@@ -90,9 +89,9 @@ macro(
 
   if(${global})
     message(STATUS "** Setting hardening options globally for all dependencies")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEW_COMPILE_OPTIONS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${NEW_LINK_OPTIONS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEW_CXX_DEFINITIONS}")
+    add_compile_options(${NEW_COMPILE_OPTIONS})
+    add_compile_definitions(${NEW_CXX_DEFINITIONS})
+    add_link_options(${NEW_LINK_OPTIONS})
   else()
     target_compile_options(${target} INTERFACE ${NEW_COMPILE_OPTIONS})
     target_link_options(${target} INTERFACE ${NEW_LINK_OPTIONS})

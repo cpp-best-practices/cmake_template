@@ -1,5 +1,5 @@
-#ifndef MYPROJECT_CONFIG_HPP
-#define MYPROJECT_CONFIG_HPP
+#ifndef myproject_CONFIG_HPP
+#define myproject_CONFIG_HPP
 
 // this is a basic example of how a CMake configured file might look
 // in this particular case, we are using it to set the version number of our executable
