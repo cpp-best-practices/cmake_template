@@ -69,10 +69,17 @@ function(myproject_configure_wasm_target target)
       set(WASM_DESCRIPTION "WebAssembly application")
     endif()
 
+    # Get the actual output name (may differ from target name)
+    get_target_property(OUTPUT_NAME ${target} OUTPUT_NAME)
+    if(NOT OUTPUT_NAME)
+      set(OUTPUT_NAME "${target}")
+    endif()
+
     # Register this target in the global WASM targets list
     set_property(GLOBAL APPEND PROPERTY myproject_WASM_TARGETS "${target}")
     set_property(GLOBAL PROPERTY myproject_WASM_TARGET_${target}_TITLE "${WASM_TITLE}")
     set_property(GLOBAL PROPERTY myproject_WASM_TARGET_${target}_DESCRIPTION "${WASM_DESCRIPTION}")
+    set_property(GLOBAL PROPERTY myproject_WASM_TARGET_${target}_OUTPUT_NAME "${OUTPUT_NAME}")
 
     target_compile_definitions(${target} PRIVATE myproject_WASM_BUILD=1)
 
@@ -110,7 +117,7 @@ function(myproject_configure_wasm_target target)
     endif()
 
     # Configure the shell HTML template for this target
-    set(TARGET_NAME "${target}")
+    set(TARGET_NAME "${OUTPUT_NAME}")
     set(TARGET_TITLE "${WASM_TITLE}")
     set(TARGET_DESCRIPTION "${WASM_DESCRIPTION}")
     set(AT "@")  # For escaping @ in npm package URLs
@@ -208,20 +215,22 @@ function(myproject_create_web_dist)
   # Each target gets its own service worker copy for standalone deployment
   foreach(target ${WASM_TARGETS})
     get_target_property(TARGET_BINARY_DIR ${target} BINARY_DIR)
+    get_property(OUTPUT_NAME GLOBAL PROPERTY myproject_WASM_TARGET_${target}_OUTPUT_NAME)
     set(TARGET_DIST_DIR "${WEB_DIST_DIR}/${target}")
 
     # Copy WASM artifacts: .html (as index.html), .js, .wasm, and service worker
+    # Use OUTPUT_NAME instead of target name for file names
     list(APPEND COPY_COMMANDS
       COMMAND ${CMAKE_COMMAND} -E make_directory "${TARGET_DIST_DIR}"
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${TARGET_BINARY_DIR}/${target}.html"
+        "${TARGET_BINARY_DIR}/${OUTPUT_NAME}.html"
         "${TARGET_DIST_DIR}/index.html"
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${TARGET_BINARY_DIR}/${target}.js"
-        "${TARGET_DIST_DIR}/${target}.js"
+        "${TARGET_BINARY_DIR}/${OUTPUT_NAME}.js"
+        "${TARGET_DIST_DIR}/${OUTPUT_NAME}.js"
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${TARGET_BINARY_DIR}/${target}.wasm"
-        "${TARGET_DIST_DIR}/${target}.wasm"
+        "${TARGET_BINARY_DIR}/${OUTPUT_NAME}.wasm"
+        "${TARGET_DIST_DIR}/${OUTPUT_NAME}.wasm"
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${myproject_COI_WORKER}"
         "${TARGET_DIST_DIR}/coi-serviceworker.min.js"
