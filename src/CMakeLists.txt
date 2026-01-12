@@ -1,2 +1,5 @@
 add_subdirectory(sample_library)
-add_subdirectory(ftxui_sample)
+
+if(myproject_BUILD_FTXUI)
+  add_subdirectory(ftxui_sample)
+endif()

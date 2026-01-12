@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.21...4.1)
 
 # This template attempts to be "fetch_content"-able
 # so that it works well with tools like CPM or other
@@ -39,7 +39,7 @@ myproject_local_options()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 set(GIT_SHA
-    "Unknown"
+    "0508115-dirty"
     CACHE STRING "SHA this build was generated from")
 string(
   SUBSTRING "${GIT_SHA}"
@@ -98,7 +98,15 @@ if(MSVC)
 endif()
 
 # set the startup project for the "play" button in MSVC
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT intro)
+if(TARGET intro)
+  set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT intro)
+  set(VS_STARTUP_PROJECT intro)
+endif()
+
+if(ENABLE_DOXYGEN)
+  include(cmake/Doxygen.cmake)
+  myproject_enable_doxygen("")
+endif()
 
 if(CMAKE_SKIP_INSTALL_RULES)
   return()
@@ -110,7 +118,7 @@ include(cmake/PackageProject.cmake)
 # we know we want to ship
 myproject_package_project(
   TARGETS
-  intro
+  ${VS_STARTUP_PROJECT}
   myproject_options
   myproject_warnings
   # FIXME: this does not work! CK
