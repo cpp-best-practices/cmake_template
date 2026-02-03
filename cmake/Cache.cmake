@@ -28,6 +28,6 @@ function(myproject_enable_cache)
         ${CACHE_BINARY}
         CACHE FILEPATH "C compiler cache used")
   else()
-    message(WARNING "${CACHE_OPTION} is enabled but was not found. Not using it")
+    message(${myproject_WARNING_TYPE} "${CACHE_OPTION} is enabled but was not found. Not using it")
   endif()
 endfunction()
