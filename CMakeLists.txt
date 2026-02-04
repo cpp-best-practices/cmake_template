@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.29)
 
+# Disable modules support, this is broken with clang-tidy at the moment
+cmake_policy(SET CMP0155 OLD) 
+
 # This template attempts to be "fetch_content"-able
 # so that it works well with tools like CPM or other
 # manual dependency management

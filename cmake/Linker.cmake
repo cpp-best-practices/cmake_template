@@ -16,6 +16,5 @@ macro(myproject_configure_linker project_name)
         "Using custom linker: '${myproject_USER_LINKER_OPTION}', explicitly supported entries are ${myproject_USER_LINKER_OPTION_VALUES}")
   endif()
 
-  set_property(GLOBAL PROPERTY LINKER_TYPE ${myproject_USER_LINKER_OPTION})
   set_target_properties(${project_name} PROPERTIES LINKER_TYPE "${myproject_USER_LINKER_OPTION}")
 endmacro()
