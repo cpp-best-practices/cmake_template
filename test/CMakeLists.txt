@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.15...3.23)
 
-project(CmakeConfigPackageTests LANGUAGES CXX)
+project(CmakeConfigPackageTests 
+  VERSION ${PROJECT_VERSION}
+  LANGUAGES CXX)
 
 # ---- Test as standalone project the exported config package ----
 
