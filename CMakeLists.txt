@@ -1,4 +1,7 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.29)
+
+# Disable modules support, this is broken with clang-tidy at the moment
+cmake_policy(SET CMP0155 OLD) 
 
 # This template attempts to be "fetch_content"-able
 # so that it works well with tools like CPM or other
@@ -17,7 +20,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Set the project name and language
 project(
   myproject
-  VERSION 0.0.1
+  VERSION 0.0.2
   DESCRIPTION ""
   HOMEPAGE_URL "%%myurl%%"
   LANGUAGES CXX C)

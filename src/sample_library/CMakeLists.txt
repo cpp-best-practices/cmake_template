@@ -19,6 +19,8 @@ endif()
 
 target_compile_features(sample_library PUBLIC cxx_std_${CMAKE_CXX_STANDARD})
 
+myproject_configure_linker(sample_library)
+
 set_target_properties(
   sample_library
   PROPERTIES VERSION ${PROJECT_VERSION}

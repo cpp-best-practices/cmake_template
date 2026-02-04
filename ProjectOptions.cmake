@@ -73,7 +73,6 @@ macro(myproject_setup_options)
   if(NOT PROJECT_IS_TOP_LEVEL OR myproject_PACKAGING_MAINTAINER_MODE)
     option(myproject_ENABLE_IPO "Enable IPO/LTO" OFF)
     option(myproject_WARNINGS_AS_ERRORS "Treat Warnings As Errors" OFF)
-    option(myproject_ENABLE_USER_LINKER "Enable user-selected linker" OFF)
     option(myproject_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
     option(myproject_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
     option(myproject_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" OFF)
@@ -87,7 +86,6 @@ macro(myproject_setup_options)
   else()
     option(myproject_ENABLE_IPO "Enable IPO/LTO" ON)
     option(myproject_WARNINGS_AS_ERRORS "Treat Warnings As Errors" ON)
-    option(myproject_ENABLE_USER_LINKER "Enable user-selected linker" OFF)
     option(myproject_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" ${SUPPORTS_ASAN})
     option(myproject_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
     option(myproject_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" ${SUPPORTS_UBSAN})
@@ -104,7 +102,6 @@ macro(myproject_setup_options)
     mark_as_advanced(
       myproject_ENABLE_IPO
       myproject_WARNINGS_AS_ERRORS
-      myproject_ENABLE_USER_LINKER
       myproject_ENABLE_SANITIZER_ADDRESS
       myproject_ENABLE_SANITIZER_LEAK
       myproject_ENABLE_SANITIZER_UNDEFINED
@@ -170,13 +167,10 @@ macro(myproject_local_options)
     ""
     "")
 
-  # Linker and sanitizers not supported in Emscripten
-  if(NOT EMSCRIPTEN)
-    if(myproject_ENABLE_USER_LINKER)
-      include(cmake/Linker.cmake)
-      myproject_configure_linker(myproject_options)
-    endif()
+  include(cmake/Linker.cmake)
+  # Must configure each target with linker options, we're avoiding setting it globally for now
 
+  if(NOT EMSCRIPTEN)
     include(cmake/Sanitizers.cmake)
     myproject_enable_sanitizers(
       myproject_options

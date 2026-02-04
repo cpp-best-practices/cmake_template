@@ -1,31 +1,20 @@
 macro(myproject_configure_linker project_name)
-  include(CheckCXXCompilerFlag)
-
-  set(USER_LINKER_OPTION
-      "lld"
+  set(myproject_USER_LINKER_OPTION
+    "DEFAULT"
       CACHE STRING "Linker to be used")
-  set(USER_LINKER_OPTION_VALUES "lld" "gold" "bfd" "mold")
-  set_property(CACHE USER_LINKER_OPTION PROPERTY STRINGS ${USER_LINKER_OPTION_VALUES})
+    set(myproject_USER_LINKER_OPTION_VALUES "DEFAULT" "SYSTEM" "LLD" "GOLD" "BFD" "MOLD" "SOLD" "APPLE_CLASSIC" "MSVC")
+  set_property(CACHE myproject_USER_LINKER_OPTION PROPERTY STRINGS ${myproject_USER_LINKER_OPTION_VALUES})
   list(
     FIND
-    USER_LINKER_OPTION_VALUES
-    ${USER_LINKER_OPTION}
-    USER_LINKER_OPTION_INDEX)
+    myproject_USER_LINKER_OPTION_VALUES
+    ${myproject_USER_LINKER_OPTION}
+    myproject_USER_LINKER_OPTION_INDEX)
 
-  if(${USER_LINKER_OPTION_INDEX} EQUAL -1)
+  if(${myproject_USER_LINKER_OPTION_INDEX} EQUAL -1)
     message(
       STATUS
-        "Using custom linker: '${USER_LINKER_OPTION}', explicitly supported entries are ${USER_LINKER_OPTION_VALUES}")
+        "Using custom linker: '${myproject_USER_LINKER_OPTION}', explicitly supported entries are ${myproject_USER_LINKER_OPTION_VALUES}")
   endif()
 
-  if(NOT myproject_ENABLE_USER_LINKER)
-    return()
-  endif()
-
-  set(LINKER_FLAG "-fuse-ld=${USER_LINKER_OPTION}")
-
-  check_cxx_compiler_flag(${LINKER_FLAG} CXX_SUPPORTS_USER_LINKER)
-  if(CXX_SUPPORTS_USER_LINKER)
-    target_compile_options(${project_name} INTERFACE ${LINKER_FLAG})
-  endif()
+  set_target_properties(${project_name} PROPERTIES LINKER_TYPE "${myproject_USER_LINKER_OPTION}")
 endmacro()
