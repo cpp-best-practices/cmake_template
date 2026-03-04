@@ -1,4 +1,7 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.29)
+
+# Disable modules support, this is broken with clang-tidy at the moment
+cmake_policy(SET CMP0155 OLD) 
 
 # This template attempts to be "fetch_content"-able
 # so that it works well with tools like CPM or other
@@ -17,12 +20,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Set the project name and language
 project(
   myproject
-  VERSION 0.0.1
+  VERSION 0.0.2
   DESCRIPTION ""
   HOMEPAGE_URL "%%myurl%%"
   LANGUAGES CXX C)
 
 include(cmake/PreventInSourceBuilds.cmake)
+include(cmake/Emscripten.cmake)
 include(ProjectOptions.cmake)
 
 
@@ -59,6 +63,11 @@ add_subdirectory(configured_files)
 
 # Adding the src:
 add_subdirectory(src)
+
+# Create unified web deployment directory (for WASM builds)
+if(EMSCRIPTEN)
+  myproject_create_web_dist()
+endif()
 
 # Don't even look at tests if we're not top level
 if(NOT PROJECT_IS_TOP_LEVEL)

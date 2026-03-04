@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@PROJECT_NAME@ - WebAssembly Applications</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css" id="theme-stylesheet">
+    <style>
+        body { max-width: 900px; }
+        header { text-align: center; }
+        footer { text-align: center; margin-top: 3rem; }
+        fieldset { text-align: center; border: none; }
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .app-card {
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            text-decoration: none;
+            display: block;
+        }
+        .app-card:hover {
+            border-color: var(--links);
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <fieldset>
+            <label><input type="radio" name="theme" value="auto" checked> Auto</label>
+            <label><input type="radio" name="theme" value="light"> Light</label>
+            <label><input type="radio" name="theme" value="dark"> Dark</label>
+        </fieldset>
+
+        <header>
+            <h1>@PROJECT_NAME@</h1>
+            <p>WebAssembly Applications</p>
+        </header>
+
+        <div class="app-grid">
+            @WASM_APPS_HTML@
+        </div>
+
+        <footer>
+            <small>Built with CMake and Emscripten | Version @PROJECT_VERSION@</small>
+        </footer>
+    </main>
+
+    <script>
+        const themeStylesheet = document.getElementById('theme-stylesheet');
+        const themeRadios = document.querySelectorAll('input[name="theme"]');
+        const themes = {
+            auto: 'https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css',
+            light: 'https://cdn.jsdelivr.net/npm/water.css@2/out/light.min.css',
+            dark: 'https://cdn.jsdelivr.net/npm/water.css@2/out/dark.min.css'
+        };
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'auto';
+        themeStylesheet.href = themes[savedTheme];
+        document.querySelector(`input[value="${savedTheme}"]`).checked = true;
+
+        // Handle theme changes
+        themeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const theme = e.target.value;
+                themeStylesheet.href = themes[theme];
+                localStorage.setItem('theme', theme);
+            });
+        });
+    </script>
+</body>
+</html>

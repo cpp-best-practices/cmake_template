@@ -13,6 +13,9 @@ target_link_libraries(
           -fsanitize=fuzzer)
 target_compile_options(fuzz_tester PRIVATE -fsanitize=fuzzer)
 
+
+myproject_configure_linker(fuzz_tester)
+
 # Allow short runs during automated testing to see if something new breaks
 set(FUZZ_RUNTIME
     10

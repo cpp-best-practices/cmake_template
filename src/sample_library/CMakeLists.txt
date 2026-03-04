@@ -12,7 +12,14 @@ target_link_libraries(sample_library PRIVATE myproject_options myproject_warning
 target_include_directories(sample_library ${WARNING_GUARD} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                                                                   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 
-target_compile_features(sample_library PUBLIC cxx_std_20)
+if (myproject_BUILD_FUZZ_TESTS)
+  target_link_libraries(sample_library PRIVATE -fsanitize=fuzzer-no-link)
+  target_compile_options(sample_library PRIVATE -fsanitize=fuzzer-no-link)
+endif()
+
+target_compile_features(sample_library PUBLIC cxx_std_${CMAKE_CXX_STANDARD})
+
+myproject_configure_linker(sample_library)
 
 set_target_properties(
   sample_library

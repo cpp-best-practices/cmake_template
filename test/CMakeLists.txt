@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.15...3.23)
 
-project(CmakeConfigPackageTests LANGUAGES CXX)
+project(CmakeConfigPackageTests 
+  VERSION ${PROJECT_VERSION}
+  LANGUAGES CXX)
 
 # ---- Test as standalone project the exported config package ----
 
@@ -37,6 +39,8 @@ target_link_libraries(
           myproject::sample_library
           Catch2::Catch2WithMain)
 
+myproject_configure_linker(tests)
+
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(
     TARGET tests
@@ -69,6 +73,8 @@ target_link_libraries(
           myproject::sample_library
           Catch2::Catch2WithMain)
 
+myproject_configure_linker(constexpr_tests)
+
 catch_discover_tests(
   constexpr_tests
   TEST_PREFIX
@@ -92,6 +98,9 @@ target_link_libraries(
           myproject::sample_library
           Catch2::Catch2WithMain)
 target_compile_definitions(relaxed_constexpr_tests PRIVATE -DCATCH_CONFIG_RUNTIME_STATIC_REQUIRE)
+
+myproject_configure_linker(relaxed_constexpr_tests)
+
 
 catch_discover_tests(
   relaxed_constexpr_tests

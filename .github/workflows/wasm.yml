@@ -1,0 +1,59 @@
+name: Build Intro WASM and Deploy to GitHub Pages
+
+on:
+  pull_request:
+  release:
+    types: [published]
+  push:
+    branches: [main, develop]
+    tags: ['**']
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 'latest'
+
+      - name: Install Ninja
+        run: sudo apt-get install -y ninja-build
+
+      - name: Configure CMake
+        run: emcmake cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build all WASM targets
+        run: emmake cmake --build build --target web-dist
+
+      - name: Prepare deployment
+        run: |
+          # web-dist target already created build/web-dist/
+          # Just copy it to dist/ for GitHub Pages action
+          cp -r build/web-dist dist
+
+      - name: Determine deploy path
+        id: deploy-path
+        if: github.event_name != 'pull_request' && github.event_name != 'release'
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            echo "path=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          elif [[ "$GITHUB_REF" == refs/heads/main ]]; then
+            echo "path=." >> $GITHUB_OUTPUT
+          elif [[ "$GITHUB_REF" == refs/heads/develop ]]; then
+            echo "path=develop" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy to GitHub Pages
+        if: github.event_name != 'pull_request' && github.event_name != 'release'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: ${{ steps.deploy-path.outputs.path }}
+          keep_files: true
