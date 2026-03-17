@@ -207,11 +207,9 @@ struct Color {
 
 // A simple way of representing a bitmap on screen using only characters
 struct Bitmap : ftxui::Node {
-  Bitmap(std::size_t width,
-         std::size_t
-             height)  // NOLINT same typed parameters adjacent to each other
-      : width_(width)
-      , height_(height) {}
+  // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+  Bitmap(std::size_t width, std::size_t height)
+      : width_(width), height_(height) {}
 
   Color& at(std::size_t cur_x, std::size_t cur_y) {
     return pixels.at((width_ * cur_y) + cur_x);

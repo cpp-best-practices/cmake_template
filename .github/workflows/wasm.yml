@@ -20,15 +20,20 @@ jobs:
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
         with:
-          version: 'latest'
+          # Pin to 3.1.x — Conan's settings.yml doesn't support emcc 23+ yet
+          version: '3.1.74'
 
-      - name: Install Ninja and Conan
+      - name: Install Ninja, Conan, and Lizard
         run: |
           sudo apt-get install -y ninja-build
-          pip install conan
+          pip install conan lizard
 
       - name: Configure CMake
-        run: emcmake cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+        run: |
+          emcmake cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -Dmyproject_ENABLE_BLOATY=OFF \
+            -Dmyproject_ENABLE_INCLUDE_WHAT_YOU_USE=OFF \
+            -Dmyproject_ENABLE_CLANG_TIDY=OFF
 
       - name: Build all WASM targets
         run: emmake cmake --build build --target web-dist

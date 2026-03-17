@@ -42,6 +42,9 @@ target_link_libraries(
           myproject::myproject_options
           myproject::sample_library
           Catch2::Catch2WithMain)
+# Disable clang-tidy for test targets: Catch2 macros generate
+# false positives (non-const globals, include-cleaner, etc.)
+set_target_properties(tests PROPERTIES CXX_CLANG_TIDY "")
 
 myproject_configure_linker(tests)
 
@@ -77,6 +80,7 @@ target_link_libraries(
           myproject::myproject_options
           Catch2::Catch2WithMain
           trompeloeil::trompeloeil)
+set_target_properties(mock_tests PROPERTIES CXX_CLANG_TIDY "")
 
 myproject_configure_linker(mock_tests)
 
@@ -101,6 +105,7 @@ target_link_libraries(
           myproject::myproject_options
           myproject::sample_library
           Catch2::Catch2WithMain)
+set_target_properties(constexpr_tests PROPERTIES CXX_CLANG_TIDY "")
 
 myproject_configure_linker(constexpr_tests)
 

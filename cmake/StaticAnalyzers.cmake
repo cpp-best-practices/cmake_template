@@ -74,12 +74,17 @@ macro(myproject_enable_clang_tidy target WARNINGS_AS_ERRORS)
     endif()
 
     # construct the clang-tidy command line
+    # NOTE: Do not add -p here. With -p, CMake tells clang-tidy to use
+    # compile_commands.json instead of passing the full compile command
+    # directly. This breaks include resolution for Conan packages whose
+    # headers live in external -isystem paths outside the build tree.
+    # Without -p, CMake appends "-- <full compile command>" to clang-tidy,
+    # which includes all -isystem paths and works reliably.
     set(CLANG_TIDY_OPTIONS
         ${CLANGTIDY}
         -extra-arg=-Wno-unknown-warning-option
         -extra-arg=-Wno-ignored-optimization-argument
-        -extra-arg=-Wno-unused-command-line-argument
-        -p)
+        -extra-arg=-Wno-unused-command-line-argument)
     # set standard
     if(NOT
        "${CMAKE_CXX_STANDARD}"

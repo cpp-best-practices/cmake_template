@@ -161,12 +161,43 @@ jobs:
           gcovr: true
           opencppcoverage: true
 
-      - name: Install Conan
-        run: pip install conan
+      - name: Install Conan and Lizard
+        run: pip install conan lizard
+
+      - name: Pre-install Conan deps for macOS GCC
+        if: ${{ runner.os == 'macOS' && contains(matrix.compiler, 'gcc') }}
+        run: |
+          # GCC on macOS uses libstdc++, but the cmake-conan provider
+          # auto-detects Apple Clang and builds packages with libc++.
+          # Pre-install deps with a GCC profile and skip the provider.
+          conan profile detect --force
+          GCC_VER=$(echo "${{ matrix.compiler }}" | grep -o '[0-9]*')
+          cat > ~/.conan2/profiles/default << PROFILE
+          [settings]
+          arch=armv8
+          build_type=Release
+          compiler=gcc
+          compiler.cppstd=23
+          compiler.libcxx=libstdc++11
+          compiler.version=$GCC_VER
+          os=Macos
+          [conf]
+          tools.build:compiler_executables={"c": "gcc-$GCC_VER", "cpp": "g++-$GCC_VER"}
+          PROFILE
+          cat ~/.conan2/profiles/default
+          conan install . --output-folder=build --build=missing -s build_type=Debug
+          conan install . --output-folder=build --build=missing -s build_type=Release
+          conan install . --output-folder=build --build=missing -s build_type=RelWithDebInfo
 
       - name: Configure CMake
+        shell: bash
         run: |
-          cmake -S . -B ./build -G "${{matrix.generator}}" -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }}
+          EXTRA_CMAKE_ARGS=""
+          # macOS GCC: deps pre-installed with libstdc++11 profile
+          if [[ "${{ runner.os }}" == "macOS" && "${{ matrix.compiler }}" =~ gcc ]]; then
+            EXTRA_CMAKE_ARGS="-Dmyproject_SKIP_CONAN_PROVIDER=ON -DCMAKE_PREFIX_PATH=$PWD/build"
+          fi
+          cmake -S . -B ./build -G "${{matrix.generator}}" $EXTRA_CMAKE_ARGS -D${{ env.PROJECT_NAME }}_ENABLE_IPO=${{matrix.enable_ipo }} -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -D${{ env.PROJECT_NAME }}_PACKAGING_MAINTAINER_MODE:BOOL=${{matrix.packaging_maintainer_mode}} -D${{ env.PROJECT_NAME }}_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -D${{ env.PROJECT_NAME }}_ENABLE_BLOATY:BOOL=OFF -D${{ env.PROJECT_NAME }}_ENABLE_INCLUDE_WHAT_YOU_USE:BOOL=OFF -DGIT_SHA:STRING=${{ github.sha }}
 
       - name: Build
         # Execute the build.  You can specify a specific target with "--target <NAME>"
@@ -205,7 +236,7 @@ jobs:
       - name: Publish to codecov
         uses: codecov/codecov-action@v5
         with:
-          fail_ci_if_error: true # we weren't posting previously
+          fail_ci_if_error: true
           flags: ${{ runner.os }}
           name: ${{ runner.os }}-coverage
           token: ${{ secrets.CODECOV_TOKEN }}

@@ -6,6 +6,11 @@
 #
 # This file must be included BEFORE the project() call.
 
+option(myproject_SKIP_CONAN_PROVIDER "Skip the Conan CMake provider (use pre-installed deps)" OFF)
+if(myproject_SKIP_CONAN_PROVIDER)
+  return()
+endif()
+
 set(CONAN_PROVIDER_LOCATION "${CMAKE_BINARY_DIR}/cmake/conan_provider.cmake")
 
 if(NOT EXISTS "${CONAN_PROVIDER_LOCATION}")
