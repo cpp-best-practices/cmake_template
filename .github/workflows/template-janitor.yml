@@ -8,6 +8,7 @@ on:
     types: [published]
   push:
     branches:
+      - master
       - main
       - develop
 permissions:
@@ -41,7 +42,7 @@ jobs:
         with:
           compiler: ${{ matrix.compiler }}
           build_type: ${{ matrix.build_type }}
-          package_maintainer_mode: ${{ matrix.package_maintainer_mode }}
+          packaging_maintainer_mode: ${{ matrix.packaging_maintainer_mode }}
           generator: ${{ matrix.generator }}
 
       - name: Get organization and project name
@@ -184,7 +185,7 @@ jobs:
     strategy:
       matrix:
         compiler:
-          - gcc-11
+          - gcc-14
         generator:
           - "Unix Makefiles"
         build_type:
@@ -242,7 +243,7 @@ jobs:
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
-          compiler: gcc
+          compiler: ${{ matrix.compiler }}
 
           cmake: true
           ninja: false
@@ -255,6 +256,13 @@ jobs:
           gcovr: false
           opencppcoverage: false
 
+      - name: Install Conan
+        run: pip install conan
+
+      - name: Project Name
+        uses: cardinalby/export-env-action@v2
+        with:
+          envFile: '.github/constants.env'
 
       - name: Test simple configuration to make sure nothing broke (default compiler,cmake,packaging_maintainer_mode OFF)
         run: |
