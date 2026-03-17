@@ -89,9 +89,9 @@ function(myproject_configure_wasm_target target)
       "-sUSE_PTHREADS=1"
       "-sPROXY_TO_PTHREAD=1"
       "-sPTHREAD_POOL_SIZE=${myproject_WASM_PTHREAD_POOL_SIZE}"
-      # Enable asyncify for emscripten_sleep and async operations
-      "-sASYNCIFY=1"
-      "-sASYNCIFY_STACK_SIZE=${myproject_WASM_ASYNCIFY_STACK_SIZE}"
+      # NOTE: Asyncify is disabled because it conflicts with pthreads +
+      # wasm-exceptions on Emscripten 3.1.x (wasm-opt UNREACHABLE crash).
+      # PROXY_TO_PTHREAD handles async operations instead.
       # Memory configuration
       "-sALLOW_MEMORY_GROWTH=1"
       "-sINITIAL_MEMORY=${myproject_WASM_INITIAL_MEMORY}"

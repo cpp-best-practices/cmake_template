@@ -13,7 +13,7 @@ macro(
     message(STATUS "*** MSVC flags: /sdl /DYNAMICBASE /guard:cf /NXCOMPAT /CETCOMPAT")
     list(APPEND NEW_LINK_OPTIONS /NXCOMPAT /CETCOMPAT)
 
-  elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
     list(APPEND NEW_CXX_DEFINITIONS -D_GLIBCXX_ASSERTIONS)
     message(STATUS "*** GLIBC++ Assertions (vector[], string[], ...) enabled")
 

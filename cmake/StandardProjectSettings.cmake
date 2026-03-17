@@ -18,7 +18,7 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Enhance error reporting and compiler messages
-if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
     add_compile_options($<$<COMPILE_LANGUAGE:C>:-fcolor-diagnostics> $<$<COMPILE_LANGUAGE:CXX>:-fcolor-diagnostics>)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options($<$<COMPILE_LANGUAGE:C>:-fdiagnostics-color=always>

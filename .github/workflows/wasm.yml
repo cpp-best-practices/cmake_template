@@ -15,7 +15,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
@@ -28,12 +28,32 @@ jobs:
           sudo apt-get install -y ninja-build
           pip install conan lizard
 
+      - name: Project Name
+        uses: cardinalby/export-env-action@v2
+        with:
+          envFile: '.github/constants.env'
+
+      - name: Configure Conan for Emscripten threading
+        run: |
+          # The cmake-conan provider auto-detects Emscripten but builds
+          # packages without threading flags. FTXUI requires pthreads.
+          # Configure the default Conan profile to pass -pthread so all
+          # packages (especially spdlog) are built with atomics support.
+          conan profile detect --force
+          echo "" >> ~/.conan2/profiles/default
+          echo "[conf]" >> ~/.conan2/profiles/default
+          echo "tools.build:cflags=[\"-pthread\"]" >> ~/.conan2/profiles/default
+          echo "tools.build:cxxflags=[\"-pthread\"]" >> ~/.conan2/profiles/default
+          echo "tools.build:sharedlinkflags=[\"-pthread\"]" >> ~/.conan2/profiles/default
+          echo "tools.build:exelinkflags=[\"-pthread\"]" >> ~/.conan2/profiles/default
+          cat ~/.conan2/profiles/default
+
       - name: Configure CMake
         run: |
           emcmake cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
-            -Dmyproject_ENABLE_BLOATY=OFF \
-            -Dmyproject_ENABLE_INCLUDE_WHAT_YOU_USE=OFF \
-            -Dmyproject_ENABLE_CLANG_TIDY=OFF
+            -D${{ env.PROJECT_NAME }}_ENABLE_BLOATY=OFF \
+            -D${{ env.PROJECT_NAME }}_ENABLE_INCLUDE_WHAT_YOU_USE=OFF \
+            -D${{ env.PROJECT_NAME }}_ENABLE_CLANG_TIDY=OFF
 
       - name: Build all WASM targets
         run: emmake cmake --build build --target web-dist

@@ -91,13 +91,12 @@ function(
 
   if(MSVC)
     set(PROJECT_WARNINGS_CXX ${MSVC_WARNINGS})
-  elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
     set(PROJECT_WARNINGS_CXX ${CLANG_WARNINGS})
   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(PROJECT_WARNINGS_CXX ${GCC_WARNINGS})
   else()
     message(AUTHOR_WARNING "No compiler warnings set for CXX compiler: '${CMAKE_CXX_COMPILER_ID}'")
-    # TODO support Intel compiler
   endif()
 
   # use the same warning flags for C

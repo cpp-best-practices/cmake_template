@@ -7,7 +7,7 @@ function(
   ENABLE_SANITIZER_THREAD
   ENABLE_SANITIZER_MEMORY)
 
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
     set(SANITIZERS "")
 
     if(${ENABLE_SANITIZER_ADDRESS})
@@ -30,7 +30,7 @@ function(
       endif()
     endif()
 
-    if(${ENABLE_SANITIZER_MEMORY} AND CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+    if(${ENABLE_SANITIZER_MEMORY} AND (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM"))
       message(
         WARNING
           "Memory sanitizer requires all the code (including libc++) to be MSan-instrumented otherwise it reports false positives"

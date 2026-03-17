@@ -56,9 +56,9 @@ macro(myproject_enable_clang_tidy target WARNINGS_AS_ERRORS)
   find_program(CLANGTIDY clang-tidy)
   if(CLANGTIDY)
     if(NOT
-       CMAKE_CXX_COMPILER_ID
+       (CMAKE_CXX_COMPILER_ID
        MATCHES
-       ".*Clang")
+       ".*Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM"))
 
       get_target_property(TARGET_PCH ${target} INTERFACE_PRECOMPILE_HEADERS)
 
