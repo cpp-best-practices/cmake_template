@@ -61,6 +61,7 @@ endmacro()
 macro(myproject_setup_options)
   option(myproject_ENABLE_HARDENING "Enable hardening" ON)
   option(myproject_ENABLE_COVERAGE "Enable coverage reporting" OFF)
+  option(myproject_ENABLE_DOCS "Enable Doxygen documentation" OFF)
   cmake_dependent_option(
     myproject_ENABLE_GLOBAL_HARDENING
     "Attempt to push hardening options to built dependencies"
@@ -81,6 +82,9 @@ macro(myproject_setup_options)
     option(myproject_ENABLE_UNITY_BUILD "Enable unity builds" OFF)
     option(myproject_ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
     option(myproject_ENABLE_CPPCHECK "Enable cpp-check analysis" OFF)
+    option(myproject_ENABLE_INCLUDE_WHAT_YOU_USE "Enable include-what-you-use" OFF)
+    option(myproject_ENABLE_LIZARD "Enable Lizard complexity analysis" OFF)
+    option(myproject_ENABLE_BLOATY "Enable Bloaty McBloatface binary size analysis" OFF)
     option(myproject_ENABLE_PCH "Enable precompiled headers" OFF)
     option(myproject_ENABLE_CACHE "Enable ccache" OFF)
   else()
@@ -94,6 +98,9 @@ macro(myproject_setup_options)
     option(myproject_ENABLE_UNITY_BUILD "Enable unity builds" OFF)
     option(myproject_ENABLE_CLANG_TIDY "Enable clang-tidy" ON)
     option(myproject_ENABLE_CPPCHECK "Enable cpp-check analysis" ON)
+    option(myproject_ENABLE_INCLUDE_WHAT_YOU_USE "Enable include-what-you-use" OFF)
+    option(myproject_ENABLE_LIZARD "Enable Lizard complexity analysis" ON)
+    option(myproject_ENABLE_BLOATY "Enable Bloaty McBloatface binary size analysis" OFF)
     option(myproject_ENABLE_PCH "Enable precompiled headers" OFF)
     option(myproject_ENABLE_CACHE "Enable ccache" ON)
   endif()
@@ -110,7 +117,11 @@ macro(myproject_setup_options)
       myproject_ENABLE_UNITY_BUILD
       myproject_ENABLE_CLANG_TIDY
       myproject_ENABLE_CPPCHECK
+      myproject_ENABLE_INCLUDE_WHAT_YOU_USE
+      myproject_ENABLE_LIZARD
+      myproject_ENABLE_BLOATY
       myproject_ENABLE_COVERAGE
+      myproject_ENABLE_DOCS
       myproject_ENABLE_PCH
       myproject_ENABLE_CACHE)
   endif()
@@ -136,7 +147,7 @@ macro(myproject_global_options)
 
   if(myproject_ENABLE_HARDENING AND myproject_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
-    if(NOT SUPPORTS_UBSAN 
+    if(NOT SUPPORTS_UBSAN
        OR myproject_ENABLE_SANITIZER_UNDEFINED
        OR myproject_ENABLE_SANITIZER_ADDRESS
        OR myproject_ENABLE_SANITIZER_THREAD
@@ -207,6 +218,15 @@ macro(myproject_local_options)
     )
   endif()
 
+  if(myproject_ENABLE_INCLUDE_WHAT_YOU_USE)
+    myproject_enable_include_what_you_use()
+  endif()
+
+  if(myproject_ENABLE_LIZARD)
+    include(cmake/Lizard.cmake)
+    myproject_setup_lizard(${myproject_WARNINGS_AS_ERRORS})
+  endif()
+
   if(myproject_ENABLE_COVERAGE)
     include(cmake/Tests.cmake)
     myproject_enable_coverage(myproject_options)
@@ -222,7 +242,7 @@ macro(myproject_local_options)
 
   if(myproject_ENABLE_HARDENING AND NOT myproject_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
-    if(NOT SUPPORTS_UBSAN 
+    if(NOT SUPPORTS_UBSAN
        OR myproject_ENABLE_SANITIZER_UNDEFINED
        OR myproject_ENABLE_SANITIZER_ADDRESS
        OR myproject_ENABLE_SANITIZER_THREAD

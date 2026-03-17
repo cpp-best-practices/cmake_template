@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15...3.23)
 
-project(CmakeConfigPackageTests 
+project(CmakeConfigPackageTests
   VERSION ${PROJECT_VERSION}
   LANGUAGES CXX)
 
@@ -19,7 +19,11 @@ endif()
 
 # ---- Dependencies ----
 
-include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
+# Catch2 test discovery module (Catch.cmake) is added to CMAKE_MODULE_PATH
+# by myproject_setup_dependencies() in Dependencies.cmake.
+if(NOT COMMAND catch_discover_tests)
+  include(Catch)
+endif()
 
 # Provide a simple smoke test to make sure that the CLI works and can display a --help message
 add_test(NAME cli.has_help COMMAND intro --help)

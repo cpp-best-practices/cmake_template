@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.29)
 
 # Disable modules support, this is broken with clang-tidy at the moment
-cmake_policy(SET CMP0155 OLD) 
+cmake_policy(SET CMP0155 OLD)
 
 # This template attempts to be "fetch_content"-able
-# so that it works well with tools like CPM or other
-# manual dependency management
+# so that it works well with dependency managers like
+# Conan or manual dependency management
 
 # Only set the cxx_standard if it is not set by someone else
 if (NOT DEFINED CMAKE_CXX_STANDARD)
@@ -16,6 +16,9 @@ endif()
 # -Wpedantic being enabled and -std=c++20 and -std=gnu++20 for example
 # when compiling with PCH enabled
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Conan 2.0 - must be initialized before the project() call
+include(cmake/Conan.cmake)
 
 # Set the project name and language
 project(
@@ -31,6 +34,12 @@ include(ProjectOptions.cmake)
 
 
 myproject_setup_options()
+
+if(myproject_WARNINGS_AS_ERRORS)
+  set(myproject_WARNING_TYPE SEND_ERROR)
+else()
+  set(myproject_WARNING_TYPE WARNING)
+endif()
 
 myproject_global_options()
 include(Dependencies.cmake)
@@ -63,6 +72,18 @@ add_subdirectory(configured_files)
 
 # Adding the src:
 add_subdirectory(src)
+
+# Bloaty needs targets to exist, so it runs after add_subdirectory(src)
+if(myproject_ENABLE_BLOATY)
+  include(cmake/Bloaty.cmake)
+  myproject_setup_bloaty(intro)
+endif()
+
+# Build documentation
+if(PROJECT_IS_TOP_LEVEL AND myproject_ENABLE_DOCS)
+  include(cmake/Doxygen.cmake)
+  myproject_enable_doxygen()
+endif()
 
 # Create unified web deployment directory (for WASM builds)
 if(EMSCRIPTEN)

@@ -68,4 +68,3 @@ run them separately.
 
 A script called `build_examples.sh` is provided to help you to build the example
 GUI projects in this container.
-

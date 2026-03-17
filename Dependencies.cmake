@@ -1,4 +1,4 @@
-include(cmake/CPM.cmake)
+include(FetchContent)
 
 # Done as a function so that updates to variables like
 # CMAKE_CXX_FLAGS don't propagate out to other
@@ -6,38 +6,56 @@ include(cmake/CPM.cmake)
 function(myproject_setup_dependencies)
 
   # For each dependency, see if it's
-  # already been provided to us by a parent project
+  # already been provided to us by a parent project.
+  #
+  # Dependencies are resolved via find_package(). The Conan CMake
+  # provider transparently intercepts these calls and runs
+  # conan install using the project's conanfile.py.
 
-  if(NOT TARGET fmtlib::fmtlib)
-    cpmaddpackage("gh:fmtlib/fmt#12.1.0")
+  if(NOT TARGET fmt::fmt)
+    find_package(fmt REQUIRED)
   endif()
 
   if(NOT TARGET spdlog::spdlog)
-    cpmaddpackage(
-      NAME
-      spdlog
-      VERSION
-      1.17.0
-      GITHUB_REPOSITORY
-      "gabime/spdlog"
-      OPTIONS
-      "SPDLOG_FMT_EXTERNAL ON")
+    find_package(spdlog REQUIRED)
   endif()
 
   if(NOT TARGET Catch2::Catch2WithMain)
-    cpmaddpackage("gh:catchorg/Catch2@3.12.0")
+    find_package(Catch2 REQUIRED)
+    # Conan's CMakeDeps provides targets but does not expose Catch2's test
+    # discovery module (Catch.cmake). Locate it in the installed package
+    # and add it to CMAKE_MODULE_PATH so include(Catch) works in tests.
+    foreach(_dir IN LISTS Catch2_INCLUDE_DIRS)
+      cmake_path(GET _dir PARENT_PATH _catch2_root)
+      if(EXISTS "${_catch2_root}/lib/cmake/Catch2/Catch.cmake")
+        set(CMAKE_MODULE_PATH
+          "${_catch2_root}/lib/cmake/Catch2" ${CMAKE_MODULE_PATH} PARENT_SCOPE)
+        break()
+      endif()
+    endforeach()
   endif()
 
   if(NOT TARGET CLI11::CLI11)
-    cpmaddpackage("gh:CLIUtils/CLI11@2.6.1")
+    find_package(CLI11 REQUIRED)
   endif()
 
   if(NOT TARGET ftxui::screen)
-    cpmaddpackage("gh:ArthurSonzogni/FTXUI@6.1.9")
+    find_package(ftxui REQUIRED)
   endif()
 
-  if(NOT TARGET tools::tools)
-    cpmaddpackage("gh:lefticus/tools#update_build_system")
+  # lefticus/tools is not available on Conan, fetch from GitHub.
+  # It uses CPM internally to fetch its own dependencies (e.g. fmt).
+  # CPM_USE_LOCAL_PACKAGES tells CPM to use find_package() first,
+  # so it picks up packages already provided by Conan instead of
+  # downloading duplicates.
+  if(NOT TARGET lefticus::tools)
+    set(CPM_USE_LOCAL_PACKAGES ON)
+    FetchContent_Declare(
+      tools
+      GIT_REPOSITORY https://github.com/lefticus/tools.git
+      GIT_TAG main
+      GIT_SHALLOW TRUE)
+    FetchContent_MakeAvailable(tools)
   endif()
 
 endfunction()

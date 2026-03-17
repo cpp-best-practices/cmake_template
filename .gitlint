@@ -1,0 +1,34 @@
+[general]
+# Use Python `search` semantics for regex-based rules, so patterns only need to
+# match somewhere in the text (not the entire string).
+regex-style-search = true
+
+# Body line length is not enforced — git stores messages as-is and every
+# modern tool wraps. Title length (72) matters for git log --oneline;
+# body length does not.
+ignore = body-max-line-length
+
+# -----------------------------------------------------------
+# Conventional Commits title
+# -----------------------------------------------------------
+[title-match-regex]
+# Allowed types: build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test
+# Format: type(scope?)?(!)?: subject
+regex = ^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9._-]+\))?(!)?: .+
+
+[title-max-length]
+line-length = 72
+
+# -----------------------------------------------------------
+# Body formatting
+# -----------------------------------------------------------
+[body-first-line-empty]
+# Enforce a blank line between title and body when a body is present.
+
+# -----------------------------------------------------------
+# DCO / Signed-off-by enforcement
+# -----------------------------------------------------------
+[body-match-regex]
+# Require at least one "Signed-off-by: Name <email>" line somewhere in the body.
+# This works together with regex-style-search=true in [general].
+regex = (?m)^Signed-off-by: .+ <.+>$

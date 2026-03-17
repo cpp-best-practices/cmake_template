@@ -47,7 +47,7 @@ Fill in a repository name and short description, and click 'Create repository fr
 This will allow you to create a new repository in your GitHub account,
 prepopulated with the contents of this project.
 
-After creating the project please wait until the cleanup workflow has finished 
+After creating the project please wait until the cleanup workflow has finished
 setting up your project and committed the changes.
 
 Now you can clone the project locally and get to work!
@@ -67,5 +67,3 @@ See [Catch2 tutorial](https://github.com/catchorg/Catch2/blob/master/docs/tutori
 ## Fuzz testing
 
 See [libFuzzer Tutorial](https://github.com/google/fuzzing/blob/master/tutorial/libFuzzerTutorial.md)
-
-

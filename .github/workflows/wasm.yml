@@ -22,8 +22,10 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Install Ninja
-        run: sudo apt-get install -y ninja-build
+      - name: Install Ninja and Conan
+        run: |
+          sudo apt-get install -y ninja-build
+          pip install conan
 
       - name: Configure CMake
         run: emcmake cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
