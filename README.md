@@ -13,7 +13,7 @@ By default (collectively known as `ENABLE_DEVELOPER_MODE`)
  * Address Sanitizer and Undefined Behavior Sanitizer enabled where possible
  * Warnings as errors
  * clang-tidy and cppcheck static analysis
- * CPM for dependencies
+ * Conan 2.0 for dependency management
 
 It includes
 
@@ -21,6 +21,24 @@ It includes
  * examples for fuzz, unit, and constexpr testing
  * large GitHub action testing matrix
  * WebAssembly build support with automatic GitHub Pages deployment
+
+### Code quality tools
+
+ * [pre-commit](https://pre-commit.com/) hooks for trailing whitespace, end-of-file, large file checks, clang-format, and gitlint
+ * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) for automatic code formatting
+ * [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) and [cppcheck](http://cppcheck.sourceforge.net/) for static analysis
+ * [include-what-you-use](https://include-what-you-use.org/) for include hygiene (opt-in)
+ * [Lizard](https://github.com/terryyin/lizard) for cyclomatic complexity analysis
+ * [Bloaty McBloatface](https://github.com/google/bloaty) for binary size analysis (opt-in)
+ * [Conventional Commits](https://www.conventionalcommits.org/) enforced via [gitlint](https://jorisroovers.com/gitlint/)
+
+### Documentation
+
+ * [Sphinx](https://www.sphinx-doc.org/) + [Breathe](https://breathe.readthedocs.io/) + [Exhale](https://exhale.readthedocs.io/) documentation pipeline powered by Doxygen
+
+### Development environment
+
+ * [Devcontainer](https://containers.dev/) based on Red Hat UBI 10 with GCC 14, Clang 19, and all tools pre-installed
 
 **Live Demo:** If you enable GitHub Pages in your project created from this template, you'll have a working example like this:
 - Main: [https://cpp-best-practices.github.io/cmake_template/](https://cpp-best-practices.github.io/cmake_template/)
@@ -31,11 +49,10 @@ The `main` branch deploys to the root, `develop` to `/develop/`, and tags to `/t
 It requires
 
  * cmake
- * a compiler
-
+ * a C++17 compiler
+ * Conan 2.0
 
 This project gets you started with a simple example of using FTXUI, which happens to also be a game.
-
 
 ## Getting Started
 
@@ -53,6 +70,15 @@ setting up your project and committed the changes.
 Now you can clone the project locally and get to work!
 
     git clone https://github.com/<user>/<your_new_repo>.git
+
+### Set up pre-commit hooks
+
+```sh
+pipx install pre-commit
+pre-commit install
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for commit message policy and developer workflow.
 
 ## More Details
 

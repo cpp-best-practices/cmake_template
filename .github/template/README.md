@@ -7,6 +7,16 @@
 ## About %%myproject%%
 %%description%%
 
+### Developer mode
+
+By default the project enables developer mode with:
+
+ * Address Sanitizer and Undefined Behavior Sanitizer
+ * Warnings as errors
+ * clang-tidy and cppcheck static analysis
+ * Conan 2.0 for dependency management
+ * pre-commit hooks (clang-format, gitlint, trailing whitespace)
+
 ## WebAssembly Demo
 
 Try the live WebAssembly demo:
@@ -15,6 +25,14 @@ Try the live WebAssembly demo:
 
 The `main` branch deploys to the root, `develop` to `/develop/`, and tags to `/tagname/`.
 
+## Getting Started
+
+```sh
+pipx install pre-commit
+pre-commit install
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for commit message policy and developer workflow.
 
 ## More Details
 
