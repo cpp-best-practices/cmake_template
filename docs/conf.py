@@ -9,7 +9,7 @@ extensions = [
     'exhale',
 ]
 
-# -- Breathe (Doxygen XML → Sphinx) -----------------------------------------
+# ── Breathe (Doxygen XML → Sphinx) ────────────────────────────────────
 
 # CMake passes the XML path via environment variable; fall back to a
 # conventional location so that standalone sphinx-build also works.
@@ -20,7 +20,7 @@ _doxygen_xml_dir = os.environ.get(
 breathe_projects = {'myproject': _doxygen_xml_dir}
 breathe_default_project = 'myproject'
 
-# -- Exhale (auto-generate API tree from Breathe) ---------------------------
+# ── Exhale (auto-generate API tree from Breathe) ──────────────────────
 
 _project_source_dir = os.environ.get(
     'PROJECT_SOURCE_DIR',
@@ -34,6 +34,6 @@ exhale_args = {
     'createTreeView': True,
 }
 
-# -- Theme -------------------------------------------------------------------
+# ── Theme ─────────────────────────────────────────────────────────────
 
 html_theme = 'sphinx_rtd_theme'

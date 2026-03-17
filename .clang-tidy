@@ -18,7 +18,7 @@ Checks: "*,
         -misc-use-internal-linkage
 "
 WarningsAsErrors: ''
-HeaderFilterRegex: ''
+HeaderFilterRegex: '(include|src)/'
 FormatStyle:     none
 
 CheckOptions:

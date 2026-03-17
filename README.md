@@ -27,9 +27,9 @@ It includes
  * [pre-commit](https://pre-commit.com/) hooks for trailing whitespace, end-of-file, large file checks, clang-format, and gitlint
  * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) for automatic code formatting
  * [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) and [cppcheck](http://cppcheck.sourceforge.net/) for static analysis
- * [include-what-you-use](https://include-what-you-use.org/) for include hygiene (opt-in)
+ * [include-what-you-use](https://include-what-you-use.org/) for include hygiene
  * [Lizard](https://github.com/terryyin/lizard) for cyclomatic complexity analysis
- * [Bloaty McBloatface](https://github.com/google/bloaty) for binary size analysis (opt-in)
+ * [Bloaty McBloatface](https://github.com/google/bloaty) for binary size analysis
  * [Conventional Commits](https://www.conventionalcommits.org/) enforced via [gitlint](https://jorisroovers.com/gitlint/)
 
 ### Documentation

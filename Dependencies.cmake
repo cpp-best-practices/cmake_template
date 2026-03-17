@@ -35,6 +35,10 @@ function(myproject_setup_dependencies)
     endforeach()
   endif()
 
+  if(NOT TARGET trompeloeil::trompeloeil)
+    find_package(trompeloeil REQUIRED)
+  endif()
+
   if(NOT TARGET CLI11::CLI11)
     find_package(CLI11 REQUIRED)
   endif()
