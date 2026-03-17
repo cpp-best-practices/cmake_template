@@ -93,7 +93,7 @@ With Cmake directly:
 
 Cmake will automatically create the `./build` folder if it does not exist, and it wil configure the project.
 
-Instead, if you have CMake version 3.21+, you can use one of the configuration presets that are listed in the CmakePresets.json file.
+Instead, if you have CMake version 3.21+, you can use one of the configuration presets that are listed in the CMakePresets.json file.
 
     cmake . --preset <configure-preset>
     cmake --build
@@ -139,7 +139,7 @@ Choose MinGW Makefiles as the generator:
 
 You should have already set `C` and `CXX` to `cl.exe`.
 
-Choose "Visual Studio 16 2019" as the generator:
+Choose "Visual Studio 17 2022" as the generator:
 
 <img src="https://user-images.githubusercontent.com/16418197/82524696-32502680-9af5-11ea-9697-a42000e900a6.jpg" alt="default_vs">
 
@@ -151,7 +151,7 @@ Choose "Visual Studio 16 2019" as the generator:
 
 You should have already set `C` and `CXX` to `clang.exe` and `clang++.exe`.
 
-Choose "Visual Studio 16 2019" as the generator. To tell Visual studio to use `clang-cl.exe`:
+Choose "Visual Studio 17 2022" as the generator. To tell Visual studio to use `clang-cl.exe`:
 - If you use the LLVM that is shipped with Visual Studio: write `ClangCl` under "optional toolset to use".
 
 <img src="https://user-images.githubusercontent.com/16418197/82781142-ae60ac00-9e1e-11ea-8c77-222b005a8f7e.png" alt="visual_studio">

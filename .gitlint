@@ -8,7 +8,7 @@ regex-style-search = true
 # body length does not.
 ignore = body-max-line-length
 
-# ── Conventional Commits title ────────────────────────────────────────
+# Conventional Commits title
 [title-match-regex]
 # Allowed types: build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test
 # Format: type(scope?)?(!)?: subject
@@ -17,11 +17,11 @@ regex = ^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-
 [title-max-length]
 line-length = 72
 
-# ── Body formatting ───────────────────────────────────────────────────
+# Body formatting
 [body-first-line-empty]
 # Enforce a blank line between title and body when a body is present.
 
-# ── DCO / Signed-off-by enforcement ───────────────────────────────────
+# DCO / Signed-off-by enforcement
 [body-match-regex]
 # Require at least one "Signed-off-by: Name <email>" line somewhere in the body.
 # This works together with regex-style-search=true in [general].

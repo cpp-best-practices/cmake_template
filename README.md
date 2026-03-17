@@ -1,14 +1,14 @@
 # cmake_template
 
-[![ci](https://github.com/cpp-best-practices/cmake_template/actions/workflows/ci.yml/badge.svg)](https://github.com/cpp-best-practices/cmake_template/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/cpp-best-practices/cmake_template/branch/main/graph/badge.svg)](https://codecov.io/gh/cpp-best-practices/cmake_template)
-[![CodeQL](https://github.com/cpp-best-practices/cmake_template/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/cpp-best-practices/cmake_template/actions/workflows/codeql-analysis.yml)
+[![ci](https://github.com/VersatusHPC/cmake_template/actions/workflows/ci.yml/badge.svg)](https://github.com/VersatusHPC/cmake_template/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/VersatusHPC/cmake_template/branch/master/graph/badge.svg)](https://codecov.io/gh/VersatusHPC/cmake_template)
+[![CodeQL](https://github.com/VersatusHPC/cmake_template/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/VersatusHPC/cmake_template/actions/workflows/codeql-analysis.yml)
 
 ## About cmake_template
 
 This is a C++ Best Practices GitHub template for getting up and running with C++ quickly.
 
-By default (collectively known as `ENABLE_DEVELOPER_MODE`)
+By default, developer mode enables
 
  * Address Sanitizer and Undefined Behavior Sanitizer enabled where possible
  * Warnings as errors
@@ -40,16 +40,16 @@ It includes
 
  * [Devcontainer](https://containers.dev/) based on Red Hat UBI 10 with GCC 14, Clang 19, and all tools pre-installed
 
-**Live Demo:** If you enable GitHub Pages in your project created from this template, you'll have a working example like this:
-- Main: [https://cpp-best-practices.github.io/cmake_template/](https://cpp-best-practices.github.io/cmake_template/)
-- Develop: [https://cpp-best-practices.github.io/cmake_template/develop/](https://cpp-best-practices.github.io/cmake_template/develop/)
+### Acknowledgements
 
-The `main` branch deploys to the root, `develop` to `/develop/`, and tags to `/tagname/`.
+This template is heavily based on [cpp-best-practices/cmake_template](https://github.com/cpp-best-practices/cmake_template) by [Jason Turner](https://github.com/lefticus) and the [C++ Best Practices](https://github.com/cpp-best-practices) community. Their work on CMake infrastructure, CI workflows, and developer tooling laid the foundation for this project.
+
+If you enable GitHub Pages on a repository created from this template, the default branch (`main` or `master`) deploys to the root, `develop` to `/develop/`, and tags to `/tagname/`.
 
 It requires
 
  * cmake
- * a C++17 compiler
+ * a C++23 compiler
  * Conan 2.0
 
 This project gets you started with a simple example of using FTXUI, which happens to also be a game.
@@ -58,7 +58,7 @@ This project gets you started with a simple example of using FTXUI, which happen
 
 ### Use the GitHub template
 First, click the green `Use this template` button near the top of this page.
-This will take you to GitHub's ['Generate Repository'](https://github.com/cpp-best-practices/cmake_template/generate)
+This will take you to GitHub's ['Generate Repository'](https://github.com/VersatusHPC/cmake_template/generate)
 page.
 Fill in a repository name and short description, and click 'Create repository from template'.
 This will allow you to create a new repository in your GitHub account,
@@ -84,7 +84,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for commit message policy and developer w
 
  * [Dependency Setup](README_dependencies.md)
  * [Building Details](README_building.md)
- * [Docker](README_docker.md)
+ * [Containers](README_container.md)
 
 ## Testing
 

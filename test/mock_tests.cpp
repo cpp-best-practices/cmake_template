@@ -7,31 +7,30 @@
 #include <catch2/catch_test_macros.hpp>
 #include <trompeloeil.hpp>
 
-// ── Interface ────────────────────────────────────────────────────────
+// Interface
 
-class ICalculator
-{
-public:
+class ICalculator {
+ public:
   virtual ~ICalculator() = default;
   virtual int compute(int input) = 0;
 };
 
-// ── Mock ─────────────────────────────────────────────────────────────
+// Mock
 
-class MockCalculator : public ICalculator
-{
-public:
+class MockCalculator : public ICalculator {
+ public:
   MAKE_MOCK1(compute, int(int), override);
 };
 
-// ── Consumer under test ──────────────────────────────────────────────
+// Consumer under test
 
-int double_compute(ICalculator &calc, int value) { return calc.compute(value) * 2; }
+int double_compute(ICalculator& calc, int value) {
+  return calc.compute(value) * 2;
+}
 
-// ── Tests ────────────────────────────────────────────────────────────
+// Tests
 
-TEST_CASE("Mock verifies compute is called", "[mock]")
-{
+TEST_CASE("Mock verifies compute is called", "[mock]") {
   MockCalculator calc;
 
   REQUIRE_CALL(calc, compute(5)).RETURN(42);
@@ -39,8 +38,7 @@ TEST_CASE("Mock verifies compute is called", "[mock]")
   REQUIRE(double_compute(calc, 5) == 84);
 }
 
-TEST_CASE("Mock allows sequences of calls", "[mock]")
-{
+TEST_CASE("Mock allows sequences of calls", "[mock]") {
   MockCalculator calc;
 
   trompeloeil::sequence seq;

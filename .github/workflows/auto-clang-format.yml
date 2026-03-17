@@ -18,6 +18,6 @@ jobs:
       with:
         author_name: Clang Robot
         author_email: robot@example.com
-        message: ':art: Committing clang-format changes'
+        message: 'style: apply clang-format'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -16,7 +16,7 @@ class MyProjectConan(ConanFile):
         self.requires("cli11/[>=2.4.0 <3.0]")
         self.requires("ftxui/[>=5.0 <7.0]")
 
-        # ── Commented-out packages ────────────────────────────────────
+        # Commented-out packages
         # Uncomment the ones your project needs. These serve as
         # ready-to-use examples with tested version ranges.
         #
@@ -40,7 +40,7 @@ class MyProjectConan(ConanFile):
         # Process management
         #self.requires("reproc/[>=14.2 <15.0]")
 
-        # ── Version range cheat-sheet ─────────────────────────────────
+        # Version range cheat-sheet
         #
         # Exact version (reproducible, no flexibility):
         #   self.requires("spdlog/1.14.1")

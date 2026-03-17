@@ -3,7 +3,7 @@ build/
 out/
 cmake-build-*/
 
-# User spesific settings
+# User specific settings
 CMakeUserPresets.json
 
 # IDE files
@@ -31,4 +31,5 @@ $RECYCLE.BIN/
 .TemporaryItems
 ehthumbs.db
 Thumbs.db
+Containerfile
 Dockerfile

@@ -10,8 +10,8 @@ Note about install commands:
 
 This is a really long list of dependencies, and it's easy to mess up. That's why:
 
-#### Docker
-We have a Docker image that's already set up for you. See the [Docker instructions](./README_docker.md).
+#### Containers
+We have a container image that's already set up for you. See the [container instructions](./README_container.md).
 
 #### Setup-cpp
 
@@ -22,19 +22,19 @@ Please check [the setup-cpp documentation](https://github.com/aminya/setup-cpp) 
 For example, on Windows, you can run the following to install llvm, cmake, ninja, ccache, and cppcheck.
 ```ps1
 # windows example (open shell as admin)
-curl -LJO "https://github.com/aminya/setup-cpp/releases/download/v0.5.7/setup_cpp_windows.exe"
+curl -LJO "https://github.com/aminya/setup-cpp/releases/download/v1.8.0/setup_cpp_windows.exe"
 ./setup_cpp_windows --compiler llvm --cmake true --ninja true --ccache true --cppcheck true
 
 RefreshEnv.cmd # reload the environment
 ```
 
 ### Necessary Dependencies
-1. A C++ compiler that supports C++17.
+1. A C++ compiler that supports C++23.
 See [cppreference.com](https://en.cppreference.com/w/cpp/compiler_support)
 to see which features are supported by each compiler.
 The following compilers should work:
 
-  * [gcc 7+](https://gcc.gnu.org/)
+  * [gcc 14+](https://gcc.gnu.org/)
 	<details>
 	<summary>Install command</summary>
 
@@ -51,7 +51,7 @@ The following compilers should work:
 			brew install gcc
 	</details>
 
-  * [clang 6+](https://clang.llvm.org/)
+  * [clang 17+](https://clang.llvm.org/)
 	<details>
 	<summary>Install command</summary>
 
@@ -61,14 +61,14 @@ The following compilers should work:
 
 	- Windows:
 
-		Visual Studio 2019 ships with LLVM (see the Visual Studio section). However, to install LLVM separately:
+		Visual Studio 2022 ships with LLVM (see the Visual Studio section). However, to install LLVM separately:
 
 			choco install llvm -y
 
 		llvm-utils for using external LLVM with Visual Studio generator:
 
 			git clone https://github.com/zufuliu/llvm-utils.git
-			cd llvm-utils/VS2017
+			cd llvm-utils/VS2022
 			.\install.bat
 
 	- MacOS:
@@ -76,15 +76,15 @@ The following compilers should work:
 			brew install llvm
 	</details>
 
-  * [Visual Studio 2019 or higher](https://visualstudio.microsoft.com/)
+  * [Visual Studio 2022 or higher](https://visualstudio.microsoft.com/)
 	<details>
 	<summary>Install command + Environment setup</summary>
 
-	On Windows, you need to install Visual Studio 2019 because of the SDK and libraries that ship with it.
+	On Windows, you need to install Visual Studio 2022 because of the SDK and libraries that ship with it.
 
-  	Visual Studio IDE - 2019 Community (installs Clang too):
+  	Visual Studio IDE - 2022 Community (installs Clang too):
 
-  	  	choco install -y visualstudio2019community --package-parameters "add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended --includeOptional --passive --locale en-US"
+  	  	choco install -y visualstudio2022community --package-parameters "add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended --includeOptional --passive --locale en-US"
 
 	Put MSVC compiler, Clang compiler, and vcvarsall.bat on the path:
 

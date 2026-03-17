@@ -5,7 +5,7 @@ on:
   release:
     types: [published]
   push:
-    branches: [main, develop]
+    branches: [master, main, develop]
     tags: ['**']
 
 permissions:
@@ -45,7 +45,7 @@ jobs:
         run: |
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then
             echo "path=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-          elif [[ "$GITHUB_REF" == refs/heads/main ]]; then
+          elif [[ "$GITHUB_REF" == refs/heads/main || "$GITHUB_REF" == refs/heads/master ]]; then
             echo "path=." >> $GITHUB_OUTPUT
           elif [[ "$GITHUB_REF" == refs/heads/develop ]]; then
             echo "path=develop" >> $GITHUB_OUTPUT

@@ -6,6 +6,7 @@ on:
   push:
     tags:
     branches:
+      - master
       - main
       - develop
 
