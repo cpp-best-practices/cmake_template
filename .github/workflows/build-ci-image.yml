@@ -2,7 +2,12 @@ name: build-ci-image
 
 on:
   push:
-    branches: [master, main, feat/ci-ubi10-container]  # TODO: remove feature branch after merge
+    branches: [master, main]
+    paths:
+      - '.devcontainer/Containerfile'
+      - '.devcontainer/Containerfile.intel'
+      - '.github/workflows/build-ci-image.yml'
+  pull_request:
     paths:
       - '.devcontainer/Containerfile'
       - '.devcontainer/Containerfile.intel'
