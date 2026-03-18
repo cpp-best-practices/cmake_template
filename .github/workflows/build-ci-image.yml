@@ -2,7 +2,7 @@ name: build-ci-image
 
 on:
   push:
-    branches: [master, main]
+    branches: [master, main, feat/ci-ubi10-container]  # TODO: remove feature branch after merge
     paths:
       - '.devcontainer/Containerfile'
       - '.devcontainer/Containerfile.intel'
