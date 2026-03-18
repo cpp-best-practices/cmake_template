@@ -22,9 +22,24 @@ on:
 
 
 jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      ci-image: ${{ steps.images.outputs.ci }}
+    steps:
+      - id: images
+        run: |
+          REPO="${{ github.repository }}"
+          REPO_LC="${REPO,,}"
+          echo "ci=ghcr.io/${REPO_LC}/ci:latest" >> $GITHUB_OUTPUT
+
   analyze:
     name: Analyze
+    needs: setup
     runs-on: ubuntu-latest
+    container:
+      image: ${{ needs.setup.outputs.ci-image }}
     permissions:
       actions: read
       contents: read
@@ -34,10 +49,7 @@ jobs:
       fail-fast: false
       matrix:
         language: [ 'cpp' ]
-        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
-        # Learn more about CodeQL language support at https://git.io/codeql-language-support
         compiler:
-          # you can specify the version after `-` like "llvm-13.0.0".
           - gcc-14
         generator:
           - "Ninja Multi-Config"
@@ -62,27 +74,6 @@ jobs:
       uses: cardinalby/export-env-action@v2
       with:
         envFile: '.github/constants.env'
-
-
-    - name: Setup Cpp
-      uses: aminya/setup-cpp@v1
-      with:
-        compiler: ${{ matrix.compiler }}
-        vcvarsall: ${{ contains(matrix.os, 'windows' )}}
-
-        cmake: true
-        ninja: true
-        vcpkg: false
-        ccache: true
-        clangtidy: false
-
-        cppcheck: false
-
-        gcovr: false
-        opencppcoverage: false
-
-    - name: Install Conan and Lizard
-      run: pip install conan lizard
 
     - name: Configure CMake
       run: |

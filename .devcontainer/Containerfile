@@ -23,12 +23,23 @@ RUN dnf install -y \
 # Static analysis and documentation
 RUN dnf install -y cppcheck doxygen graphviz
 
+# Bloaty McBloatface — binary size analyzer (build from source)
+ARG BLOATY_VERSION="v1.1"
+RUN dnf install -y re2-devel protobuf-devel capstone-devel && \
+    git clone --branch ${BLOATY_VERSION} --depth 1 \
+        https://github.com/google/bloaty.git /tmp/bloaty && \
+    cmake -S /tmp/bloaty -B /tmp/bloaty/build \
+        -DCMAKE_BUILD_TYPE=Release -G Ninja && \
+    cmake --build /tmp/bloaty/build -j && \
+    cmake --install /tmp/bloaty/build && \
+    rm -rf /tmp/bloaty
+
 # Editors
 RUN dnf install -y neovim nano
 
 # Python packages
 RUN python3 -m pip install --upgrade pip setuptools && \
-    python3 -m pip install conan && \
+    python3 -m pip install conan gcovr lizard && \
     conan --version
 
 # Conan configuration for containers

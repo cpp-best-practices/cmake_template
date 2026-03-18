@@ -13,6 +13,13 @@ Tracked issues with links to GitHub issues for follow-up.
 - **codecov**: Set to `fail_ci_if_error: true`. Derived repos must
   configure their own `CODECOV_TOKEN` repository secret from
   [codecov.io](https://codecov.io).
+- **Intel ICX coverage** ([#6](https://github.com/VersatusHPC/cmake_template/issues/6)):
+  Resolved by moving Linux CI to UBI 10 containers. The Intel
+  container includes `llvm-cov` from oneAPI. Use `llvm-cov gcov`
+  as the gcov executable for ICX builds.
+- **IWYU / Bloaty in CI**: Previously disabled because `ubuntu-latest`
+  runners lacked these tools. Now pre-installed in the UBI 10 CI
+  container and enabled for all Linux jobs.
 
 ## Open
 
@@ -22,6 +29,3 @@ Tracked issues with links to GitHub issues for follow-up.
   doesn't support emcc 23+).
 - **macOS GCC coverage** ([#5](https://github.com/VersatusHPC/cmake_template/issues/5)):
   Apple ARM linker can't find libgcov. Tests pass, coverage skipped.
-- **Intel ICX coverage** ([#6](https://github.com/VersatusHPC/cmake_template/issues/6)):
-  gcov incompatible with ICX coverage format. Tests pass, coverage
-  skipped.

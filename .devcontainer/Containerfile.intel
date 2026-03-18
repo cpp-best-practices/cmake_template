@@ -1,0 +1,28 @@
+# Intel oneAPI CI image — extends the main CI image with ICX/ICPX
+ARG BASE_IMAGE=ghcr.io/versatushpc/cmake_template/ci:latest
+FROM ${BASE_IMAGE}
+
+# Intel oneAPI repository
+RUN rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
+    cat > /etc/yum.repos.d/oneAPI.repo << 'EOF'
+[oneAPI]
+name=Intel oneAPI repository
+baseurl=https://yum.repos.intel.com/oneapi
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+EOF
+
+# Install Intel oneAPI DPC++/C++ compiler
+RUN dnf install -y intel-oneapi-compiler-dpcpp-cpp && \
+    dnf clean all && rm -rf /var/cache/dnf
+
+# Make Intel compiler available without setvars.sh
+# The compiler binaries and libraries are under /opt/intel/oneapi/compiler/latest
+ENV PATH="/opt/intel/oneapi/compiler/latest/bin:${PATH}" \
+    LD_LIBRARY_PATH="/opt/intel/oneapi/compiler/latest/lib:${LD_LIBRARY_PATH}" \
+    CMAKE_PREFIX_PATH="/opt/intel/oneapi/compiler/latest:${CMAKE_PREFIX_PATH}" \
+    CC="icx" \
+    CXX="icpx"
+
+CMD ["/bin/bash"]
