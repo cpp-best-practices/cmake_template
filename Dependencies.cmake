@@ -9,7 +9,15 @@ function(myproject_setup_dependencies)
   # already been provided to us by a parent project
 
   if(NOT TARGET fmtlib::fmtlib)
-    cpmaddpackage("gh:fmtlib/fmt#12.1.0")
+    cpmaddpackage(
+      NAME
+      fmt
+      GITHUB_REPOSITORY
+      "fmtlib/fmt"
+      GIT_TAG
+      "12.1.0"
+      SYSTEM
+      YES)
   endif()
 
   if(NOT TARGET spdlog::spdlog)
@@ -20,24 +28,58 @@ function(myproject_setup_dependencies)
       1.17.0
       GITHUB_REPOSITORY
       "gabime/spdlog"
+      SYSTEM
+      YES
       OPTIONS
       "SPDLOG_FMT_EXTERNAL ON")
   endif()
 
   if(NOT TARGET Catch2::Catch2WithMain)
-    cpmaddpackage("gh:catchorg/Catch2@3.12.0")
+    cpmaddpackage(
+      NAME
+      Catch2
+      VERSION
+      3.12.0
+      GITHUB_REPOSITORY
+      "catchorg/Catch2"
+      SYSTEM
+      YES)
   endif()
 
   if(NOT TARGET CLI11::CLI11)
-    cpmaddpackage("gh:CLIUtils/CLI11@2.6.1")
+    cpmaddpackage(
+      NAME
+      CLI11
+      VERSION
+      2.6.1
+      GITHUB_REPOSITORY
+      "CLIUtils/CLI11"
+      SYSTEM
+      YES)
   endif()
 
   if(NOT TARGET ftxui::screen)
-    cpmaddpackage("gh:ArthurSonzogni/FTXUI@6.1.9")
+    cpmaddpackage(
+      NAME
+      FTXUI
+      VERSION
+      6.1.9
+      GITHUB_REPOSITORY
+      "ArthurSonzogni/FTXUI"
+      SYSTEM
+      YES)
   endif()
 
   if(NOT TARGET tools::tools)
-    cpmaddpackage("gh:lefticus/tools#main")
+    cpmaddpackage(
+      NAME
+      tools
+      GITHUB_REPOSITORY
+      "lefticus/tools"
+      GIT_TAG
+      "main"
+      SYSTEM
+      YES)
   endif()
 
 endfunction()

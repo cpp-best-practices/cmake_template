@@ -21,6 +21,20 @@ endif()
 
 include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
 
+# Regression test for issue #143: verify CPM dependencies use SYSTEM includes
+get_property(_fmt_dir TARGET fmt::fmt PROPERTY SOURCE_DIR)
+if(_fmt_dir)
+  get_property(_fmt_dir_system DIRECTORY "${_fmt_dir}" PROPERTY SYSTEM)
+else()
+  set(_fmt_dir_system FALSE)
+endif()
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/check_system_includes.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/check_system_includes.cmake"
+  @ONLY)
+add_test(NAME cmake.system_includes
+         COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/check_system_includes.cmake")
+
 # Provide a simple smoke test to make sure that the CLI works and can display a --help message
 add_test(NAME cli.has_help COMMAND intro --help)
 

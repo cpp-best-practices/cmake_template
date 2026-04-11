@@ -1,4 +1,3 @@
-include(cmake/SystemLink.cmake)
 include(cmake/LibFuzzer.cmake)
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
