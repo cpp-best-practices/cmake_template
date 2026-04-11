@@ -77,9 +77,7 @@ function(myproject_setup_dependencies)
       GITHUB_REPOSITORY
       "lefticus/tools"
       GIT_TAG
-      "main"
-      SYSTEM
-      YES)
+      "main")
   endif()
 
 endfunction()
