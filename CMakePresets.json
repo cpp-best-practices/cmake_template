@@ -57,51 +57,25 @@
             }
         },
         {
-            "name": "windows-msvc-debug-developer-mode",
-            "displayName": "msvc Debug (Developer Mode)",
+            "name": "windows-msvc-debug",
+            "displayName": "msvc Debug",
             "description": "Target Windows with the msvc compiler, debug build type",
             "inherits": "conf-windows-common",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl",
                 "CMAKE_CXX_COMPILER": "cl",
-                "CMAKE_BUILD_TYPE": "Debug",
-                "ENABLE_DEVELOPER_MODE": "ON"
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
-            "name": "windows-msvc-release-developer-mode",
-            "displayName": "msvc Release (Developer Mode)",
+            "name": "windows-msvc-release",
+            "displayName": "msvc Release",
             "description": "Target Windows with the msvc compiler, release build type",
             "inherits": "conf-windows-common",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl",
                 "CMAKE_CXX_COMPILER": "cl",
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-                "ENABLE_DEVELOPER_MODE": "ON"
-            }
-        },
-        {
-            "name": "windows-msvc-debug-user-mode",
-            "displayName": "msvc Debug (User Mode)",
-            "description": "Target Windows with the msvc compiler, debug build type",
-            "inherits": "conf-windows-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl",
-                "CMAKE_CXX_COMPILER": "cl",
-                "CMAKE_BUILD_TYPE": "Debug",
-                "ENABLE_DEVELOPER_MODE": "OFF"
-            }
-        },
-        {
-            "name": "windows-msvc-release-user-mode",
-            "displayName": "msvc Release (User Mode)",
-            "description": "Target Windows with the msvc compiler, release build type",
-            "inherits": "conf-windows-common",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl",
-                "CMAKE_CXX_COMPILER": "cl",
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-                "ENABLE_DEVELOPER_MODE": "OFF"
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
             }
         },
         {
@@ -195,18 +169,18 @@
             }
         },
         {
-            "name": "test-windows-msvc-debug-developer-mode",
+            "name": "test-windows-msvc-debug",
             "displayName": "Strict",
             "description": "Enable output and stop on failure",
             "inherits": "test-common",
-            "configurePreset": "windows-msvc-debug-developer-mode"
+            "configurePreset": "windows-msvc-debug"
         },
         {
-            "name": "test-windows-msvc-release-developer-mode",
+            "name": "test-windows-msvc-release",
             "displayName": "Strict",
             "description": "Enable output and stop on failure",
             "inherits": "test-common",
-            "configurePreset": "windows-msvc-release-developer-mode"
+            "configurePreset": "windows-msvc-release"
         },
         {
             "name": "test-windows-clang-debug",

@@ -8,7 +8,7 @@
 
 This is a C++ Best Practices GitHub template for getting up and running with C++ quickly.
 
-By default (collectively known as `ENABLE_DEVELOPER_MODE`)
+By default (when building as the top-level project)
 
  * Address Sanitizer and Undefined Behavior Sanitizer enabled where possible
  * Warnings as errors
