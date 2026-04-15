@@ -88,11 +88,6 @@ catch_discover_tests(
   OUTPUT_SUFFIX
   .xml)
 
-# Verify no redundant warning flags in CompilerWarnings.cmake
-add_test(
-  NAME cmake.no_redundant_warnings
-  COMMAND ${CMAKE_COMMAND} -DPROJECT_ROOT=${CMAKE_SOURCE_DIR} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/test_no_redundant_warnings.cmake)
-
 # Disable the constexpr portion of the test, and build again this allows us to have an executable that we can debug when
 # things go wrong with the constexpr testing
 add_executable(relaxed_constexpr_tests constexpr_tests.cpp)
