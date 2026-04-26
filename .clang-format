@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://www.schemastore.org/clang-format-21.x.json
 AccessModifierOffset: -2
 AlignAfterOpenBracket: DontAlign
 AlignConsecutiveAssignments: false
