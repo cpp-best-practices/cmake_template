@@ -21,6 +21,15 @@ endif()
 
 include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
 
+# Regression test for issue #139: ensure windows-clang preset actually disables
+# cppcheck/clang-tidy by setting the real project option names.
+add_test(
+  NAME presets.windows_disables_static_analysis
+  COMMAND
+    ${CMAKE_COMMAND}
+    -DPRESETS_FILE=${CMAKE_SOURCE_DIR}/CMakePresets.json
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/test_cmake_presets.cmake)
+
 # Provide a simple smoke test to make sure that the CLI works and can display a --help message
 add_test(NAME cli.has_help COMMAND intro --help)
 
