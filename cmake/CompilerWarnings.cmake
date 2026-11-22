@@ -67,6 +67,7 @@ function(
         -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
         -Wuseless-cast # warn if you perform a cast to the same type
         -Wsuggest-override # warn if an overridden member function is not marked 'override' or 'final'
+        -Wsign-conversion # warn on sign conversions
     )
   endif()
 
