@@ -7,7 +7,7 @@ add_library(sample_library sample_library.cpp)
 
 add_library(myproject::sample_library ALIAS sample_library)
 
-target_link_libraries(sample_library PRIVATE myproject_options myproject_warnings)
+target_link_libraries(sample_library PRIVATE myproject_options)
 
 target_include_directories(sample_library ${WARNING_GUARD} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                                                                   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
@@ -19,6 +19,7 @@ endif()
 
 target_compile_features(sample_library PUBLIC cxx_std_${CMAKE_CXX_STANDARD})
 
+myproject_enable_warnings(sample_library)
 myproject_configure_linker(sample_library)
 
 set_target_properties(

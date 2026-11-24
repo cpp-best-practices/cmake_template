@@ -81,11 +81,6 @@ function(
     )
   endif()
 
-  if(WARNINGS_AS_ERRORS)
-    message(TRACE "Warnings are treated as errors")
-  endif()
-  set(CMAKE_COMPILE_WARNING_AS_ERROR "${WARNINGS_AS_ERRORS}" PARENT_SCOPE)
-
   if(MSVC)
     set(PROJECT_WARNINGS_CXX ${MSVC_WARNINGS})
   elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
@@ -110,4 +105,13 @@ function(
               $<$<COMPILE_LANGUAGE:C>:${PROJECT_WARNINGS_C}>
               # Cuda warnings
               $<$<COMPILE_LANGUAGE:CUDA>:${PROJECT_WARNINGS_CUDA}>)
+endfunction()
+
+function(myproject_enable_warnings target)
+  target_link_libraries(${target} PRIVATE myproject::myproject_warnings)
+
+  if(WARNINGS_AS_ERRORS)
+    message(TRACE "Warnings are treated as errors")
+  endif()
+  set_property(TARGET ${target} PROPERTY COMPILE_WARNING_AS_ERROR "${myproject_WARNINGS_AS_ERRORS}")
 endfunction()

@@ -78,9 +78,11 @@ headers. Default set: fmt, spdlog, Catch2, CLI11, FTXUI, lefticus/tools.
 ## Targets and packaging
 
 `myproject_options` and `myproject_warnings` are `INTERFACE` libraries that
-hold flags. Real targets link them to inherit the configuration without
-touching global state. `CPack` package names embed compiler, version, and
-short Git SHA, so a binary maps to one build.
+hold flags. Real targets link `myproject_options` and call
+`myproject_enable_warnings(target)` to link the warning flags and set the
+target's `COMPILE_WARNING_AS_ERROR` property from `myproject_WARNINGS_AS_ERRORS`,
+without changing global state. `CPack` package names embed compiler, version,
+and short Git SHA, so a binary maps to one build.
 
 ## Defaults for daily use
 
