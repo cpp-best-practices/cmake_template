@@ -7,13 +7,12 @@ add_executable(fuzz_tester fuzz_tester.cpp)
 target_link_libraries(
   fuzz_tester
   PRIVATE myproject_options
-          myproject_warnings
           fmt::fmt
           -coverage
           -fsanitize=fuzzer)
 target_compile_options(fuzz_tester PRIVATE -fsanitize=fuzzer)
 
-
+myproject_enable_warnings(fuzz_tester)
 myproject_configure_linker(fuzz_tester)
 
 # Allow short runs during automated testing to see if something new breaks

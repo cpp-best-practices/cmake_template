@@ -3,7 +3,6 @@ add_executable(intro main.cpp)
 target_link_libraries(
   intro
   PRIVATE myproject::myproject_options
-          myproject::myproject_warnings
           CLI11::CLI11
           fmt::fmt
           spdlog::spdlog
@@ -12,7 +11,7 @@ target_link_libraries(
           ftxui::dom
           ftxui::component)
 
-
+myproject_enable_warnings(intro)
 myproject_configure_linker(intro)
 
 target_include_directories(intro PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")
